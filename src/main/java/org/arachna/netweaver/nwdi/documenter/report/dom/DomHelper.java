@@ -28,7 +28,7 @@ public class DomHelper {
      *
      * @return the document used in this <code>DOMCreator</code>.
      */
-    protected final Document getDocument() {
+    public final Document getDocument() {
         return document;
     }
 
