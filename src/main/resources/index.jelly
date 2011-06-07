@@ -2,5 +2,5 @@
   This view is used to render the installed plugins page.
 -->
 <div>
-  ${%This plugin creates documentation for SAP NetWeaver development components}.
+  This plugin creates documentation for SAP NetWeaver development components.
 </div>

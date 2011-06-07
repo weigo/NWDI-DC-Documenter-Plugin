@@ -62,7 +62,7 @@
     <xsl:choose>
      <xsl:when test="@archive-state='no'">
       <xsl:element name="a">
-       <xsl:attribute name="href"><xsl:value-of select="concat(../@name, '/', @sc-name, '/index.html')" /></xsl:attribute>
+       <xsl:attribute name="href"><xsl:value-of select="concat(@sc-name, '/index.html')" /></xsl:attribute>
        <xsl:value-of select="@sc-name" />
       </xsl:element>
      </xsl:when>
@@ -90,7 +90,7 @@
     <xsl:when test="../../@archive-state='no'">
      <xsl:element name="a">
       <xsl:attribute name="href"><xsl:value-of
-       select="concat(../../../@name, '/', ../../@sc-name, '/', translate(@name, '/', '~'), '.html')" /></xsl:attribute>
+       select="concat(../../@sc-name, '/', @vendor, '~', translate(@name, '/', '~'), '.html')" /></xsl:attribute>
       <xsl:value-of select="$dcName" />
      </xsl:element>
     </xsl:when>
@@ -106,7 +106,7 @@
      <xsl:value-of select="concat(@vendor, '~', translate(@name, '/', '~'))" />
     </xsl:variable>
     <xsl:variable name="baseDir">
-     <xsl:value-of select="'../build/'" />
+     <xsl:value-of select="'../'" />
     </xsl:variable>
     <xsl:element name="a">
      <xsl:attribute name="href"><xsl:value-of select="concat($baseDir, 'javadoc/', $componentName, '/index.html')" /></xsl:attribute>
@@ -115,42 +115,6 @@
       <xsl:attribute name="border">0</xsl:attribute>
       <xsl:attribute name="src"><xsl:value-of select="concat($imageLocation,'/info16_1.gif')" /></xsl:attribute>
       <xsl:attribute name="alt">JavaDoc ansehen</xsl:attribute>
-     </xsl:element>
-    </xsl:element>
-    <xsl:element name="a">
-     <xsl:attribute name="href"><xsl:value-of select="concat($baseDir, 'checkstyle/', $componentName, '/index.html')" /></xsl:attribute>
-     <xsl:attribute name="target">_blank</xsl:attribute>
-     <xsl:element name="img">
-      <xsl:attribute name="border">0</xsl:attribute>
-      <xsl:attribute name="src"><xsl:value-of select="concat($imageLocation,'/checkstyle-32px.png')" /></xsl:attribute>
-      <xsl:attribute name="alt">Checkstyle-Bericht ansehen</xsl:attribute>
-     </xsl:element>
-    </xsl:element>
-    <xsl:element name="a">
-     <xsl:attribute name="href"><xsl:value-of select="concat($baseDir, 'cpd/', $componentName, '/cpd.html')" /></xsl:attribute>
-     <xsl:attribute name="target">_blank</xsl:attribute>
-     <xsl:element name="img">
-      <xsl:attribute name="border">0</xsl:attribute>
-      <xsl:attribute name="src"><xsl:value-of select="concat($imageLocation,'/dry-24x24.png')" /></xsl:attribute>
-      <xsl:attribute name="alt">Bericht des Copy und Paste Detektors ansehen</xsl:attribute>
-     </xsl:element>
-    </xsl:element>
-    <xsl:element name="a">
-     <xsl:attribute name="href"><xsl:value-of select="concat($baseDir, 'pmd/', $componentName, '/pmd.html')" /></xsl:attribute>
-     <xsl:attribute name="target">_blank</xsl:attribute>
-     <xsl:element name="img">
-      <xsl:attribute name="border">0</xsl:attribute>
-      <xsl:attribute name="src"><xsl:value-of select="concat($imageLocation,'/pmd-24x24.gif')" /></xsl:attribute>
-      <xsl:attribute name="alt">PMD-Bericht ansehen</xsl:attribute>
-     </xsl:element>
-    </xsl:element>
-    <xsl:element name="a">
-     <xsl:attribute name="href"><xsl:value-of select="concat($baseDir, 'findbugs/', $componentName, '/findbugs.html')" /></xsl:attribute>
-     <xsl:attribute name="target">_blank</xsl:attribute>
-     <xsl:element name="img">
-      <xsl:attribute name="border">0</xsl:attribute>
-      <xsl:attribute name="src"><xsl:value-of select="concat($imageLocation,'/findbugs-32x32.png')" /></xsl:attribute>
-      <xsl:attribute name="alt">FindBugs-Bericht ansehen</xsl:attribute>
      </xsl:element>
     </xsl:element>
    </xsl:if>

@@ -1,0 +1,113 @@
+@CHARSET "ISO-8859-1";
+
+BODY {
+	FONT-SIZE: 9pt;
+	CURSOR: default;
+	FONT-FAMILY: Tahoma, Verdana;
+	background-color: white;
+}
+
+TD {
+	BORDER: 1px solid #000;
+}
+
+H1 {
+	color: White;
+	FONT-SIZE: 12pt;
+	font-weight: bold;
+	BACKGROUND-COLOR: #5E7CB1;
+	BORDER: 1px solid #cecfce;
+	padding: 3px;
+}
+
+H2 {
+	FONT-SIZE: 10pt;
+	font-weight: bold;
+}
+
+table {
+	BORDER: 1px solid silver;
+}
+
+th {
+	PADDING-RIGHT : 5px;
+	PADDING-LEFT: 5px;
+	PADDING-BOTTOM: 2px;
+	PADDING-TOP: 2px;
+	BACKGROUND-COLOR: #5E7CB1;
+	color: White;
+	text-align: left;
+}
+
+caption {
+	color: White;
+	text-align: left;
+	BACKGROUND-COLOR: #5E7CB1;
+}
+
+.odd {
+	background-color: #f7f7ee;
+}
+
+.even {
+
+}
+
+.developmentConfiguration {
+	clear: left;
+	border: #535353 solid 1px;
+	background: url("etc/images/g41_bg.gif") repeat-x 0 -102px #eee;
+	width: 200px;
+	/*position: relative;*/
+	margin: 12px 0;
+	border: #535353 solid 1px;
+	-moz-border-radius: 7px;
+	-webkit-border-radius: 7px;
+	border-radius: 7px;
+	-moz-background-clip: padding;
+	padding: 5px;
+}
+
+a img {
+  margin: 5px;
+}
+
+.developmentConfiguration hr {
+	width: 100%;
+}
+
+.compartentContainer {
+	float: left;
+	position: relative;
+	width: 300px;
+}
+
+.compartment {
+	clear: left; border : #535353 solid 1px;
+	background: #6dace7;
+	width: 200px;
+	position: relative;
+	left: 10px;
+	margin: 12px 0;
+	-moz-border-radius: 7px;
+	-webkit-border-radius: 7px;
+	border-radius: 7px;
+	-moz-background-clip: padding;
+	padding: 5px;
+	border: #535353 solid 1px;
+}
+
+.developmentComponent {
+	clear: left;
+	border: #535353 solid 1px;
+	background: #fbf2ad;
+	width: 230px;
+	position: relative;
+	left: 20px;
+	margin: 12px 0;
+	-moz-border-radius: 7px;
+	-webkit-border-radius: 7px;
+	border-radius: 7px;
+	-moz-background-clip: padding;
+	padding: 5px;
+}
