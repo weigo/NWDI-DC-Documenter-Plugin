@@ -9,7 +9,9 @@ import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
 import hudson.util.FormValidation;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
@@ -17,7 +19,17 @@ import javax.servlet.ServletException;
 
 import net.sf.json.JSONObject;
 
+import org.apache.tools.ant.Project;
+import org.apache.tools.ant.taskdefs.ExecuteOn;
+import org.apache.tools.ant.taskdefs.ExecuteOn.FileDirBoth;
+import org.apache.tools.ant.types.FileSet;
+import org.apache.tools.ant.util.GlobPatternMapper;
+import org.arachna.ant.AntHelper;
+import org.arachna.netweaver.dc.types.DevelopmentComponentFactory;
+import org.arachna.netweaver.hudson.nwdi.NWDIBuild;
 import org.arachna.netweaver.hudson.nwdi.NWDIProject;
+import org.arachna.netweaver.nwdi.documenter.report.DevelopmentConfigurationReportWriter;
+import org.arachna.netweaver.nwdi.documenter.report.ReportWriterConfiguration;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
@@ -40,6 +52,8 @@ import org.kohsuke.stapler.StaplerRequest;
  * @author Kohsuke Kawaguchi
  */
 public class DocumentationBuilder extends Builder {
+    @Extension
+    public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
     /**
      * regular expression for ignoring development components of certain
      * vendors.
@@ -78,11 +92,91 @@ public class DocumentationBuilder extends Builder {
 
     @Override
     public boolean perform(AbstractBuild build, Launcher launcher, BuildListener listener) {
-        // This is where you 'build' the project.
-        // Since this is a dummy, we just say 'hello world' and call that a
-        // build.
+        boolean result = true;
+        NWDIBuild nwdiBuild = (NWDIBuild)build;
+        PrintStream logger = listener.getLogger();
+        AntHelper antHelper = nwdiBuild.getAntHelper(logger);
+        DevelopmentComponentFactory dcFactory = nwdiBuild.getDevelopmentComponentFactory();
 
-        return true;
+        ReportWriterConfiguration writerConfiguration = new ReportWriterConfiguration();
+        String outputLocation = antHelper.getPathToWorkspace() + File.separatorChar + "documentation";
+        writerConfiguration.setOutputLocation(outputLocation);
+        DevelopmentConfigurationReportWriter reportWriter =
+            new DevelopmentConfigurationReportWriter(dcFactory, writerConfiguration);
+
+        try {
+            long start = System.currentTimeMillis();
+            logger.append("Creating development configuration report...");
+            reportWriter.write(nwdiBuild.getDevelopmentConfiguration());
+            duration(logger, start);
+
+            start = System.currentTimeMillis();
+            logger.append("Creating usage diagrams...");
+            ExecuteOn task = setUpApplyTask(outputLocation, DESCRIPTOR.getDotExecutable());
+
+            task.execute();
+            duration(logger, start);
+        }
+        catch (IOException e) {
+            result = false;
+            e.printStackTrace();
+        }
+
+        return result;
+    }
+
+    private void duration(PrintStream logger, long start) {
+        logger.append(String.format("(%f sec.).\n", (System.currentTimeMillis() - start) / 1000f));
+    }
+
+    /**
+     * @param outputLocation
+     * @return
+     */
+    private ExecuteOn setUpApplyTask(String outputLocation, String dotExecutable) {
+        ExecuteOn task = new ExecuteOn();
+
+        task.setExecutable(dotExecutable);
+        FileDirBoth fileDirBoth = new FileDirBoth();
+        fileDirBoth.setValue("both");
+        task.setType(fileDirBoth);
+        task.add(createMapper());
+        File destDir = new File(outputLocation);
+        task.setDir(destDir);
+        task.setDest(destDir);
+        task.addFileset(createFileSet(outputLocation));
+        task.createArg().setValue("-Tsvg");
+        task.createArg().setValue("-o");
+        task.createTargetfile();
+        task.createSrcfile();
+        task.setVMLauncher(true);
+        task.setParallel(false);
+        task.setProject(new Project());
+
+        return task;
+    }
+
+    /**
+     * @param outputLocation
+     * @return
+     */
+    private FileSet createFileSet(String outputLocation) {
+        FileSet dotFiles = new FileSet();
+        dotFiles.setDir(new File(outputLocation));
+        dotFiles.setIncludes("**/*.dot");
+
+        return dotFiles;
+    }
+
+    /**
+     * @return
+     */
+    private GlobPatternMapper createMapper() {
+        GlobPatternMapper mapper = new GlobPatternMapper();
+        mapper.setFrom("*.dot");
+        mapper.setTo("*.svg");
+
+        return mapper;
     }
 
     // Overridden for better type safety.
@@ -90,7 +184,7 @@ public class DocumentationBuilder extends Builder {
     // you don't have to do this.
     @Override
     public DescriptorImpl getDescriptor() {
-        return (DescriptorImpl)super.getDescriptor();
+        return DESCRIPTOR;
     }
 
     /**
@@ -102,7 +196,7 @@ public class DocumentationBuilder extends Builder {
      * <tt>src/main/resources/hudson/plugins/hello_world/HelloWorldBuilder/*.jelly</tt>
      * for the actual HTML fragment for the configuration screen.
      */
-    @Extension
+
     // This indicates to Jenkins that this is an implementation of an extension
     // point.
     public static final class DescriptorImpl extends BuildStepDescriptor<Builder> {
@@ -117,6 +211,11 @@ public class DocumentationBuilder extends Builder {
          * software components.
          */
         private Pattern ignoreSoftwareComponentRegex;
+
+        /**
+         * Path to the 'dot' executable.
+         */
+        private String dotExecutable;
 
         public DescriptorImpl() {
             load();
@@ -168,6 +267,8 @@ public class DocumentationBuilder extends Builder {
                 throw new FormException(pse.getLocalizedMessage(), pse, "ignoreSoftwareComponentRegex");
             }
 
+            this.dotExecutable = formData.getString("dotExecutable");
+
             save();
             return super.configure(req, formData);
         }
@@ -178,7 +279,7 @@ public class DocumentationBuilder extends Builder {
          * @return the regular expression for ignoring vendors as a String.
          */
         public String getIgnoreVendorRegexp() {
-            return ignoreVendorRegexp.pattern();
+            return ignoreVendorRegexp != null ? ignoreVendorRegexp.pattern() : "";
         }
 
         /**
@@ -208,7 +309,7 @@ public class DocumentationBuilder extends Builder {
          * @return the ignoreSoftwareComponentRegex
          */
         public String getIgnoreSoftwareComponentRegex() {
-            return ignoreSoftwareComponentRegex.pattern();
+            return ignoreSoftwareComponentRegex != null ? ignoreSoftwareComponentRegex.pattern() : "";
         }
 
         /**
@@ -222,5 +323,32 @@ public class DocumentationBuilder extends Builder {
         public void setIgnoreSoftwareComponentRegex(String ignoreSoftwareComponentRegex) {
             this.ignoreSoftwareComponentRegex = Pattern.compile(ignoreSoftwareComponentRegex);
         }
+
+        /**
+         * Returns the absolute path of the 'dot' executable.
+         *
+         * @return the absolute path of the 'dot' executable.
+         */
+        public String getDotExecutable() {
+            return dotExecutable;
+        }
+
+        /**
+         * Sets the absolute path of the 'dot' executable.
+         *
+         * @param dotExecutable
+         *            the absolute path of the 'dot' executable.
+         */
+        public void setDotExecutable(String dotExecutable) {
+            this.dotExecutable = dotExecutable;
+        }
+    }
+
+    public static void main(String[] args) {
+        DocumentationBuilder builder = new DocumentationBuilder("", "");
+        ExecuteOn task =
+            builder.setUpApplyTask("C:\\tmp\\hudson\\jobs\\enviaM\\workspace\\documentation\\PN3_enviaM_D",
+                "c:/ZusatzSW/GraphViz/bin/dot.exe");
+        task.execute();
     }
 }

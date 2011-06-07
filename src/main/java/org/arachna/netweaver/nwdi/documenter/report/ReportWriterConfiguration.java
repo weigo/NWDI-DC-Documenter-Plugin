@@ -7,7 +7,7 @@ import java.io.File;
 
 /**
  * configuration object for report creation.
- * 
+ *
  * @author G526521
  */
 public final class ReportWriterConfiguration {
@@ -29,7 +29,7 @@ public final class ReportWriterConfiguration {
     /**
      * format to be used for images.
      */
-    private String imageFormat = "png";
+    private String imageFormat = "svg";
 
     /**
      * location of java script files.
@@ -45,7 +45,7 @@ public final class ReportWriterConfiguration {
 
     /**
      * set location of java script files.
-     * 
+     *
      * @param jsLocation
      *            the jsLocation to set
      */
@@ -103,7 +103,7 @@ public final class ReportWriterConfiguration {
 
     /**
      * Helper for validating arguments in set methods.
-     * 
+     *
      * @param argument
      *            argument to be validated
      * @param message
@@ -117,7 +117,7 @@ public final class ReportWriterConfiguration {
 
     /**
      * return image format to be used in report creation.
-     * 
+     *
      * @return image format to be used in report creation
      */
     public String getImageFormat() {
@@ -135,7 +135,7 @@ public final class ReportWriterConfiguration {
 
     /**
      * Return the location of 'index.html' for the output location.
-     * 
+     *
      * @return location of 'index.html' for the output location.
      */
     public String getIndexHtml() {
