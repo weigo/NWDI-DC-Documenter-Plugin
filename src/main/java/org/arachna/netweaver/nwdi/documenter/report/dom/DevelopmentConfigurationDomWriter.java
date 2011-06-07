@@ -40,32 +40,31 @@ public final class DevelopmentConfigurationDomWriter {
      * @throws TransformerException
      */
     public Document write(final DevelopmentConfiguration developmentConfiguration) throws ParserConfigurationException,
-            TransformerException {
+        TransformerException {
         final List<DevelopmentConfiguration> developmentConfigurations = new ArrayList<DevelopmentConfiguration>();
         developmentConfigurations.add(developmentConfiguration);
         return write(developmentConfigurations);
     }
 
     /**
-     * Schreibt die übergebenen Entwicklungskonfigurationen in ein DOM-Dokument.
+     * Schreibt die übergebenen Entwicklungskonfigurationen in ein
+     * DOM-Dokument.
      *
      * @param developmentConfigurations
      *            zu schreibende Entwicklungskonfiguration
      * @return erzeugtes DOM-Dokument
      * @throws ParserConfigurationException
-     * @throws IOException
-     * @throws TransformerException
      */
     public Document write(final List<DevelopmentConfiguration> developmentConfigurations)
-            throws ParserConfigurationException, TransformerException {
+        throws ParserConfigurationException {
         final DomHelper domHelper = createDomHelper();
         final Element element = domHelper.createElement(DevelopmentConfigurationDomWriter.DEVELOPMENT_CONFIGURATIONS);
         Document document = domHelper.getDocument();
         document.appendChild(element);
-        final DevelopmentConfigurationDomBuilder domCreator = new DevelopmentConfigurationDomBuilder(domHelper);
+        final DevelopmentConfigurationDomBuilder builder = new DevelopmentConfigurationDomBuilder(domHelper);
 
         for (final DevelopmentConfiguration developmentConfiguration : developmentConfigurations) {
-            element.appendChild(domCreator.write(developmentConfiguration));
+            element.appendChild(builder.write(developmentConfiguration));
         }
 
         return document;
