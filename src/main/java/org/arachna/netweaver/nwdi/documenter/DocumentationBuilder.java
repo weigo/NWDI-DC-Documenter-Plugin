@@ -26,6 +26,7 @@ import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.util.GlobPatternMapper;
 import org.arachna.ant.AntHelper;
 import org.arachna.netweaver.dc.types.DevelopmentComponentFactory;
+import org.arachna.netweaver.hudson.nwdi.AntTaskBuilder;
 import org.arachna.netweaver.hudson.nwdi.NWDIBuild;
 import org.arachna.netweaver.hudson.nwdi.NWDIProject;
 import org.arachna.netweaver.nwdi.documenter.report.DevelopmentConfigurationReportWriter;
@@ -51,7 +52,7 @@ import org.kohsuke.stapler.StaplerRequest;
  *
  * @author Kohsuke Kawaguchi
  */
-public class DocumentationBuilder extends Builder {
+public class DocumentationBuilder extends AntTaskBuilder {
     @Extension
     public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
     /**
@@ -95,11 +96,10 @@ public class DocumentationBuilder extends Builder {
         boolean result = true;
         NWDIBuild nwdiBuild = (NWDIBuild)build;
         PrintStream logger = listener.getLogger();
-        AntHelper antHelper = nwdiBuild.getAntHelper(logger);
         DevelopmentComponentFactory dcFactory = nwdiBuild.getDevelopmentComponentFactory();
 
         ReportWriterConfiguration writerConfiguration = new ReportWriterConfiguration();
-        String outputLocation = antHelper.getPathToWorkspace() + File.separatorChar + "documentation";
+        String outputLocation = getAntHelper().getPathToWorkspace() + File.separatorChar + "documentation";
         writerConfiguration.setOutputLocation(outputLocation);
         DevelopmentConfigurationReportWriter reportWriter =
             new DevelopmentConfigurationReportWriter(dcFactory, writerConfiguration);
