@@ -8,6 +8,7 @@ import java.util.Collection;
 import org.arachna.netweaver.dc.types.Compartment;
 import org.arachna.netweaver.dc.types.CompartmentState;
 import org.arachna.netweaver.dc.types.DevelopmentComponent;
+import org.arachna.xml.DomHelper;
 import org.w3c.dom.Element;
 
 /**

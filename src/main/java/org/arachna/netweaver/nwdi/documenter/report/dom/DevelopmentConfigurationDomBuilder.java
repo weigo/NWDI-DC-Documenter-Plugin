@@ -5,6 +5,7 @@ import java.io.IOException;
 import org.arachna.netweaver.dc.types.BuildVariant;
 import org.arachna.netweaver.dc.types.Compartment;
 import org.arachna.netweaver.dc.types.DevelopmentConfiguration;
+import org.arachna.xml.DomHelper;
 import org.w3c.dom.Element;
 
 /**

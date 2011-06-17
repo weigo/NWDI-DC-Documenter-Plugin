@@ -3,6 +3,7 @@ package org.arachna.netweaver.nwdi.documenter.report.dom;
 import org.arachna.netweaver.dc.types.DevelopmentComponent;
 import org.arachna.netweaver.dc.types.PublicPart;
 import org.arachna.netweaver.dc.types.PublicPartReference;
+import org.arachna.xml.DomHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 

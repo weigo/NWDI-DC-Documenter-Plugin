@@ -13,6 +13,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
 import org.arachna.netweaver.dc.types.DevelopmentConfiguration;
+import org.arachna.xml.DomHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 

@@ -17,7 +17,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
-import org.arachna.netweaver.nwdi.documenter.report.dom.DomHelper;
+import org.arachna.xml.DomHelper;
 import org.w3c.dom.Document;
 
 /**

@@ -9,7 +9,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.arachna.netweaver.dc.types.Compartment;
 import org.arachna.netweaver.nwdi.documenter.report.dom.CompartmentDomBuilder;
-import org.arachna.netweaver.nwdi.documenter.report.dom.DomHelper;
+import org.arachna.xml.DomHelper;
 import org.w3c.dom.Document;
 
 /**
