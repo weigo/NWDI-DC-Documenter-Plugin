@@ -24,7 +24,6 @@ import org.apache.tools.ant.taskdefs.ExecuteOn;
 import org.apache.tools.ant.taskdefs.ExecuteOn.FileDirBoth;
 import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.util.GlobPatternMapper;
-import org.arachna.ant.AntHelper;
 import org.arachna.netweaver.dc.types.DevelopmentComponentFactory;
 import org.arachna.netweaver.hudson.nwdi.AntTaskBuilder;
 import org.arachna.netweaver.hudson.nwdi.NWDIBuild;
@@ -37,22 +36,26 @@ import org.kohsuke.stapler.StaplerRequest;
 
 /**
  * Sample {@link Builder}.
- *
+ * 
  * <p>
  * When the user configures the project and enables this builder,
  * {@link DescriptorImpl#newInstance(StaplerRequest)} is invoked and a new
  * {@link DocumentationBuilder} is created. The created instance is persisted to
  * the project configuration XML by using XStream, so this allows you to use
  * instance fields (like {@link #name}) to remember the configuration.
- *
+ * 
  * <p>
  * When a build is performed, the
  * {@link #perform(AbstractBuild, Launcher, BuildListener)} method will be
  * invoked.
- *
+ * 
  * @author Kohsuke Kawaguchi
  */
 public class DocumentationBuilder extends AntTaskBuilder {
+    /**
+     * 
+     */
+    private static final int TEN_MINUTES = 1000 * 60 * 10;
     @Extension
     public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
     /**
@@ -152,6 +155,7 @@ public class DocumentationBuilder extends AntTaskBuilder {
         task.setVMLauncher(true);
         task.setParallel(false);
         task.setProject(new Project());
+        task.setTimeout(Integer.valueOf(TEN_MINUTES));
 
         return task;
     }
@@ -190,7 +194,7 @@ public class DocumentationBuilder extends AntTaskBuilder {
     /**
      * Descriptor for {@link DocumentationBuilder}. Used as a singleton. The
      * class is marked as public so that it can be accessed from views.
-     *
+     * 
      * <p>
      * See
      * <tt>src/main/resources/hudson/plugins/hello_world/HelloWorldBuilder/*.jelly</tt>
@@ -223,7 +227,7 @@ public class DocumentationBuilder extends AntTaskBuilder {
 
         /**
          * Performs on-the-fly validation of the form field 'name'.
-         *
+         * 
          * @param value
          *            This parameter receives the value that the user has typed.
          * @return Indicates the outcome of the validation. This is sent to the
@@ -275,7 +279,7 @@ public class DocumentationBuilder extends AntTaskBuilder {
 
         /**
          * Return the regular expression for ignoring vendors as a String.
-         *
+         * 
          * @return the regular expression for ignoring vendors as a String.
          */
         public String getIgnoreVendorRegexp() {
@@ -284,7 +288,7 @@ public class DocumentationBuilder extends AntTaskBuilder {
 
         /**
          * Return the pattern for ignoring vendors.
-         *
+         * 
          * @return the pattern for ignoring vendors.
          */
         public Pattern getIgnoreVendorRegexpPattern() {
@@ -294,7 +298,7 @@ public class DocumentationBuilder extends AntTaskBuilder {
         /**
          * Sets the regular expression to be used when ignoring development
          * components via their compartments vendor.
-         *
+         * 
          * @param ignoreVendorRegexp
          *            the ignoreVendorRegexp to set
          */
@@ -305,7 +309,7 @@ public class DocumentationBuilder extends AntTaskBuilder {
         /**
          * Returns the pattern for ignoring development components via their
          * software components name.
-         *
+         * 
          * @return the ignoreSoftwareComponentRegex
          */
         public String getIgnoreSoftwareComponentRegex() {
@@ -315,7 +319,7 @@ public class DocumentationBuilder extends AntTaskBuilder {
         /**
          * Set the regular expression to be used ignoring software components
          * during the documentation process.
-         *
+         * 
          * @param ignoreSoftwareComponentRegex
          *            the regular expression to be used ignoring software
          *            components during the documentation process to set
@@ -326,7 +330,7 @@ public class DocumentationBuilder extends AntTaskBuilder {
 
         /**
          * Returns the absolute path of the 'dot' executable.
-         *
+         * 
          * @return the absolute path of the 'dot' executable.
          */
         public String getDotExecutable() {
@@ -335,7 +339,7 @@ public class DocumentationBuilder extends AntTaskBuilder {
 
         /**
          * Sets the absolute path of the 'dot' executable.
-         *
+         * 
          * @param dotExecutable
          *            the absolute path of the 'dot' executable.
          */
@@ -350,5 +354,14 @@ public class DocumentationBuilder extends AntTaskBuilder {
             builder.setUpApplyTask("C:\\tmp\\hudson\\jobs\\enviaM\\workspace\\documentation\\PN3_enviaM_D",
                 "c:/ZusatzSW/GraphViz/bin/dot.exe");
         task.execute();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected String getAntProperties() {
+        // TODO Auto-generated method stub
+        return null;
     }
 }
