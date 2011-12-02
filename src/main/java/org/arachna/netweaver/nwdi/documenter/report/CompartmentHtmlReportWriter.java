@@ -8,13 +8,14 @@ import java.io.Writer;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.arachna.netweaver.dc.types.Compartment;
+import org.arachna.netweaver.dc.types.DevelopmentComponentFactory;
 import org.arachna.netweaver.nwdi.documenter.report.dom.CompartmentDomBuilder;
 import org.arachna.xml.DomHelper;
 import org.w3c.dom.Document;
 
 /**
  * Create a report about a {@link Compartment}.
- *
+ * 
  * @author Dirk Weigenand
  */
 public final class CompartmentHtmlReportWriter extends ReportWriter {
@@ -29,8 +30,13 @@ public final class CompartmentHtmlReportWriter extends ReportWriter {
     private final Compartment compartment;
 
     /**
+     * Registry for development components.
+     */
+    private final DevelopmentComponentFactory dcFactory;
+
+    /**
      * Create a report about a {@link Compartment}.
-     *
+     * 
      * @param writer
      *            writer to use for report creation.
      * @param writerConfiguration
@@ -39,20 +45,21 @@ public final class CompartmentHtmlReportWriter extends ReportWriter {
      *            the compartment this report is all about.
      */
     public CompartmentHtmlReportWriter(final Writer writer, final ReportWriterConfiguration writerConfiguration,
-        final Compartment compartment) {
-        super(STYLE_SHEET, writer, writerConfiguration);
+        final Compartment compartment, DevelopmentComponentFactory dcFactory) {
+        super(STYLE_SHEET, writer, writerConfiguration,dcFactory);
         this.compartment = compartment;
+        this.dcFactory = dcFactory;
     }
 
     /**
      * Create a report about a {@link Compartment}.
-     *
+     * 
      * @throws ParserConfigurationException
      */
     Document createDocument() throws ParserConfigurationException {
         final DomHelper domHelper = createDomHelper();
         Document document = domHelper.getDocument();
-        final CompartmentDomBuilder domWriter = new CompartmentDomBuilder(domHelper);
+        final CompartmentDomBuilder domWriter = new CompartmentDomBuilder(domHelper, this.dcFactory);
         document.appendChild(domWriter.write(compartment));
 
         return document;

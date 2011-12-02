@@ -12,6 +12,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
+import org.arachna.netweaver.dc.types.DevelopmentComponentFactory;
 import org.arachna.netweaver.dc.types.DevelopmentConfiguration;
 import org.arachna.xml.DomHelper;
 import org.w3c.dom.Document;
@@ -19,9 +20,9 @@ import org.w3c.dom.Element;
 
 /**
  * Writer f�r Entwicklungskonfigurationen als DOM-Dokument.
- *
+ * 
  * @author Dirk Weigenand
- *
+ * 
  */
 public final class DevelopmentConfigurationDomWriter {
     /**
@@ -30,8 +31,17 @@ public final class DevelopmentConfigurationDomWriter {
     private static final String DEVELOPMENT_CONFIGURATIONS = "development-configurations";
 
     /**
+     * Registry for development components.
+     */
+    private final DevelopmentComponentFactory dcFactory;
+
+    public DevelopmentConfigurationDomWriter(final DevelopmentComponentFactory dcFactory) {
+        this.dcFactory = dcFactory;
+    }
+
+    /**
      * Schreibt die übergebene Entwicklungskonfiguration in ein DOM-Dokument.
-     *
+     * 
      * @param developmentConfiguration
      *            zu schreibende Entwicklungskonfiguration
      * @return erzeugtes DOM-Dokument
@@ -50,7 +60,7 @@ public final class DevelopmentConfigurationDomWriter {
     /**
      * Schreibt die übergebenen Entwicklungskonfigurationen in ein
      * DOM-Dokument.
-     *
+     * 
      * @param developmentConfigurations
      *            zu schreibende Entwicklungskonfiguration
      * @return erzeugtes DOM-Dokument
@@ -62,7 +72,7 @@ public final class DevelopmentConfigurationDomWriter {
         final Element element = domHelper.createElement(DevelopmentConfigurationDomWriter.DEVELOPMENT_CONFIGURATIONS);
         Document document = domHelper.getDocument();
         document.appendChild(element);
-        final DevelopmentConfigurationDomBuilder builder = new DevelopmentConfigurationDomBuilder(domHelper);
+        final DevelopmentConfigurationDomBuilder builder = new DevelopmentConfigurationDomBuilder(domHelper, dcFactory);
 
         for (final DevelopmentConfiguration developmentConfiguration : developmentConfigurations) {
             element.appendChild(builder.write(developmentConfiguration));

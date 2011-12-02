@@ -10,6 +10,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.arachna.netweaver.dc.types.Compartment;
 import org.arachna.netweaver.dc.types.DevelopmentComponent;
+import org.arachna.netweaver.dc.types.DevelopmentComponentFactory;
 import org.arachna.netweaver.nwdi.documenter.report.dom.CompartmentDomBuilder;
 import org.arachna.xml.DomHelper;
 import org.w3c.dom.Document;
@@ -18,7 +19,7 @@ import org.w3c.dom.Element;
 /**
  * Create a report about a set of given {@link Compartment} objects and their
  * respective {@link DevelopmentComponent} objects.
- *
+ * 
  * @author Dirk Weigenand
  */
 public final class CompartmentsHtmlReportWriter extends ReportWriter {
@@ -34,10 +35,15 @@ public final class CompartmentsHtmlReportWriter extends ReportWriter {
     private final Collection<Compartment> compartments;
 
     /**
+     * Registry for development components.
+     */
+    private final DevelopmentComponentFactory dcFactory;
+
+    /**
      * Create an instance of a <code>CompartmentsHtmlReportWriter</code> using
      * the given {@link Writer}, {@link ReportWriterConfiguration} and list of
      * compartments.
-     *
+     * 
      * @param writer
      *            writer object to use writing the report.
      * @param writerConfiguration
@@ -46,15 +52,16 @@ public final class CompartmentsHtmlReportWriter extends ReportWriter {
      *            list of compartments the report should contain.
      */
     public CompartmentsHtmlReportWriter(final Writer writer, final ReportWriterConfiguration writerConfiguration,
-        final Collection<Compartment> compartments) {
-        super(STYLE_SHEET, writer, writerConfiguration);
+        final Collection<Compartment> compartments, DevelopmentComponentFactory dcFactory) {
+        super(STYLE_SHEET, writer, writerConfiguration,dcFactory);
         this.compartments = compartments;
+        this.dcFactory = dcFactory;
     }
 
     /**
      * Create a report about a set of given {@link Compartment} objects and
      * their respective {@link DevelopmentComponent} objects.
-     *
+     * 
      * @throws ParserConfigurationException
      */
     Document createDocument() throws ParserConfigurationException {
@@ -70,7 +77,7 @@ public final class CompartmentsHtmlReportWriter extends ReportWriter {
         }
 
         for (final Compartment compartment : this.compartments) {
-            final CompartmentDomBuilder domWriter = new CompartmentDomBuilder(domHelper);
+            final CompartmentDomBuilder domWriter = new CompartmentDomBuilder(domHelper, dcFactory);
             compartments.appendChild(domWriter.write(compartment));
         }
 

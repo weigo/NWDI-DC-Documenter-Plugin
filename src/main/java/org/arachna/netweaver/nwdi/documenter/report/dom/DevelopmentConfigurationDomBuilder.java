@@ -4,13 +4,14 @@ import java.io.IOException;
 
 import org.arachna.netweaver.dc.types.BuildVariant;
 import org.arachna.netweaver.dc.types.Compartment;
+import org.arachna.netweaver.dc.types.DevelopmentComponentFactory;
 import org.arachna.netweaver.dc.types.DevelopmentConfiguration;
 import org.arachna.xml.DomHelper;
 import org.w3c.dom.Element;
 
 /**
  * Builder for DOM of a development configuration.
- *
+ * 
  * @author Dirk Weigenand
  */
 public final class DevelopmentConfigurationDomBuilder {
@@ -60,18 +61,24 @@ public final class DevelopmentConfigurationDomBuilder {
     private DomHelper domHelper;
 
     /**
+     * Registry for development components.
+     */
+    private final DevelopmentComponentFactory dcFactory;
+
+    /**
      * Create a DOM builder for a developemtn configuration.
-     *
+     * 
      * @param document
      *            Dokument welches zum Erzeugen der Elemente benötigt wird.
      */
-    public DevelopmentConfigurationDomBuilder(final DomHelper domHelper) {
+    public DevelopmentConfigurationDomBuilder(final DomHelper domHelper, DevelopmentComponentFactory dcFactory) {
         this.domHelper = domHelper;
+        this.dcFactory = dcFactory;
     }
 
     /**
      * Erzeugt einen DOM-Baum für die übergebene Entwicklungskonfiguration.
-     *
+     * 
      * @param configuration
      *            Entwicklungskonfiguration für die ein DOM-Baum erzeugt werden
      *            soll.
@@ -87,7 +94,7 @@ public final class DevelopmentConfigurationDomBuilder {
 
         developmentConfiguration.appendChild(buildVariant);
 
-        final CompartmentDomBuilder compartmentDOMCreator = new CompartmentDomBuilder(this.domHelper);
+        final CompartmentDomBuilder compartmentDOMCreator = new CompartmentDomBuilder(this.domHelper, this.dcFactory);
 
         for (final Compartment compartment : configuration.getCompartments()) {
             developmentConfiguration.appendChild(compartmentDOMCreator.write(compartment));
@@ -98,7 +105,7 @@ public final class DevelopmentConfigurationDomBuilder {
 
     /**
      * Erzeugt ein Element für die Build-Variante und ihre Optionen.
-     *
+     * 
      * @param variant
      *            BuildVariante für die eine DOM-Repräsentation erzeugt werden
      *            soll

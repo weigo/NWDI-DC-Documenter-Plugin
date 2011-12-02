@@ -77,6 +77,9 @@
       <xsl:element name="th">
        Runtime
       </xsl:element>
+      <xsl:element name="th">
+       Softwarecomponent
+      </xsl:element>
      </xsl:element>
     </xsl:element>
     <xsl:element name="tbody">
@@ -124,6 +127,9 @@
           <xsl:text> </xsl:text>
          </xsl:otherwise>
         </xsl:choose>
+       </xsl:element>
+       <xsl:element name="td">
+        <xsl:value-of select="@compartment" />
        </xsl:element>
       </xsl:element>
      </xsl:for-each>

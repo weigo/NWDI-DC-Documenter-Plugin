@@ -17,12 +17,13 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import org.arachna.netweaver.dc.types.DevelopmentComponentFactory;
 import org.arachna.xml.DomHelper;
 import org.w3c.dom.Document;
 
 /**
  * Abstract base class for html report writers.
- *
+ * 
  * @author Dirk Weigenand
  */
 abstract class ReportWriter {
@@ -42,25 +43,41 @@ abstract class ReportWriter {
     private Writer writer;
 
     /**
+     * Registry for development components.
+     */
+    private final DevelopmentComponentFactory dcFactory;
+
+    /**
+     * @return the dcFactory
+     */
+    protected final DevelopmentComponentFactory getDcFactory() {
+        return dcFactory;
+    }
+
+    /**
      * Create an instance of a report writer using the given stylesheet and
      * configuration.
-     *
+     * 
      * @param styleSheet
      *            path to stylesheet in class hierarchy.
      * @param writerConfiguration
      *            configuration object.
+     * @param dcFactory
+     *            Registry for development components.
      */
-    ReportWriter(final String styleSheet, final Writer writer, final ReportWriterConfiguration writerConfiguration) {
+    ReportWriter(final String styleSheet, final Writer writer, final ReportWriterConfiguration writerConfiguration,
+        DevelopmentComponentFactory dcFactory) {
         this.styleSheet = styleSheet;
         this.writer = writer;
         this.writerConfiguration = writerConfiguration;
+        this.dcFactory = dcFactory;
     }
 
     /**
      * Create and configure the transformer object to use generating the report.
      * Throws a <code>RuntimeException</code> when there is an error creating
      * the transformer.
-     *
+     * 
      * @return the transformer to use for generating the report.
      */
     private Transformer getTransformer() {
@@ -102,7 +119,7 @@ abstract class ReportWriter {
 
     /**
      * Create the document that is to be written as report.
-     *
+     * 
      * @return
      */
     abstract Document createDocument() throws ParserConfigurationException;

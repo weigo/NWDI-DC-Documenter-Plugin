@@ -8,12 +8,13 @@ import java.util.Collection;
 import org.arachna.netweaver.dc.types.Compartment;
 import org.arachna.netweaver.dc.types.CompartmentState;
 import org.arachna.netweaver.dc.types.DevelopmentComponent;
+import org.arachna.netweaver.dc.types.DevelopmentComponentFactory;
 import org.arachna.xml.DomHelper;
 import org.w3c.dom.Element;
 
 /**
  * Builder for a DOM representation of a compartment.
- *
+ * 
  * @author Dirk Weigenand
  */
 public final class CompartmentDomBuilder {
@@ -79,18 +80,24 @@ public final class CompartmentDomBuilder {
     private final DomHelper domHelper;
 
     /**
+     * Registry for development components.
+     */
+    private final DevelopmentComponentFactory dcFactory;
+
+    /**
      * Create a builder for a DOM representation of a compartment.
-     *
+     * 
      * @param document
      *            Document zum Erzeugen der Elemente.
      */
-    public CompartmentDomBuilder(final DomHelper domHelper) {
+    public CompartmentDomBuilder(final DomHelper domHelper, DevelopmentComponentFactory dcFactory) {
         this.domHelper = domHelper;
+        this.dcFactory = dcFactory;
     }
 
     /**
      * Erzeugt DOM für das übergebene Compartment.
-     *
+     * 
      * @param compartment
      *            Compartment für das eine DOM-Repräsentation ertzeugt werden
      *            soll.
@@ -112,15 +119,17 @@ public final class CompartmentDomBuilder {
 
     /**
      * Fügt Elemente für die enthaltenen Entwicklungskomponenten hinzu.
-     *
+     * 
      * @param components
      *            Entwicklungskomponenten
      * @param parent
      *            Elternelement
      */
     private void appendDevelopmentComponents(final Collection<DevelopmentComponent> components, final Element parent) {
-        final Element developmentComponents = this.domHelper.createElement(CompartmentDomBuilder.DEVELOPMENT_COMPONENTS);
-        final DevelopmentComponentDomBuilder dcDOMCreator = new DevelopmentComponentDomBuilder(this.domHelper);
+        final Element developmentComponents =
+            this.domHelper.createElement(CompartmentDomBuilder.DEVELOPMENT_COMPONENTS);
+        final DevelopmentComponentDomBuilder dcDOMCreator =
+            new DevelopmentComponentDomBuilder(this.domHelper, this.dcFactory);
 
         for (final DevelopmentComponent component : components) {
             developmentComponents.appendChild(dcDOMCreator.write(component));
@@ -132,7 +141,7 @@ public final class CompartmentDomBuilder {
     /**
      * Fügt Elemente für die von diesem Compartment benutzten Compartments
      * hinzu.
-     *
+     * 
      * @param compartments
      *            benutzte Compartments
      * @param element
@@ -142,12 +151,10 @@ public final class CompartmentDomBuilder {
         final Element usedCompartments = this.domHelper.createElement(USED_COMPARTMENTS);
 
         for (final Compartment usedCompartment : compartments) {
-            usedCompartments.appendChild(this.domHelper.createElement(
-                USED_COMPARTMENT,
-                new String[] { NAME, VENDOR, SC_NAME, ARCHIVE_STATE },
-                new String[] { usedCompartment.getName(), usedCompartment.getVendor(),
-                    usedCompartment.getSoftwareComponent(),
-                    CompartmentState.Archive.equals(usedCompartment.getState()) ? "yes" : "no" }));
+            usedCompartments.appendChild(this.domHelper.createElement(USED_COMPARTMENT, new String[] { NAME, VENDOR,
+                SC_NAME, ARCHIVE_STATE }, new String[] { usedCompartment.getName(), usedCompartment.getVendor(),
+                usedCompartment.getSoftwareComponent(),
+                CompartmentState.Archive.equals(usedCompartment.getState()) ? "yes" : "no" }));
         }
 
         element.appendChild(usedCompartments);

@@ -24,7 +24,7 @@ import org.arachna.netweaver.nwdi.dot4j.UsingDevelopmentComponentsDotFileGenerat
 
 /**
  * Writer for reports on development configurations.
- *
+ * 
  * @author Dirk Weigenand
  */
 public final class DevelopmentConfigurationReportWriter {
@@ -40,7 +40,7 @@ public final class DevelopmentConfigurationReportWriter {
 
     /**
      * Create an instance of a {@link DevelopmentConfigurationReportWriter}.
-     *
+     * 
      * @param dcFactory
      *            registry for development components
      * @param writerConfiguration
@@ -54,7 +54,7 @@ public final class DevelopmentConfigurationReportWriter {
 
     /**
      * Create report for the given development configurations.
-     *
+     * 
      * @param configurations
      *            development configurations for which the reports shall be
      *            created.
@@ -66,7 +66,8 @@ public final class DevelopmentConfigurationReportWriter {
 
         FileWriter indexHtmlWriter = new FileWriter(baseDir.getAbsolutePath() + File.separatorChar + "index.html");
         DevelopmentConfigurationsHtmlWriter cfgWriter =
-            new DevelopmentConfigurationsHtmlWriter(indexHtmlWriter, this.writerConfiguration, configuration);
+            new DevelopmentConfigurationsHtmlWriter(indexHtmlWriter, this.writerConfiguration, configuration,
+                this.dcFactory);
         cfgWriter.write();
         indexHtmlWriter.close();
 
@@ -112,7 +113,7 @@ public final class DevelopmentConfigurationReportWriter {
     /**
      * Create a directory for the given file iff it does not exist. Throws a
      * <code>RuntimeException</code> if the directory could not be created.
-     *
+     * 
      * @param folderName
      *            absolute path to folder that should be created.
      */
@@ -129,7 +130,7 @@ public final class DevelopmentConfigurationReportWriter {
     /**
      * Write a report for the given development configuration using the given
      * {@link ReportWriterConfiguration}.
-     *
+     * 
      * @param configuration
      *            development configuration used in creating the report
      * @param config
@@ -141,7 +142,8 @@ public final class DevelopmentConfigurationReportWriter {
         Collection<Compartment> compartments = configuration.getCompartments(CompartmentState.Source);
 
         new CompartmentsHtmlReportWriter(new FileWriter(this.writerConfiguration.getOutputLocation()
-            + File.separatorChar + "compartments.html"), this.writerConfiguration, compartments).write();
+            + File.separatorChar + "compartments.html"), this.writerConfiguration, compartments, this.dcFactory)
+            .write();
 
         ReportWriterConfiguration writerConfiguration = new ReportWriterConfiguration();
         writerConfiguration.setCssLocation("../" + this.writerConfiguration.getCssLocation());
@@ -156,7 +158,7 @@ public final class DevelopmentConfigurationReportWriter {
             writerConfiguration.setOutputLocation(baseDir.getAbsolutePath());
 
             new CompartmentHtmlReportWriter(new FileWriter(baseDir.getAbsolutePath() + File.separatorChar
-                + "index.html"), writerConfiguration, compartment).write();
+                + "index.html"), writerConfiguration, compartment, dcFactory).write();
 
             final String imageOutput =
                 baseDir.getAbsolutePath() + File.separator + this.writerConfiguration.getImagesLocation();
@@ -171,7 +173,7 @@ public final class DevelopmentConfigurationReportWriter {
                 if (component.isNeedsRebuild()) {
                     String componentName = component.getVendor() + "~" + component.getName().replace("/", "~");
                     new DevelopmentComponentHtmlReportWriter(new FileWriter(baseDir.getAbsolutePath() + File.separator
-                        + componentName + ".html"), writerConfiguration, component).write();
+                        + componentName + ".html"), writerConfiguration, component, dcFactory).write();
                     dotFileWriter.write(new DevelopmentComponentDotFileGenerator(dcFactory, component), componentName);
 
                     componentName = componentName + "-usingDCs";

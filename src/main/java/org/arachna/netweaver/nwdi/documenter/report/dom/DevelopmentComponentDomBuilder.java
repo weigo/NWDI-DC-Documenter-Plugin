@@ -1,6 +1,8 @@
 package org.arachna.netweaver.nwdi.documenter.report.dom;
 
+import org.arachna.netweaver.dc.types.Compartment;
 import org.arachna.netweaver.dc.types.DevelopmentComponent;
+import org.arachna.netweaver.dc.types.DevelopmentComponentFactory;
 import org.arachna.netweaver.dc.types.PublicPart;
 import org.arachna.netweaver.dc.types.PublicPartReference;
 import org.arachna.xml.DomHelper;
@@ -9,7 +11,7 @@ import org.w3c.dom.Element;
 
 /**
  * Builder for a DOM representation of a development component.
- *
+ * 
  * @author Dirk Weigenand
  */
 public class DevelopmentComponentDomBuilder {
@@ -99,20 +101,28 @@ public class DevelopmentComponentDomBuilder {
     private final DomHelper domHelper;
 
     /**
+     * Registry for development components.
+     */
+    private final DevelopmentComponentFactory dcFactory;
+
+    /**
      * Create an instance of a <code>DevelopmentComponentDOMCreator</code> using
      * the given {@link Document}.
-     *
+     * 
      * @param document
      *            the <code>Document</code> to use building the DOM.
+     * @param dcFactory
+     *            registry for development components
      */
-    public DevelopmentComponentDomBuilder(final DomHelper domHelper) {
+    public DevelopmentComponentDomBuilder(final DomHelper domHelper, DevelopmentComponentFactory dcFactory) {
         this.domHelper = domHelper;
+        this.dcFactory = dcFactory;
     }
 
     /**
      * Add the DOM fragment for the given development component to the document
      * given in the constructor.
-     *
+     * 
      * @param component
      *            to create a DOM fragment for.
      * @return the DOM fragment for the given development component.
@@ -146,7 +156,7 @@ public class DevelopmentComponentDomBuilder {
 
     /**
      * Create an element for used DC references.
-     *
+     * 
      * @param parent
      *            the parent element the referenced DCs element should be added
      *            to.
@@ -158,10 +168,11 @@ public class DevelopmentComponentDomBuilder {
             final Element dependencies = this.domHelper.createElement(DEPENDENCIES);
 
             for (final PublicPartReference currentReference : component.getUsedDevelopmentComponents()) {
+                String softwareComponent = getSoftwareComponent(currentReference);
                 final Element reference =
-                    this.domHelper.createElement(DEPENDENCY, new String[] { NAME, VENDOR, PP_REF, },
+                    this.domHelper.createElement(DEPENDENCY, new String[] { NAME, VENDOR, PP_REF, "compartment" },
                         new String[] { currentReference.getComponentName(), currentReference.getVendor(),
-                            currentReference.getName(), });
+                            currentReference.getName(), softwareComponent });
 
                 if (currentReference.isAtBuildTime()) {
                     reference.appendChild(this.domHelper.createElement(AT_BUILD_TIME));
@@ -179,9 +190,27 @@ public class DevelopmentComponentDomBuilder {
     }
 
     /**
+     * @param currentReference
+     * @return
+     */
+    private String getSoftwareComponent(final PublicPartReference currentReference) {
+        DevelopmentComponent referencedDC =
+            this.dcFactory.get(currentReference.getVendor(), currentReference.getComponentName());
+
+        if (referencedDC == null) {
+            System.err.println(currentReference.toString() + " could not be found!");
+            referencedDC = this.dcFactory.create(currentReference.getVendor(), currentReference.getComponentName());
+        }
+
+        Compartment compartment = referencedDC.getCompartment();
+
+        return compartment == null ? "unknown" : compartment.getSoftwareComponent();
+    }
+
+    /**
      * Create an element for the source folders of the given development
      * component.
-     *
+     * 
      * @param parent
      *            the parent element the 'source-folders' element should be
      *            added to.
