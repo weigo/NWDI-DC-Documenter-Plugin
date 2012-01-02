@@ -1,6 +1,10 @@
 package org.arachna.netweaver.nwdi.documenter.report.dom;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 import org.arachna.netweaver.dc.types.BuildVariant;
 import org.arachna.netweaver.dc.types.Compartment;
@@ -95,8 +99,31 @@ public final class DevelopmentConfigurationDomBuilder {
         developmentConfiguration.appendChild(buildVariant);
 
         final CompartmentDomBuilder compartmentDOMCreator = new CompartmentDomBuilder(this.domHelper, this.dcFactory);
+        List<Compartment> compartments = new ArrayList<Compartment>();
+        compartments.addAll(configuration.getCompartments());
+        Collections.sort(compartments, new Comparator<Compartment>() {
 
-        for (final Compartment compartment : configuration.getCompartments()) {
+            @Override
+            public int compare(Compartment o1, Compartment o2) {
+                int retval = o1.getVendor().compareTo(o2.getVendor());
+
+                if (retval == 0) {
+                    return o1.getName().compareTo(o2.getName());
+                }
+
+                if ("sap.com".equals(o1.getVendor())) {
+                    return 1;
+                }
+
+                if ("sap.com".equals(o2.getVendor())) {
+                    return -1;
+                }
+
+                return retval;
+            }
+        });
+
+        for (final Compartment compartment : compartments) {
             developmentConfiguration.appendChild(compartmentDOMCreator.write(compartment));
         }
 

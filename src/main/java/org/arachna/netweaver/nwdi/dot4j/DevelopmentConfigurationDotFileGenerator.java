@@ -53,7 +53,7 @@ public final class DevelopmentConfigurationDotFileGenerator extends AbstractDotF
         final Node source = this.getOrCreateNode(compartment);
 
         for (final Compartment usedCompartment : compartment.getUsedCompartments()) {
-            this.addEdge(this.getOrCreateNode(usedCompartment), source);
+            this.addEdge(source, this.getOrCreateNode(usedCompartment));
         }
     }
 
