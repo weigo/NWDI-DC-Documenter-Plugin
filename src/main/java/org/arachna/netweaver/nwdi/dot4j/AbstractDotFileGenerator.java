@@ -5,6 +5,8 @@ package org.arachna.netweaver.nwdi.dot4j;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,7 +18,7 @@ import org.arachna.dot4j.model.Node;
 
 /**
  * Base class for generators of <code>.dot</code> files.
- *
+ * 
  * @author Dirk Weigenand
  */
 public abstract class AbstractDotFileGenerator implements DotFileGenerator {
@@ -76,7 +78,7 @@ public abstract class AbstractDotFileGenerator implements DotFileGenerator {
 
     /**
      * Get the node created with the given name.
-     *
+     * 
      * @param nodeName
      *            name under which the node can be found.
      * @return node indexed with the given node name.
@@ -87,7 +89,7 @@ public abstract class AbstractDotFileGenerator implements DotFileGenerator {
 
     /**
      * Add a new node to this graph.
-     *
+     * 
      * @param name
      *            the name the new node should be registered with.
      * @return the created node.
@@ -103,7 +105,7 @@ public abstract class AbstractDotFileGenerator implements DotFileGenerator {
 
     /**
      * Create a new edge using the two given nodes.
-     *
+     * 
      * @param source
      *            source node for the edge.
      * @param target
@@ -118,4 +120,40 @@ public abstract class AbstractDotFileGenerator implements DotFileGenerator {
      * Has to be implemented by subclasses to generate the actual graph.
      */
     protected abstract void generateInternal();
+
+    /**
+     * @return
+     */
+//    protected final void mergeEdgesBetweenSubgraphs() {
+//        for (Graph subGraph : this.graph.getClusters()) {
+//            collectNodesWithMultipleIncomingEdges(subGraph);
+//        }
+//    }
+
+    /**
+     * @param subGraph
+     */
+//    private void collectNodesWithMultipleIncomingEdges(Graph subGraph) {
+//        Map<Node, Collection<Edge>> endNodeEdgeMapping = new HashMap<Node, Collection<Edge>>();
+//
+//        for (Edge edge : subGraph.getEdges()) {
+//            Collection<Edge> edges = endNodeEdgeMapping.get(edge.getEndNode());
+//
+//            if (edges == null) {
+//                edges = new ArrayList<Edge>();
+//                endNodeEdgeMapping.put(edge.getEndNode(), edges);
+//            }
+//
+//            edges.add(edge);
+//        }
+//
+//        for (Collection<Edge> edges : endNodeEdgeMapping.values()) {
+//            Map<Graph, Edge> sourceGraphTargetEdgeMapping = new HashMap<Graph, Collection<Edge>>();
+//            
+//            for (Edge edge : edges) {
+//
+//            }
+//
+//        }
+//    }
 }

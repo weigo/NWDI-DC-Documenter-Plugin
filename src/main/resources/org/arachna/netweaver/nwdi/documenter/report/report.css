@@ -27,6 +27,8 @@ H2 {
 
 table {
 	BORDER: 1px solid silver;
+	border-colappse: collapse;
+	empty-cells:show;
 }
 
 th {

@@ -14,7 +14,7 @@ import org.arachna.netweaver.nwdi.dot4j.UsingDevelopmentComponentsDotFileGenerat
 /**
  * Diagram writer for usage relations of development components.
  * 
- * @author G526521
+ * @author Dirk Weigenand
  */
 public final class UsingDevelopmentComponentsWriter {
     /**
@@ -31,7 +31,7 @@ public final class UsingDevelopmentComponentsWriter {
      *            configuration used creating the diagrams
      */
     public UsingDevelopmentComponentsWriter(final DevelopmentComponentFactory dcFactory,
-            final ReportWriterConfiguration writerConfiguration) {
+        final ReportWriterConfiguration writerConfiguration) {
         this.writerConfiguration = writerConfiguration;
     }
 
@@ -46,7 +46,6 @@ public final class UsingDevelopmentComponentsWriter {
      *             when an error occurs writing the diagrams
      */
     public void write(final List<DevelopmentComponent> components) throws IOException {
-
         for (final DevelopmentComponent component : components) {
             final DotFileWriter dotWriter = new DotFileWriter(this.writerConfiguration.getOutputLocation());
             dotWriter.write(new UsingDevelopmentComponentsDotFileGenerator(component), getComponentName(component));
@@ -61,6 +60,6 @@ public final class UsingDevelopmentComponentsWriter {
      * @return Create file name to be used when writing the usage diagram.
      */
     private String getComponentName(final DevelopmentComponent component) {
-        return component.getVendor() + "~" + component.getName().replaceAll("/", "~") + "-usingDCs";
+        return String.format("%s~%s-usingDCs", component.getVendor(), component.getName().replaceAll("/", "~"));
     }
 }

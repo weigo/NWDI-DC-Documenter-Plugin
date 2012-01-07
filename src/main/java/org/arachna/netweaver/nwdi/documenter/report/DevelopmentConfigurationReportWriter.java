@@ -139,7 +139,7 @@ public final class DevelopmentConfigurationReportWriter {
      *             when an error writing the reports occurs
      */
     private void writeDevelopmentConfigurationReport(final DevelopmentConfiguration configuration) throws IOException {
-        Collection<Compartment> compartments = configuration.getCompartments(CompartmentState.Source);
+        Collection<Compartment> compartments = configuration.getCompartments(/*CompartmentState.Source*/);
 
         new CompartmentsHtmlReportWriter(new FileWriter(this.writerConfiguration.getOutputLocation()
             + File.separatorChar + "compartments.html"), this.writerConfiguration, compartments, this.dcFactory)
