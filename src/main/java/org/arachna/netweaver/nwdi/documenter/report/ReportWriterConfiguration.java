@@ -4,11 +4,12 @@
 package org.arachna.netweaver.nwdi.documenter.report;
 
 import java.io.File;
+import java.util.regex.Pattern;
 
 /**
  * configuration object for report creation.
- *
- * @author G526521
+ * 
+ * @author Dirk Weigenand
  */
 public final class ReportWriterConfiguration {
     /**
@@ -36,6 +37,20 @@ public final class ReportWriterConfiguration {
      */
     private String jsLocation = "js";
 
+    private final Pattern ignorableVendorPattern;
+
+    /**
+     * Create a configuration object using the given regular expression for
+     * exclusion of vendors from report generation.
+     * 
+     * @param ignorableVendorPattern
+     *            regular expression for exclusion of vendors from report
+     *            generation.
+     */
+    public ReportWriterConfiguration(final Pattern ignorableVendorPattern) {
+        this.ignorableVendorPattern = ignorableVendorPattern;
+    }
+
     /**
      * @return the jsLocation
      */
@@ -45,7 +60,7 @@ public final class ReportWriterConfiguration {
 
     /**
      * set location of java script files.
-     *
+     * 
      * @param jsLocation
      *            the jsLocation to set
      */
@@ -103,7 +118,7 @@ public final class ReportWriterConfiguration {
 
     /**
      * Helper for validating arguments in set methods.
-     *
+     * 
      * @param argument
      *            argument to be validated
      * @param message
@@ -117,11 +132,11 @@ public final class ReportWriterConfiguration {
 
     /**
      * return image format to be used in report creation.
-     *
+     * 
      * @return image format to be used in report creation
      */
     public String getImageFormat() {
-        return this.imageFormat;
+        return imageFormat;
     }
 
     /**
@@ -135,10 +150,17 @@ public final class ReportWriterConfiguration {
 
     /**
      * Return the location of 'index.html' for the output location.
-     *
+     * 
      * @return location of 'index.html' for the output location.
      */
     public String getIndexHtml() {
-        return this.getOutputLocation() + File.separatorChar + "index.html";
+        return getOutputLocation() + File.separatorChar + "index.html";
+    }
+
+    /**
+     * @return the ignorableVendorPattern
+     */
+    public final Pattern getIgnorableVendorPattern() {
+        return ignorableVendorPattern;
     }
 }

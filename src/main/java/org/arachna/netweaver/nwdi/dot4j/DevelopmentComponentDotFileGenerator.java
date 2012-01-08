@@ -8,8 +8,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
-import org.arachna.dot4j.model.Attributes;
 import org.arachna.dot4j.model.Edge;
 import org.arachna.dot4j.model.Node;
 import org.arachna.netweaver.dc.types.DevelopmentComponent;
@@ -24,6 +24,11 @@ import org.arachna.netweaver.dc.types.PublicPartReference;
  */
 public final class DevelopmentComponentDotFileGenerator extends AbstractDevelopmentComponentDotFileGenerator {
     /**
+     * Vendors to ignore during graph generation.
+     */
+    private final Pattern ignorableVendorPattern;
+
+    /**
      * Create an instance of a <code>DevelopmentComponentDotFileGenerator</code>
      * using the given development component registry and development component.
      * 
@@ -31,10 +36,14 @@ public final class DevelopmentComponentDotFileGenerator extends AbstractDevelopm
      *            registry used to get/create development components
      * @param component
      *            DC to generate usage relations for
+     * @param ignorableVendorPattern
+     *            regular expression for exclusion of development components
+     *            from vendors matching it.
      */
     public DevelopmentComponentDotFileGenerator(final DevelopmentComponentFactory dcFactory,
-        final Collection<DevelopmentComponent> components) {
+        final Collection<DevelopmentComponent> components, final Pattern ignorableVendorPattern) {
         super(dcFactory, components);
+        this.ignorableVendorPattern = ignorableVendorPattern;
     }
 
     /**
@@ -45,10 +54,14 @@ public final class DevelopmentComponentDotFileGenerator extends AbstractDevelopm
      *            registry used to get/create development components
      * @param component
      *            DC to generate usage relations for
+     * @param ignorableVendorPattern
+     *            regular expression for exclusion of development components
+     *            from vendors matching it.
      */
     public DevelopmentComponentDotFileGenerator(final DevelopmentComponentFactory dcFactory,
-        final DevelopmentComponent component) {
+        final DevelopmentComponent component, final Pattern ignorableVendorPattern) {
         super(dcFactory, component);
+        this.ignorableVendorPattern = ignorableVendorPattern;
     }
 
     /*
@@ -59,12 +72,12 @@ public final class DevelopmentComponentDotFileGenerator extends AbstractDevelopm
      */
     @Override
     protected void generateInternal() {
-        for (final DevelopmentComponent component : this.components) {
-            this.generateNodes(component);
+        for (final DevelopmentComponent component : components) {
+            generateNodes(component);
         }
 
-        for (final DevelopmentComponent component : this.components) {
-            this.generateSubGraph(component);
+        for (final DevelopmentComponent component : components) {
+            generateSubGraph(component);
         }
     }
 
@@ -76,23 +89,23 @@ public final class DevelopmentComponentDotFileGenerator extends AbstractDevelopm
      *            DC to generate <code>subgraph</code> for.
      */
     private void generateSubGraph(final DevelopmentComponent developmentComponent) {
-        if (!this.subGraphs.contains(developmentComponent.toString())) {
-            this.subGraphs.add(developmentComponent.toString());
+        if (!subGraphs.contains(developmentComponent.toString())) {
+            subGraphs.add(developmentComponent.toString());
             final String sourceNodeName = getNodeName(developmentComponent);
-            final Node sourceNode = this.getNode(sourceNodeName);
+            final Node sourceNode = getNode(sourceNodeName);
             Node targetNode;
             String targetNodeName;
             Edge edge;
 
-            final PublicPartAggregator aggregator = new PublicPartAggregator(this.dcFactory);
+            final PublicPartAggregator aggregator = new PublicPartAggregator(dcFactory);
             aggregator.aggregate(developmentComponent.getUsedDevelopmentComponents());
 
             for (final Map.Entry<DevelopmentComponent, Set<PublicPartReference>> entry : aggregator
                 .getAggregatedReferences().entrySet()) {
                 final DevelopmentComponent usedComponent = entry.getKey();
-                // TODO: Filter zum Ausschluss von Entwicklungskomponenten
-                // benutzen.
-                if (usedComponent == null || "sap.com".equals(usedComponent.getVendor())) {
+
+                // FIXME: use filter instead of Pattern
+                if (usedComponent == null || ignorableVendorPattern.matcher(usedComponent.getVendor()).matches()) {
                     continue;
                 }
 
@@ -101,12 +114,12 @@ public final class DevelopmentComponentDotFileGenerator extends AbstractDevelopm
                 targetNodeName = getNodeName(usedComponent);
 
                 if (!hasBeenGenerated(sourceNodeName, targetNodeName, label)) {
-                    targetNode = this.getNode(targetNodeName);
-                    edge = this.addEdge(sourceNode, targetNode);
+                    targetNode = getNode(targetNodeName);
+                    edge = addEdge(sourceNode, targetNode);
                     edge.getAttributes().setAttribute("label", label);
                 }
 
-                this.generateSubGraph(usedComponent);
+                generateSubGraph(usedComponent);
             }
         }
     }
@@ -120,7 +133,7 @@ public final class DevelopmentComponentDotFileGenerator extends AbstractDevelopm
      *            parts shall be generated for
      */
     private void generateNodes(final DevelopmentComponent component) {
-        if (!this.nodeExists(component)) {
+        if (!nodeExists(component)) {
             generateNode(component);
 
             DevelopmentComponent usedDC;
@@ -128,14 +141,14 @@ public final class DevelopmentComponentDotFileGenerator extends AbstractDevelopm
             for (final PublicPartReference publicPart : component.getUsedDevelopmentComponents()) {
                 // TODO: Filter zum Ausschluss von Entwicklungskomponenten
                 // benutzen.
-                if ("sap.com".equals(publicPart.getVendor())) {
-                    continue;
-                }
+                // if ("sap.com".equals(publicPart.getVendor())) {
+                // continue;
+                // }
 
-                usedDC = this.dcFactory.get(publicPart.getVendor(), publicPart.getComponentName());
+                usedDC = dcFactory.get(publicPart.getVendor(), publicPart.getComponentName());
 
                 if (usedDC == null) {
-                    usedDC = this.dcFactory.create(publicPart.getVendor(), publicPart.getComponentName());
+                    usedDC = dcFactory.create(publicPart.getVendor(), publicPart.getComponentName());
                 }
 
                 generateNodes(usedDC);
@@ -152,7 +165,7 @@ public final class DevelopmentComponentDotFileGenerator extends AbstractDevelopm
      *         <code>false</code> otherwise.
      */
     private boolean nodeExists(final DevelopmentComponent component) {
-        return this.getNode(this.getNodeName(component)) != null;
+        return getNode(this.getNodeName(component)) != null;
     }
 
     /**
@@ -195,7 +208,7 @@ public final class DevelopmentComponentDotFileGenerator extends AbstractDevelopm
             Set<PublicPartReference> aggregatedReferences;
 
             for (final PublicPartReference reference : references) {
-                component = this.dcFactory.get(reference.getVendor(), reference.getComponentName());
+                component = dcFactory.get(reference.getVendor(), reference.getComponentName());
 
                 aggregatedReferences = this.aggregatedReferences.get(component);
 
@@ -212,7 +225,7 @@ public final class DevelopmentComponentDotFileGenerator extends AbstractDevelopm
          * @return the aggregatedReferences
          */
         Map<DevelopmentComponent, Set<PublicPartReference>> getAggregatedReferences() {
-            return this.aggregatedReferences;
+            return aggregatedReferences;
         }
     }
 }

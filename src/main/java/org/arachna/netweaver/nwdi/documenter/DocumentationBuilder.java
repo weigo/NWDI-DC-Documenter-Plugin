@@ -11,7 +11,6 @@ import hudson.util.FormValidation;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
@@ -19,17 +18,9 @@ import javax.servlet.ServletException;
 
 import net.sf.json.JSONObject;
 
-import org.apache.tools.ant.Project;
-import org.apache.tools.ant.taskdefs.ExecuteOn;
-import org.apache.tools.ant.taskdefs.ExecuteOn.FileDirBoth;
-import org.apache.tools.ant.types.FileSet;
-import org.apache.tools.ant.util.GlobPatternMapper;
-import org.arachna.netweaver.dc.types.DevelopmentComponentFactory;
 import org.arachna.netweaver.hudson.nwdi.AntTaskBuilder;
 import org.arachna.netweaver.hudson.nwdi.NWDIBuild;
 import org.arachna.netweaver.hudson.nwdi.NWDIProject;
-import org.arachna.netweaver.nwdi.documenter.report.DevelopmentConfigurationReportWriter;
-import org.arachna.netweaver.nwdi.documenter.report.ReportWriterConfiguration;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
@@ -73,7 +64,7 @@ public class DocumentationBuilder extends AntTaskBuilder {
     // Fields in config.jelly must match the parameter names in the
     // "DataBoundConstructor"
     @DataBoundConstructor
-    public DocumentationBuilder(String ignoreVendorRegexp, String ignoreSoftwareComponentRegex) {
+    public DocumentationBuilder(final String ignoreVendorRegexp, final String ignoreSoftwareComponentRegex) {
         this.ignoreVendorRegexp = Pattern.compile(ignoreVendorRegexp);
         this.ignoreSoftwareComponentRegex = Pattern.compile(ignoreSoftwareComponentRegex);
     }
@@ -95,92 +86,12 @@ public class DocumentationBuilder extends AntTaskBuilder {
     }
 
     @Override
-    public boolean perform(AbstractBuild build, Launcher launcher, BuildListener listener) {
-        boolean result = true;
-        NWDIBuild nwdiBuild = (NWDIBuild)build;
-        PrintStream logger = listener.getLogger();
-        DevelopmentComponentFactory dcFactory = nwdiBuild.getDevelopmentComponentFactory();
+    public boolean perform(final AbstractBuild build, final Launcher launcher, final BuildListener listener) {
+        final NWDIBuild nwdiBuild = (NWDIBuild)build;
 
-        ReportWriterConfiguration writerConfiguration = new ReportWriterConfiguration();
-        String outputLocation = getAntHelper().getPathToWorkspace() + File.separatorChar + "documentation";
-        writerConfiguration.setOutputLocation(outputLocation);
-        DevelopmentConfigurationReportWriter reportWriter =
-            new DevelopmentConfigurationReportWriter(dcFactory, writerConfiguration);
-
-        try {
-            long start = System.currentTimeMillis();
-            logger.append("Creating development configuration report...");
-            reportWriter.write(nwdiBuild.getDevelopmentConfiguration());
-            duration(logger, start);
-
-            start = System.currentTimeMillis();
-            logger.append("Creating usage diagrams...");
-            ExecuteOn task = setUpApplyTask(outputLocation, DESCRIPTOR.getDotExecutable());
-
-            task.execute();
-            duration(logger, start);
-        }
-        catch (IOException e) {
-            result = false;
-            e.printStackTrace();
-        }
-
-        return result;
-    }
-
-    private void duration(PrintStream logger, long start) {
-        logger.append(String.format("(%f sec.).\n", (System.currentTimeMillis() - start) / 1000f));
-    }
-
-    /**
-     * @param outputLocation
-     * @return
-     */
-    private ExecuteOn setUpApplyTask(String outputLocation, String dotExecutable) {
-        ExecuteOn task = new ExecuteOn();
-
-        task.setExecutable(dotExecutable);
-        FileDirBoth fileDirBoth = new FileDirBoth();
-        fileDirBoth.setValue("both");
-        task.setType(fileDirBoth);
-        task.add(createMapper());
-        File destDir = new File(outputLocation);
-        task.setDir(destDir);
-        task.setDest(destDir);
-        task.addFileset(createFileSet(outputLocation));
-        task.createArg().setValue("-Tsvg");
-        task.createArg().setValue("-o");
-        task.createTargetfile();
-        task.createSrcfile();
-        task.setVMLauncher(true);
-        task.setParallel(false);
-        task.setProject(new Project());
-        task.setTimeout(Integer.valueOf(TEN_MINUTES));
-
-        return task;
-    }
-
-    /**
-     * @param outputLocation
-     * @return
-     */
-    private FileSet createFileSet(String outputLocation) {
-        FileSet dotFiles = new FileSet();
-        dotFiles.setDir(new File(outputLocation));
-        dotFiles.setIncludes("**/*.dot");
-
-        return dotFiles;
-    }
-
-    /**
-     * @return
-     */
-    private GlobPatternMapper createMapper() {
-        GlobPatternMapper mapper = new GlobPatternMapper();
-        mapper.setFrom("*.dot");
-        mapper.setTo("*.svg");
-
-        return mapper;
+        return new ReportGenerator(listener.getLogger(), nwdiBuild.getDevelopmentConfiguration(),
+            nwdiBuild.getDevelopmentComponentFactory(), getAntHelper().getPathToWorkspace() + File.separatorChar
+                + "documentation", DESCRIPTOR.getDotExecutable(), ignoreVendorRegexp).execute();
     }
 
     // Overridden for better type safety.
@@ -233,45 +144,50 @@ public class DocumentationBuilder extends AntTaskBuilder {
          * @return Indicates the outcome of the validation. This is sent to the
          *         browser.
          */
-        public FormValidation doCheckVendorRegexp(@QueryParameter String value) throws IOException, ServletException {
-            if (value.length() == 0)
+        public FormValidation doCheckVendorRegexp(@QueryParameter final String value) throws IOException,
+            ServletException {
+            if (value.length() == 0) {
                 return FormValidation.error("Please set a name");
-            if (value.length() < 4)
+            }
+            if (value.length() < 4) {
                 return FormValidation.warning("Isn't the name too short?");
+            }
             return FormValidation.ok();
         }
 
         /**
          * {@inheritDoc}
          */
-        public boolean isApplicable(Class<? extends AbstractProject> aClass) {
+        @Override
+        public boolean isApplicable(final Class<? extends AbstractProject> aClass) {
             return NWDIProject.class.equals(aClass);
         }
 
         /**
          * This human readable name is used in the configuration screen.
          */
+        @Override
         public String getDisplayName() {
             return "NWDI Documentation Builder";
         }
 
         @Override
-        public boolean configure(StaplerRequest req, JSONObject formData) throws FormException {
+        public boolean configure(final StaplerRequest req, final JSONObject formData) throws FormException {
             try {
-                this.setIgnoreVendorRegexp(formData.getString("ignoreVendorRegexp"));
+                setIgnoreVendorRegexp(formData.getString("ignoreVendorRegexp"));
             }
-            catch (PatternSyntaxException pse) {
+            catch (final PatternSyntaxException pse) {
                 throw new FormException(pse.getLocalizedMessage(), pse, "ignoreVendorRegexp");
             }
 
             try {
-                this.setIgnoreSoftwareComponentRegex(formData.getString("ignoreSoftwareComponentRegex"));
+                setIgnoreSoftwareComponentRegex(formData.getString("ignoreSoftwareComponentRegex"));
             }
-            catch (PatternSyntaxException pse) {
+            catch (final PatternSyntaxException pse) {
                 throw new FormException(pse.getLocalizedMessage(), pse, "ignoreSoftwareComponentRegex");
             }
 
-            this.dotExecutable = formData.getString("dotExecutable");
+            dotExecutable = formData.getString("dotExecutable");
 
             save();
             return super.configure(req, formData);
@@ -292,7 +208,7 @@ public class DocumentationBuilder extends AntTaskBuilder {
          * @return the pattern for ignoring vendors.
          */
         public Pattern getIgnoreVendorRegexpPattern() {
-            return this.ignoreVendorRegexp;
+            return ignoreVendorRegexp;
         }
 
         /**
@@ -302,7 +218,7 @@ public class DocumentationBuilder extends AntTaskBuilder {
          * @param ignoreVendorRegexp
          *            the ignoreVendorRegexp to set
          */
-        public void setIgnoreVendorRegexp(String ignoreVendorRegexp) {
+        public void setIgnoreVendorRegexp(final String ignoreVendorRegexp) {
             this.ignoreVendorRegexp = Pattern.compile(ignoreVendorRegexp);
         }
 
@@ -324,7 +240,7 @@ public class DocumentationBuilder extends AntTaskBuilder {
          *            the regular expression to be used ignoring software
          *            components during the documentation process to set
          */
-        public void setIgnoreSoftwareComponentRegex(String ignoreSoftwareComponentRegex) {
+        public void setIgnoreSoftwareComponentRegex(final String ignoreSoftwareComponentRegex) {
             this.ignoreSoftwareComponentRegex = Pattern.compile(ignoreSoftwareComponentRegex);
         }
 
@@ -343,17 +259,9 @@ public class DocumentationBuilder extends AntTaskBuilder {
          * @param dotExecutable
          *            the absolute path of the 'dot' executable.
          */
-        public void setDotExecutable(String dotExecutable) {
+        public void setDotExecutable(final String dotExecutable) {
             this.dotExecutable = dotExecutable;
         }
-    }
-
-    public static void main(String[] args) {
-        DocumentationBuilder builder = new DocumentationBuilder("", "");
-        ExecuteOn task =
-            builder.setUpApplyTask("C:\\tmp\\hudson\\jobs\\enviaM\\workspace\\documentation\\PN3_enviaM_D",
-                "c:/ZusatzSW/GraphViz/bin/dot.exe");
-        task.execute();
     }
 
     /**

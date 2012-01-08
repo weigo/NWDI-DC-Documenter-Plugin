@@ -16,7 +16,7 @@ import org.arachna.netweaver.dc.types.PublicPartReference;
 /**
  * Abstract base class for graphviz <code>.dot</code> file generators for
  * development components usage relations.
- *
+ * 
  * @author Dirk Weigenand
  */
 public abstract class AbstractDevelopmentComponentDotFileGenerator extends AbstractDotFileGenerator {
@@ -38,7 +38,7 @@ public abstract class AbstractDevelopmentComponentDotFileGenerator extends Abstr
     /**
      * Constructor using the given factory for development components and the DC
      * to be used as root for the graph to be generated.
-     *
+     * 
      * @param dcFactory
      *            Registry for getting/creating development components.
      * @param component
@@ -47,13 +47,13 @@ public abstract class AbstractDevelopmentComponentDotFileGenerator extends Abstr
     public AbstractDevelopmentComponentDotFileGenerator(final DevelopmentComponentFactory dcFactory,
         final DevelopmentComponent component) {
         this.dcFactory = dcFactory;
-        this.components.add(component);
+        components.add(component);
     }
 
     /**
      * Constructor using the given factory for development components and the DC
      * to be used as root for the graph to be generated.
-     *
+     * 
      * @param dcFactory
      *            Registry for getting/creating development components.
      * @param components
@@ -67,7 +67,7 @@ public abstract class AbstractDevelopmentComponentDotFileGenerator extends Abstr
 
     /**
      * Return a node name for the given development component.
-     *
+     * 
      * @param component
      *            DC a node name should be generated for/a cached value should
      *            be returned for.
@@ -80,7 +80,7 @@ public abstract class AbstractDevelopmentComponentDotFileGenerator extends Abstr
 
     /**
      * Return a node name for the given public part reference.
-     *
+     * 
      * @param reference
      *            public part reference a node name should be generated for/a
      *            cached value should be returned for.
@@ -93,7 +93,7 @@ public abstract class AbstractDevelopmentComponentDotFileGenerator extends Abstr
 
     /**
      * Return the node name for the given vendor and component name.
-     *
+     * 
      * @param vendor
      *            vendor of the component
      * @param componentName
@@ -108,7 +108,7 @@ public abstract class AbstractDevelopmentComponentDotFileGenerator extends Abstr
     /**
      * Create label for the given development component. Consists of component
      * name and vendor, component type and public parts.
-     *
+     * 
      * @param component
      *            development component to generate label for.
      * @return generated label.
@@ -145,7 +145,7 @@ public abstract class AbstractDevelopmentComponentDotFileGenerator extends Abstr
     /**
      * Check whether an edge has already been generated for the given
      * combination of source and target node with the given label.
-     *
+     * 
      * @param sourceNode
      *            name of source node.
      * @param targetNode
@@ -158,11 +158,11 @@ public abstract class AbstractDevelopmentComponentDotFileGenerator extends Abstr
      */
     protected boolean hasBeenGenerated(final String sourceNode, final String targetNode, final String label) {
         final String key = String.format("%s:%s:%s", sourceNode, targetNode, label);
-        final boolean hasBeenGenerated = this.subGraphs.contains(key);
+        final boolean hasBeenGenerated = subGraphs.contains(key);
 
         // TODO: should not keep track of subGraphs!
         if (!hasBeenGenerated) {
-            this.subGraphs.add(key);
+            subGraphs.add(key);
         }
 
         return hasBeenGenerated;
@@ -171,20 +171,20 @@ public abstract class AbstractDevelopmentComponentDotFileGenerator extends Abstr
     /**
      * Generate a new node if none has been generated already for the given
      * component.
-     *
+     * 
      * @param component
      *            development component to generate node for.
      */
     protected final void generateNode(final DevelopmentComponent component) {
         final String nodeName = getNodeName(component);
-        Node node = this.getNode(nodeName);
+        Node node = getNode(nodeName);
 
         if (node == null) {
             node =
-                this.addNode(nodeName, component.getCompartment() != null ? component.getCompartment().getName()
+                addNode(nodeName, component.getCompartment() != null ? component.getCompartment().getName()
                     : "unknown SC");
             final Attributes attributes = node.getAttributes();
-            attributes.setAttribute("label", this.createLabel(component));
+            attributes.setAttribute("label", createLabel(component));
         }
     }
 }

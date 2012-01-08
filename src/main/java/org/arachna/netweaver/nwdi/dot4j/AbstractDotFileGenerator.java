@@ -5,13 +5,12 @@ package org.arachna.netweaver.nwdi.dot4j;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.arachna.dot4j.DotGenerator;
 import org.arachna.dot4j.model.Attributes;
+import org.arachna.dot4j.model.CommonEdgeMergeAlgorithm;
 import org.arachna.dot4j.model.Edge;
 import org.arachna.dot4j.model.Graph;
 import org.arachna.dot4j.model.Node;
@@ -38,7 +37,7 @@ public abstract class AbstractDotFileGenerator implements DotFileGenerator {
      * {@inheritDoc}
      */
     public String generate() {
-        this.graph = new Graph();
+        graph = new Graph();
         final Attributes attributes = graph.getAttributes();
         attributes.setAttribute("shape", "record");
         attributes.setAttribute("rankdir", "LR");
@@ -47,12 +46,12 @@ public abstract class AbstractDotFileGenerator implements DotFileGenerator {
 
         graph.getNodeAttributes().setAttribute("shape", "record");
 
-        this.generateInternal();
+        generateInternal();
 
         final StringWriter result = new StringWriter();
 
         try {
-            final DotGenerator generator = new DotGenerator(this.graph);
+            final DotGenerator generator = new DotGenerator(graph);
             generator.generate(result);
         }
         catch (final IOException e) {
@@ -64,13 +63,13 @@ public abstract class AbstractDotFileGenerator implements DotFileGenerator {
     }
 
     protected final Graph getCluster(final String groupName) {
-        Graph group = this.groupNames.get(groupName);
+        Graph group = groupNames.get(groupName);
 
         if (group == null) {
-            group = this.graph.newGraph();
+            group = graph.newGraph();
             final Attributes attributes = group.getAttributes();
             attributes.setAttribute("label", groupName);
-            this.groupNames.put(groupName, group);
+            groupNames.put(groupName, group);
         }
 
         return group;
@@ -84,7 +83,7 @@ public abstract class AbstractDotFileGenerator implements DotFileGenerator {
      * @return node indexed with the given node name.
      */
     protected final Node getNode(final String nodeName) {
-        return this.nodeNames.get(nodeName);
+        return nodeNames.get(nodeName);
     }
 
     /**
@@ -95,10 +94,10 @@ public abstract class AbstractDotFileGenerator implements DotFileGenerator {
      * @return the created node.
      */
     protected final Node addNode(final String name, final String clusterName) {
-        final Graph cluster = this.getCluster(clusterName);
+        final Graph cluster = getCluster(clusterName);
         final Node node = cluster.newNode();
         node.getAttributes().setAttribute("shape", "record");
-        this.nodeNames.put(name, node);
+        nodeNames.put(name, node);
 
         return node;
     }
@@ -113,47 +112,15 @@ public abstract class AbstractDotFileGenerator implements DotFileGenerator {
      * @return the newly created edge.
      */
     protected final Edge addEdge(final Node source, final Node target) {
-        return this.graph.newEdge(source, target);
+        return graph.newEdge(source, target);
+    }
+
+    protected final void mergeEdges() {
+        new CommonEdgeMergeAlgorithm(graph).execute();
     }
 
     /**
      * Has to be implemented by subclasses to generate the actual graph.
      */
     protected abstract void generateInternal();
-
-    /**
-     * @return
-     */
-//    protected final void mergeEdgesBetweenSubgraphs() {
-//        for (Graph subGraph : this.graph.getClusters()) {
-//            collectNodesWithMultipleIncomingEdges(subGraph);
-//        }
-//    }
-
-    /**
-     * @param subGraph
-     */
-//    private void collectNodesWithMultipleIncomingEdges(Graph subGraph) {
-//        Map<Node, Collection<Edge>> endNodeEdgeMapping = new HashMap<Node, Collection<Edge>>();
-//
-//        for (Edge edge : subGraph.getEdges()) {
-//            Collection<Edge> edges = endNodeEdgeMapping.get(edge.getEndNode());
-//
-//            if (edges == null) {
-//                edges = new ArrayList<Edge>();
-//                endNodeEdgeMapping.put(edge.getEndNode(), edges);
-//            }
-//
-//            edges.add(edge);
-//        }
-//
-//        for (Collection<Edge> edges : endNodeEdgeMapping.values()) {
-//            Map<Graph, Edge> sourceGraphTargetEdgeMapping = new HashMap<Graph, Collection<Edge>>();
-//            
-//            for (Edge edge : edges) {
-//
-//            }
-//
-//        }
-//    }
 }

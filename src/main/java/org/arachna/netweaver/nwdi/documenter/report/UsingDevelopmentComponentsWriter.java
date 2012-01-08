@@ -47,8 +47,10 @@ public final class UsingDevelopmentComponentsWriter {
      */
     public void write(final List<DevelopmentComponent> components) throws IOException {
         for (final DevelopmentComponent component : components) {
-            final DotFileWriter dotWriter = new DotFileWriter(this.writerConfiguration.getOutputLocation());
-            dotWriter.write(new UsingDevelopmentComponentsDotFileGenerator(component), getComponentName(component));
+            final DotFileWriter dotWriter = new DotFileWriter(writerConfiguration.getOutputLocation());
+            dotWriter.write(
+                new UsingDevelopmentComponentsDotFileGenerator(component, writerConfiguration
+                    .getIgnorableVendorPattern()), getComponentName(component));
         }
     }
 

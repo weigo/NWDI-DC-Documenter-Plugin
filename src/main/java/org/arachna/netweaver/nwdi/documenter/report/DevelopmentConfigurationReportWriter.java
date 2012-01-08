@@ -3,8 +3,6 @@
  */
 package org.arachna.netweaver.nwdi.documenter.report;
 
-import hudson.Util;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -12,8 +10,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Collection;
 
+import org.apache.commons.io.IOUtils;
 import org.arachna.netweaver.dc.types.Compartment;
-import org.arachna.netweaver.dc.types.CompartmentState;
 import org.arachna.netweaver.dc.types.DevelopmentComponent;
 import org.arachna.netweaver.dc.types.DevelopmentComponentFactory;
 import org.arachna.netweaver.dc.types.DevelopmentConfiguration;
@@ -36,7 +34,7 @@ public final class DevelopmentConfigurationReportWriter {
     /**
      * Configuration for this report writer.
      */
-    private ReportWriterConfiguration writerConfiguration = new ReportWriterConfiguration();
+    private final ReportWriterConfiguration writerConfiguration;
 
     /**
      * Create an instance of a {@link DevelopmentConfigurationReportWriter}.
@@ -62,21 +60,20 @@ public final class DevelopmentConfigurationReportWriter {
      *             when an error occurs writing a report
      */
     public void write(final DevelopmentConfiguration configuration) throws IOException {
-        final File baseDir = this.createDirectoryIffNotExists(this.writerConfiguration.getOutputLocation());
+        final File baseDir = createDirectoryIffNotExists(writerConfiguration.getOutputLocation());
 
-        FileWriter indexHtmlWriter = new FileWriter(baseDir.getAbsolutePath() + File.separatorChar + "index.html");
-        DevelopmentConfigurationsHtmlWriter cfgWriter =
-            new DevelopmentConfigurationsHtmlWriter(indexHtmlWriter, this.writerConfiguration, configuration,
-                this.dcFactory);
+        final FileWriter indexHtmlWriter =
+            new FileWriter(baseDir.getAbsolutePath() + File.separatorChar + "index.html");
+        final DevelopmentConfigurationsHtmlWriter cfgWriter =
+            new DevelopmentConfigurationsHtmlWriter(indexHtmlWriter, writerConfiguration, configuration, dcFactory);
         cfgWriter.write();
         indexHtmlWriter.close();
 
         final String imageOutput =
-            this.writerConfiguration.getOutputLocation() + File.separator
-                + this.writerConfiguration.getImagesLocation();
-        this.createDirectoryIffNotExists(imageOutput);
+            writerConfiguration.getOutputLocation() + File.separator + writerConfiguration.getImagesLocation();
+        createDirectoryIffNotExists(imageOutput);
 
-        copyResources(this.writerConfiguration);
+        copyResources(writerConfiguration);
 
         final DotFileWriter dotFileWriter = new DotFileWriter(imageOutput);
         dotFileWriter.write(new DevelopmentConfigurationDotFileGenerator(configuration), configuration.getName());
@@ -90,11 +87,11 @@ public final class DevelopmentConfigurationReportWriter {
      * @throws FileNotFoundException
      */
     private void copyResources(final ReportWriterConfiguration config) throws IOException, FileNotFoundException {
-        File cssFolder =
-            this.createDirectoryIffNotExists(config.getOutputLocation() + File.separator + config.getCssLocation());
+        final File cssFolder =
+            createDirectoryIffNotExists(config.getOutputLocation() + File.separator + config.getCssLocation());
         copyResourceToTargetFolder(cssFolder, "/org/arachna/netweaver/nwdi/documenter/report/report.css", "report.css");
-        File jsFolder =
-            this.createDirectoryIffNotExists(config.getOutputLocation() + File.separator + config.getJsLocation());
+        final File jsFolder =
+            createDirectoryIffNotExists(config.getOutputLocation() + File.separator + config.getJsLocation());
         copyResourceToTargetFolder(jsFolder, "/org/arachna/netweaver/nwdi/documenter/report/search.js", "search.js");
         copyResourceToTargetFolder(jsFolder, "/org/arachna/netweaver/nwdi/documenter/report/xpath.js", "xpath.js");
     }
@@ -104,10 +101,10 @@ public final class DevelopmentConfigurationReportWriter {
      * @throws IOException
      * @throws FileNotFoundException
      */
-    private void copyResourceToTargetFolder(File targetFolder, String absoluteResourcePath, String targetName)
-        throws IOException, FileNotFoundException {
-        Util.copyStreamAndClose(this.getClass().getResourceAsStream(absoluteResourcePath), new FileOutputStream(
-            targetFolder.getAbsolutePath() + File.separatorChar + targetName));
+    private void copyResourceToTargetFolder(final File targetFolder, final String absoluteResourcePath,
+        final String targetName) throws IOException, FileNotFoundException {
+        IOUtils.copy(this.getClass().getResourceAsStream(absoluteResourcePath),
+            new FileOutputStream(targetFolder.getAbsolutePath() + File.separatorChar + targetName));
     }
 
     /**
@@ -117,7 +114,7 @@ public final class DevelopmentConfigurationReportWriter {
      * @param folderName
      *            absolute path to folder that should be created.
      */
-    private File createDirectoryIffNotExists(String folderName) {
+    private File createDirectoryIffNotExists(final String folderName) {
         final File directory = new File(folderName);
 
         if (!directory.exists() && !directory.mkdirs()) {
@@ -139,13 +136,17 @@ public final class DevelopmentConfigurationReportWriter {
      *             when an error writing the reports occurs
      */
     private void writeDevelopmentConfigurationReport(final DevelopmentConfiguration configuration) throws IOException {
-        Collection<Compartment> compartments = configuration.getCompartments(/*CompartmentState.Source*/);
+        final Collection<Compartment> compartments = configuration.getCompartments(/*
+                                                                                    * CompartmentState
+                                                                                    * .
+                                                                                    * Source
+                                                                                    */);
 
-        new CompartmentsHtmlReportWriter(new FileWriter(this.writerConfiguration.getOutputLocation()
-            + File.separatorChar + "compartments.html"), this.writerConfiguration, compartments, this.dcFactory)
-            .write();
+        new CompartmentsHtmlReportWriter(new FileWriter(writerConfiguration.getOutputLocation() + File.separatorChar
+            + "compartments.html"), writerConfiguration, compartments, dcFactory).write();
 
-        ReportWriterConfiguration writerConfiguration = new ReportWriterConfiguration();
+        final ReportWriterConfiguration writerConfiguration =
+            new ReportWriterConfiguration(this.writerConfiguration.getIgnorableVendorPattern());
         writerConfiguration.setCssLocation("../" + this.writerConfiguration.getCssLocation());
         writerConfiguration.setImageFormat(this.writerConfiguration.getImageFormat());
         writerConfiguration.setImagesLocation(this.writerConfiguration.getImagesLocation());
@@ -153,7 +154,7 @@ public final class DevelopmentConfigurationReportWriter {
 
         for (final Compartment compartment : compartments) {
             final File baseDir =
-                this.createDirectoryIffNotExists(this.writerConfiguration.getOutputLocation() + File.separatorChar
+                createDirectoryIffNotExists(this.writerConfiguration.getOutputLocation() + File.separatorChar
                     + compartment.getSoftwareComponent());
             writerConfiguration.setOutputLocation(baseDir.getAbsolutePath());
 
@@ -162,13 +163,10 @@ public final class DevelopmentConfigurationReportWriter {
 
             final String imageOutput =
                 baseDir.getAbsolutePath() + File.separator + this.writerConfiguration.getImagesLocation();
-            this.createDirectoryIffNotExists(imageOutput);
+            createDirectoryIffNotExists(imageOutput);
 
             final DotFileWriter dotFileWriter = new DotFileWriter(imageOutput);
 
-            // FIXME: should not use component.isNeedsRebuild() but DCs should
-            // be injected based on checked in activities and changes that
-            // really influence usage relations
             for (final DevelopmentComponent component : compartment.getDevelopmentComponents()) {
                 if (component.isNeedsRebuild()) {
                     String componentName = component.getVendor() + "~" + component.getName().replace("/", "~");
@@ -177,12 +175,14 @@ public final class DevelopmentConfigurationReportWriter {
                     dotFileWriter.write(new DevelopmentComponentDotFileGenerator(dcFactory, component), componentName);
 
                     componentName = componentName + "-usingDCs";
-                    dotFileWriter.write(new UsingDevelopmentComponentsDotFileGenerator(component), componentName);
+                    dotFileWriter.write(
+                        new UsingDevelopmentComponentsDotFileGenerator(component, writerConfiguration
+                            .getIgnorableVendorPattern()), componentName);
                 }
             }
 
-            dotFileWriter.write(new UsingDevelopmentComponentsDotFileGenerator(compartment.getDevelopmentComponents()),
-                compartment.getName() + "-usingDCs");
+            dotFileWriter.write(new UsingDevelopmentComponentsDotFileGenerator(compartment.getDevelopmentComponents(),
+                writerConfiguration.getIgnorableVendorPattern()), compartment.getName() + "-usingDCs");
             dotFileWriter.write(
                 new DevelopmentComponentDotFileGenerator(dcFactory, compartment.getDevelopmentComponents()),
                 compartment.getName() + "-usedDCs");

@@ -62,7 +62,7 @@ public final class DevelopmentConfigurationDomBuilder {
     /**
      * A helper object for creating DOMs.
      */
-    private DomHelper domHelper;
+    private final DomHelper domHelper;
 
     /**
      * Registry for development components.
@@ -75,7 +75,7 @@ public final class DevelopmentConfigurationDomBuilder {
      * @param document
      *            Dokument welches zum Erzeugen der Elemente benötigt wird.
      */
-    public DevelopmentConfigurationDomBuilder(final DomHelper domHelper, DevelopmentComponentFactory dcFactory) {
+    public DevelopmentConfigurationDomBuilder(final DomHelper domHelper, final DevelopmentComponentFactory dcFactory) {
         this.domHelper = domHelper;
         this.dcFactory = dcFactory;
     }
@@ -91,21 +91,21 @@ public final class DevelopmentConfigurationDomBuilder {
      */
     public Element write(final DevelopmentConfiguration configuration) {
         final Element developmentConfiguration =
-            this.domHelper.createElement(DEVELOPMENT_CONFIGURATION,
-                new String[] { NAME, DESCRIPTION, CAPTION, LOCATION }, new String[] { configuration.getName(),
-                    configuration.getDescription(), configuration.getCaption(), configuration.getLocation() });
+            domHelper.createElement(DEVELOPMENT_CONFIGURATION, new String[] { NAME, DESCRIPTION, CAPTION, LOCATION },
+                new String[] { configuration.getName(), configuration.getDescription(), configuration.getCaption(),
+                    configuration.getLocation() });
         final Element buildVariant = createBuildVariantElement(configuration.getBuildVariant());
 
         developmentConfiguration.appendChild(buildVariant);
 
-        final CompartmentDomBuilder compartmentDOMCreator = new CompartmentDomBuilder(this.domHelper, this.dcFactory);
-        List<Compartment> compartments = new ArrayList<Compartment>();
+        final CompartmentDomBuilder compartmentDOMCreator = new CompartmentDomBuilder(domHelper, dcFactory);
+        final List<Compartment> compartments = new ArrayList<Compartment>();
         compartments.addAll(configuration.getCompartments());
         Collections.sort(compartments, new Comparator<Compartment>() {
 
-            @Override
-            public int compare(Compartment o1, Compartment o2) {
-                int retval = o1.getVendor().compareTo(o2.getVendor());
+            // @Override
+            public int compare(final Compartment o1, final Compartment o2) {
+                final int retval = o1.getVendor().compareTo(o2.getVendor());
 
                 if (retval == 0) {
                     return o1.getName().compareTo(o2.getName());
@@ -139,10 +139,10 @@ public final class DevelopmentConfigurationDomBuilder {
      * @return DOM-Repräsentation der BuildVariante
      */
     private Element createBuildVariantElement(final BuildVariant variant) {
-        final Element buildVariant = this.domHelper.createElement(BUILD_VARIANT, NAME, variant.getName());
+        final Element buildVariant = domHelper.createElement(BUILD_VARIANT, NAME, variant.getName());
 
         for (final String optionName : variant.getBuildOptionNames()) {
-            buildVariant.appendChild(this.domHelper.createElement(OPTION, new String[] { NAME, VALUE }, new String[] {
+            buildVariant.appendChild(domHelper.createElement(OPTION, new String[] { NAME, VALUE }, new String[] {
                 optionName, variant.getBuildOption(optionName) }));
         }
 
