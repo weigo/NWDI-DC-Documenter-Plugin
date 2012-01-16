@@ -8,13 +8,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Pattern;
 
 import org.arachna.dot4j.model.Edge;
 import org.arachna.dot4j.model.Node;
 import org.arachna.netweaver.dc.types.DevelopmentComponent;
 import org.arachna.netweaver.dc.types.DevelopmentComponentFactory;
 import org.arachna.netweaver.dc.types.PublicPartReference;
+import org.arachna.netweaver.hudson.nwdi.IDevelopmentComponentFilter;
 
 /**
  * Generator for graphviz <code>.dot</code> files depicting relations between a
@@ -26,7 +26,7 @@ public final class DevelopmentComponentDotFileGenerator extends AbstractDevelopm
     /**
      * Vendors to ignore during graph generation.
      */
-    private final Pattern ignorableVendorPattern;
+    private final IDevelopmentComponentFilter vendorFilter;
 
     /**
      * Create an instance of a <code>DevelopmentComponentDotFileGenerator</code>
@@ -36,14 +36,14 @@ public final class DevelopmentComponentDotFileGenerator extends AbstractDevelopm
      *            registry used to get/create development components
      * @param component
      *            DC to generate usage relations for
-     * @param ignorableVendorPattern
+     * @param vendorFilter
      *            regular expression for exclusion of development components
      *            from vendors matching it.
      */
     public DevelopmentComponentDotFileGenerator(final DevelopmentComponentFactory dcFactory,
-        final Collection<DevelopmentComponent> components, final Pattern ignorableVendorPattern) {
+        final Collection<DevelopmentComponent> components, final IDevelopmentComponentFilter vendorFilter) {
         super(dcFactory, components);
-        this.ignorableVendorPattern = ignorableVendorPattern;
+        this.vendorFilter = vendorFilter;
     }
 
     /**
@@ -54,14 +54,14 @@ public final class DevelopmentComponentDotFileGenerator extends AbstractDevelopm
      *            registry used to get/create development components
      * @param component
      *            DC to generate usage relations for
-     * @param ignorableVendorPattern
+     * @param vendorFilter
      *            regular expression for exclusion of development components
      *            from vendors matching it.
      */
     public DevelopmentComponentDotFileGenerator(final DevelopmentComponentFactory dcFactory,
-        final DevelopmentComponent component, final Pattern ignorableVendorPattern) {
+        final DevelopmentComponent component, final IDevelopmentComponentFilter vendorFilter) {
         super(dcFactory, component);
-        this.ignorableVendorPattern = ignorableVendorPattern;
+        this.vendorFilter = vendorFilter;
     }
 
     /*
@@ -104,8 +104,8 @@ public final class DevelopmentComponentDotFileGenerator extends AbstractDevelopm
                 .getAggregatedReferences().entrySet()) {
                 final DevelopmentComponent usedComponent = entry.getKey();
 
-                // FIXME: use filter instead of Pattern
-                if (usedComponent == null || ignorableVendorPattern.matcher(usedComponent.getVendor()).matches()) {
+                // exclude DCs matched by the vendor filter.
+                if (vendorFilter.accept(usedComponent)) {
                     continue;
                 }
 
@@ -139,16 +139,16 @@ public final class DevelopmentComponentDotFileGenerator extends AbstractDevelopm
             DevelopmentComponent usedDC;
 
             for (final PublicPartReference publicPart : component.getUsedDevelopmentComponents()) {
-                // TODO: Filter zum Ausschluss von Entwicklungskomponenten
-                // benutzen.
-                // if ("sap.com".equals(publicPart.getVendor())) {
-                // continue;
-                // }
-
+                // exclude DCs matched by the vendor filter.
                 usedDC = dcFactory.get(publicPart.getVendor(), publicPart.getComponentName());
 
                 if (usedDC == null) {
                     usedDC = dcFactory.create(publicPart.getVendor(), publicPart.getComponentName());
+                }
+
+                // exclude DCs matched by the vendor filter.
+                if (this.vendorFilter.accept(usedDC)) {
+                    continue;
                 }
 
                 generateNodes(usedDC);

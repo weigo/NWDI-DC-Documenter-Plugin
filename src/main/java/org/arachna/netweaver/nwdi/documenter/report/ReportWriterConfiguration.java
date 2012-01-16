@@ -4,7 +4,6 @@
 package org.arachna.netweaver.nwdi.documenter.report;
 
 import java.io.File;
-import java.util.regex.Pattern;
 
 /**
  * configuration object for report creation.
@@ -36,20 +35,6 @@ public final class ReportWriterConfiguration {
      * location of java script files.
      */
     private String jsLocation = "js";
-
-    private final Pattern ignorableVendorPattern;
-
-    /**
-     * Create a configuration object using the given regular expression for
-     * exclusion of vendors from report generation.
-     * 
-     * @param ignorableVendorPattern
-     *            regular expression for exclusion of vendors from report
-     *            generation.
-     */
-    public ReportWriterConfiguration(final Pattern ignorableVendorPattern) {
-        this.ignorableVendorPattern = ignorableVendorPattern;
-    }
 
     /**
      * @return the jsLocation
@@ -155,12 +140,5 @@ public final class ReportWriterConfiguration {
      */
     public String getIndexHtml() {
         return getOutputLocation() + File.separatorChar + "index.html";
-    }
-
-    /**
-     * @return the ignorableVendorPattern
-     */
-    public final Pattern getIgnorableVendorPattern() {
-        return ignorableVendorPattern;
     }
 }

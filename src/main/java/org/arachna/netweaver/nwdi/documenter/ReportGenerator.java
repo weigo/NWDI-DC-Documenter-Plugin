@@ -24,22 +24,64 @@ import org.arachna.xml.XmlReaderHelper;
 import org.xml.sax.SAXException;
 
 /**
- * @author Dirk Weigenand
+ * (HTML-)Documentation generator for a development configuration.
  * 
+ * @author Dirk Weigenand
  */
 public class ReportGenerator {
     /**
-     * 
+     * timeout for dependency diagram generation.
      */
-    private static final int TEN_MINUTES = 1000 * 60 * 10;
+    private static final int TIMEOUT = 1000 * 60 * 2;
 
+    /**
+     * Logger.
+     */
     private final PrintStream logger;
+
+    /**
+     * development configuration to generator documentation for.
+     */
     private final DevelopmentConfiguration config;
+
+    /**
+     * registry for development components.
+     */
     private final DevelopmentComponentFactory dcFactory;
+
+    /**
+     * target directory for generated documentation.
+     */
     private final String outputLocation;
+
+    /**
+     * location of dot executable.
+     */
     private final String dotExecutable;
+
+    /**
+     * regular expression for vendors to ignore during generation of
+     * documentation.
+     */
     private final Pattern ignorableVendorRgexp;
 
+    /**
+     * Create an report generator instance using the given configuration
+     * parameters.
+     * 
+     * @param logger
+     *            Logger
+     * @param config
+     *            development configuration
+     * @param dcFactory
+     *            DC registry
+     * @param outputLocation
+     *            target directory
+     * @param dotExecutable
+     *            path to dot executable
+     * @param ignorableVendorRgexp
+     *            vendors to ignore
+     */
     ReportGenerator(final PrintStream logger, final DevelopmentConfiguration config,
         final DevelopmentComponentFactory dcFactory, final String outputLocation, final String dotExecutable,
         final Pattern ignorableVendorRgexp) {
@@ -52,12 +94,19 @@ public class ReportGenerator {
 
     }
 
+    /**
+     * Generate documentation.
+     * 
+     * @return <code>true</code> when no error occurred during the generation
+     *         process, <code>false</code> otherwise.
+     */
     boolean execute() {
         boolean result = true;
-        final ReportWriterConfiguration writerConfiguration = new ReportWriterConfiguration(ignorableVendorRgexp);
+        final ReportWriterConfiguration writerConfiguration = new ReportWriterConfiguration();
         writerConfiguration.setOutputLocation(outputLocation);
         final DevelopmentConfigurationReportWriter reportWriter =
-            new DevelopmentConfigurationReportWriter(dcFactory, writerConfiguration);
+            new DevelopmentConfigurationReportWriter(dcFactory, writerConfiguration,
+                new DevelopmentComponentByVendorFilter(this.ignorableVendorRgexp));
 
         try {
             long start = System.currentTimeMillis();
@@ -105,7 +154,7 @@ public class ReportGenerator {
         task.setVMLauncher(true);
         task.setParallel(false);
         task.setProject(new Project());
-        task.setTimeout(Integer.valueOf(TEN_MINUTES));
+        task.setTimeout(Integer.valueOf(TIMEOUT));
 
         return task;
     }

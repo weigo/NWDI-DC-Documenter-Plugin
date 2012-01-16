@@ -6,11 +6,11 @@ package org.arachna.netweaver.nwdi.dot4j;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.regex.Pattern;
 
 import org.arachna.dot4j.model.Attributes;
 import org.arachna.dot4j.model.Edge;
 import org.arachna.netweaver.dc.types.DevelopmentComponent;
+import org.arachna.netweaver.hudson.nwdi.IDevelopmentComponentFilter;
 
 /**
  * Generator for <code>.dot</code> files visualizing the relation to development
@@ -27,7 +27,7 @@ public class UsingDevelopmentComponentsDotFileGenerator extends AbstractDevelopm
     /**
      * Vendors to ignore during graph generation.
      */
-    private final Pattern ignorableVendorPattern;
+    private final IDevelopmentComponentFilter vendorFilter;
 
     /**
      * Create an instance of a
@@ -37,14 +37,14 @@ public class UsingDevelopmentComponentsDotFileGenerator extends AbstractDevelopm
      * @param component
      *            development component the using development components
      *            relation shall be visualized for.
-     * @param ignorableVendorPattern
+     * @param vendorFilter
      *            regular expression for exclusion of development components
      *            from vendors matching it.
      */
     public UsingDevelopmentComponentsDotFileGenerator(final DevelopmentComponent component,
-        final Pattern ignorableVendorPattern) {
+        final IDevelopmentComponentFilter vendorFilter) {
         super(null, component);
-        this.ignorableVendorPattern = ignorableVendorPattern;
+        this.vendorFilter = vendorFilter;
     }
 
     /**
@@ -55,14 +55,14 @@ public class UsingDevelopmentComponentsDotFileGenerator extends AbstractDevelopm
      * @param components
      *            development components the using development components shall
      *            be visualized for.
-     * @param ignorableVendorPattern
+     * @param vendorFilter
      *            regular expression for exclusion of development components
      *            from vendors matching it.
      */
     public UsingDevelopmentComponentsDotFileGenerator(final Collection<DevelopmentComponent> components,
-        final Pattern ignorableVendorPattern) {
+        final IDevelopmentComponentFilter vendorFilter) {
         super(null, components);
-        this.ignorableVendorPattern = ignorableVendorPattern;
+        this.vendorFilter = vendorFilter;
     }
 
     /*
@@ -98,8 +98,7 @@ public class UsingDevelopmentComponentsDotFileGenerator extends AbstractDevelopm
         final String label = "";
 
         for (final DevelopmentComponent usingComponent : developmentComponent.getUsingDevelopmentComponents()) {
-            // FIXME: use filter instead of Pattern
-            if (ignorableVendorPattern.matcher(usingComponent.getVendor()).matches()) {
+            if (vendorFilter.accept(usingComponent)) {
                 continue;
             }
 

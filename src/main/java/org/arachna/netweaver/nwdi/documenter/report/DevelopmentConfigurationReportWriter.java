@@ -15,6 +15,7 @@ import org.arachna.netweaver.dc.types.Compartment;
 import org.arachna.netweaver.dc.types.DevelopmentComponent;
 import org.arachna.netweaver.dc.types.DevelopmentComponentFactory;
 import org.arachna.netweaver.dc.types.DevelopmentConfiguration;
+import org.arachna.netweaver.hudson.nwdi.IDevelopmentComponentFilter;
 import org.arachna.netweaver.nwdi.dot4j.DevelopmentComponentDotFileGenerator;
 import org.arachna.netweaver.nwdi.dot4j.DevelopmentConfigurationDotFileGenerator;
 import org.arachna.netweaver.nwdi.dot4j.DotFileWriter;
@@ -36,6 +37,8 @@ public final class DevelopmentConfigurationReportWriter {
      */
     private final ReportWriterConfiguration writerConfiguration;
 
+    private final IDevelopmentComponentFilter vendorFilter;
+
     /**
      * Create an instance of a {@link DevelopmentConfigurationReportWriter}.
      * 
@@ -45,9 +48,10 @@ public final class DevelopmentConfigurationReportWriter {
      *            configuration to be used creating the reports
      */
     public DevelopmentConfigurationReportWriter(final DevelopmentComponentFactory dcFactory,
-        final ReportWriterConfiguration writerConfiguration) {
+        final ReportWriterConfiguration writerConfiguration, final IDevelopmentComponentFilter vendorFilter) {
         this.dcFactory = dcFactory;
         this.writerConfiguration = writerConfiguration;
+        this.vendorFilter = vendorFilter;
     }
 
     /**
@@ -145,8 +149,7 @@ public final class DevelopmentConfigurationReportWriter {
         new CompartmentsHtmlReportWriter(new FileWriter(writerConfiguration.getOutputLocation() + File.separatorChar
             + "compartments.html"), writerConfiguration, compartments, dcFactory).write();
 
-        final ReportWriterConfiguration writerConfiguration =
-            new ReportWriterConfiguration(this.writerConfiguration.getIgnorableVendorPattern());
+        final ReportWriterConfiguration writerConfiguration = new ReportWriterConfiguration();
         writerConfiguration.setCssLocation("../" + this.writerConfiguration.getCssLocation());
         writerConfiguration.setImageFormat(this.writerConfiguration.getImageFormat());
         writerConfiguration.setImagesLocation(this.writerConfiguration.getImagesLocation());
@@ -172,20 +175,20 @@ public final class DevelopmentConfigurationReportWriter {
                     String componentName = component.getVendor() + "~" + component.getName().replace("/", "~");
                     new DevelopmentComponentHtmlReportWriter(new FileWriter(baseDir.getAbsolutePath() + File.separator
                         + componentName + ".html"), writerConfiguration, component, dcFactory).write();
-                    dotFileWriter.write(new DevelopmentComponentDotFileGenerator(dcFactory, component), componentName);
+                    dotFileWriter.write(new DevelopmentComponentDotFileGenerator(dcFactory, component,
+                        this.vendorFilter), componentName);
 
                     componentName = componentName + "-usingDCs";
-                    dotFileWriter.write(
-                        new UsingDevelopmentComponentsDotFileGenerator(component, writerConfiguration
-                            .getIgnorableVendorPattern()), componentName);
+                    dotFileWriter.write(new UsingDevelopmentComponentsDotFileGenerator(component, this.vendorFilter),
+                        componentName);
                 }
             }
 
             dotFileWriter.write(new UsingDevelopmentComponentsDotFileGenerator(compartment.getDevelopmentComponents(),
-                writerConfiguration.getIgnorableVendorPattern()), compartment.getName() + "-usingDCs");
+                this.vendorFilter), compartment.getName() + "-usingDCs");
             dotFileWriter.write(
-                new DevelopmentComponentDotFileGenerator(dcFactory, compartment.getDevelopmentComponents()),
-                compartment.getName() + "-usedDCs");
+                new DevelopmentComponentDotFileGenerator(dcFactory, compartment.getDevelopmentComponents(),
+                    this.vendorFilter), compartment.getName() + "-usedDCs");
         }
     }
 }

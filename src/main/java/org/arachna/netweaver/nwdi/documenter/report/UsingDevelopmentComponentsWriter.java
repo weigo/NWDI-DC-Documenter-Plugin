@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.arachna.netweaver.dc.types.DevelopmentComponent;
-import org.arachna.netweaver.dc.types.DevelopmentComponentFactory;
+import org.arachna.netweaver.hudson.nwdi.IDevelopmentComponentFilter;
 import org.arachna.netweaver.nwdi.dot4j.DotFileWriter;
 import org.arachna.netweaver.nwdi.dot4j.UsingDevelopmentComponentsDotFileGenerator;
 
@@ -20,19 +20,19 @@ public final class UsingDevelopmentComponentsWriter {
     /**
      * Configuration for this writer.
      */
-    private final ReportWriterConfiguration writerConfiguration;
+    private final String outputLocation;
+
+    private final IDevelopmentComponentFilter vendorFilter;
 
     /**
      * Create an instance of {@link UsingDevelopmentComponentsWriter}.
      * 
-     * @param dcFactory
-     *            registry for development components.
-     * @param writerConfiguration
-     *            configuration used creating the diagrams
+     * @param outputLocation
+     * @param vendorFilter
      */
-    public UsingDevelopmentComponentsWriter(final DevelopmentComponentFactory dcFactory,
-        final ReportWriterConfiguration writerConfiguration) {
-        this.writerConfiguration = writerConfiguration;
+    public UsingDevelopmentComponentsWriter(final String outputLocation, final IDevelopmentComponentFilter vendorFilter) {
+        this.outputLocation = outputLocation;
+        this.vendorFilter = vendorFilter;
     }
 
     /**
@@ -47,10 +47,9 @@ public final class UsingDevelopmentComponentsWriter {
      */
     public void write(final List<DevelopmentComponent> components) throws IOException {
         for (final DevelopmentComponent component : components) {
-            final DotFileWriter dotWriter = new DotFileWriter(writerConfiguration.getOutputLocation());
-            dotWriter.write(
-                new UsingDevelopmentComponentsDotFileGenerator(component, writerConfiguration
-                    .getIgnorableVendorPattern()), getComponentName(component));
+            final DotFileWriter dotWriter = new DotFileWriter(this.outputLocation);
+            dotWriter.write(new UsingDevelopmentComponentsDotFileGenerator(component, this.vendorFilter),
+                getComponentName(component));
         }
     }
 
