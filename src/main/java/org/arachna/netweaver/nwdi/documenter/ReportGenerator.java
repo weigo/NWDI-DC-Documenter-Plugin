@@ -155,7 +155,8 @@ public class ReportGenerator {
         task.setParallel(false);
         task.setProject(new Project());
         task.setTimeout(Integer.valueOf(TIMEOUT));
-
+        task.setVerbose(true);
+        
         return task;
     }
 

@@ -171,7 +171,8 @@ public final class DevelopmentConfigurationReportWriter {
             final DotFileWriter dotFileWriter = new DotFileWriter(imageOutput);
 
             for (final DevelopmentComponent component : compartment.getDevelopmentComponents()) {
-                if (component.isNeedsRebuild()) {
+                // FIXME: dependency graphs should only be generated for DCs matching the vendor filter, were affected (transitively) be the 
+                if (vendorFilter.accept(component) && component.isNeedsRebuild()) {
                     String componentName = component.getVendor() + "~" + component.getName().replace("/", "~");
                     new DevelopmentComponentHtmlReportWriter(new FileWriter(baseDir.getAbsolutePath() + File.separator
                         + componentName + ".html"), writerConfiguration, component, dcFactory).write();
