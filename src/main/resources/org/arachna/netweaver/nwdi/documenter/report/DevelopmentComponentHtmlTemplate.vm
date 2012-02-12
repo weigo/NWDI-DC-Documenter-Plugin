@@ -1,0 +1,46 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+       "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>$component.getName()</title>
+<link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+<h1>$bundle.getString("developmentComponent") $component.getName()</h1>
+<h2>$bundle.getString("caption")</h2>
+<p>$component.getCaption()</p>
+
+<h2>$bundle.getString("description")</h2>
+<p>$component.getDescription()</p>
+
+#if (!$component.getUsedDevelopmentComponents().isEmpty())
+<h2>$bundle.getString("usedComponents")</h2>
+<table>
+  <caption>$formatter.format($bundle.getString("usedComponents.table.caption"), $component.getName())</caption>
+  <thead>
+  <th>$bundle.getString("developmentComponent")</th>
+  <th>$bundle.getString("dcType")</th>
+  <th>$bundle.getString("vendor")</th>
+  <th>$bundle.getString("PublicPartName")</th>
+  <th>$bundle.getString("buildTime")</th>
+  <th>$bundle.getString("runTime")</th>
+  <th>$bundle.getString("softwareComponent")</th>
+  </thead>
+  <tbody>
+#foreach($pp in $component.getUsedDevelopmentComponents())
+#set($usedDC = $dcFactory.get($pp))
+    <tr>
+      <td>$pp.getComponentName()</td>
+      <td>$usedDC.getType().toString()</td>
+      <td>$pp.getVendor()</td>
+      <td>$pp.getName()</td>
+      <td>#if($pp.isAtBuildTime())x#end</td>
+      <td>#if($pp.isAtRunTime())x#end</td>
+      <td>$usedDC.getCompartment().getSoftwareComponent()</td>
+    </tr>
+#end  
+  </tbody>
+</table>
+#end
+</body>
+</html>
