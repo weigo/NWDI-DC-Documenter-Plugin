@@ -3,20 +3,27 @@
 <html>
 <head>
 <title>$component.getName()</title>
-<link rel="stylesheet" type="text/css" href="style.css">
+<link rel="stylesheet" type="text/css" href="../css/report.css">
 </head>
 <body>
 <h1>$bundle.getString("developmentComponent") $component.getName()</h1>
 <h2>$bundle.getString("caption")</h2>
 <p>$component.getCaption()</p>
 
+#if (!$component.getDescription().isempty())
 <h2>$bundle.getString("description")</h2>
 <p>$component.getDescription()</p>
-
+#end
 #if (!$component.getUsedDevelopmentComponents().isEmpty())
 <h2>$bundle.getString("usedComponents")</h2>
+
+#set ($imageSuffix = '.svg')
+
+<img src="images/$component.getVendor()~$component.getName().replace('/', '~')$imageSuffix">
+#set ($message = "")
+#set ($varargs = [$component.getName()])
 <table>
-  <caption>$formatter.format($bundle.getString("usedComponents.table.caption"), $component.getName())</caption>
+  <caption>$message.format($bundle.getString("usedComponents.table.caption"), $varargs)</caption>
   <thead>
   <th>$bundle.getString("developmentComponent")</th>
   <th>$bundle.getString("dcType")</th>
@@ -37,6 +44,34 @@
       <td>#if($pp.isAtBuildTime())x#end</td>
       <td>#if($pp.isAtRunTime())x#end</td>
       <td>$usedDC.getCompartment().getSoftwareComponent()</td>
+    </tr>
+#end  
+  </tbody>
+</table>
+#end
+
+#if (!$component.getUsingDevelopmentComponents().isEmpty())
+<h2>$StringClass.format($bundle.getString("usingComponents"), $component.getName())</h2>
+
+<img src="images/$component.getVendor()~$component.getName().replace('/', '~')-usingDCs.svg">
+#end
+
+#if (!$component.getPublicParts().isEmpty())
+<table>
+  <caption>$formatter.format($bundle.getString("publicParts.table.caption"), $component.getName())</caption>
+  <thead>
+  <th>$bundle.getString("PublicPartName")</th>
+  <th>$bundle.getString("ppType")</th>
+  <th>$bundle.getString("caption")</th>
+  <th>$bundle.getString("description")</th>
+  </thead>
+  <tbody>
+#foreach($pp in $component.getPublicParts())
+    <tr>
+      <td>$pp.getPublicPart()</td>
+      <td>$pp.getType().toString()</td>
+      <td>$pp.getCaption()</td>
+      <td>$pp.getDescription()</td>
     </tr>
 #end  
   </tbody>

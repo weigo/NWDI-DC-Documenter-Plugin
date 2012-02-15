@@ -134,6 +134,7 @@ public class DevelopmentComponentDomBuilder {
                 new String[] { NAME, VENDOR, TYPE, NEEDS_REBUILD },
                 new String[] { component.getName(), component.getVendor(), component.getType().toString(),
                     Boolean.toString(component.isNeedsRebuild()) });
+        element.appendChild(this.domHelper.createText(CAPTION, component.getCaption()));
         element.appendChild(this.domHelper.createText(DESCRIPTION, component.getDescription()));
 
         this.createUsedDevelopmentReferences(element, component);

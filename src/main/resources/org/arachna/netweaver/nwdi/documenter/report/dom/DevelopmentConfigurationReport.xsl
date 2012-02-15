@@ -86,7 +86,8 @@
         <xsl:value-of select="$dcName" />
       </xsl:element>
       <hr />
-      <xsl:value-of select="description/text()" />
+      <p><xsl:value-of select="caption/text()" /></p>
+      <p><xsl:value-of select="description/text()" /></p>
       <xsl:if test="count(sourceFolders/package-folder) &gt; 0 and ../../@archive-state='no'">
         <hr />
         <xsl:variable name="componentName">

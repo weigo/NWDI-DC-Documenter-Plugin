@@ -8,9 +8,13 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.Collection;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.velocity.app.VelocityEngine;
 import org.arachna.netweaver.dc.types.Compartment;
 import org.arachna.netweaver.dc.types.DevelopmentComponent;
 import org.arachna.netweaver.dc.types.DevelopmentComponentFactory;
@@ -20,6 +24,7 @@ import org.arachna.netweaver.nwdi.dot4j.DevelopmentComponentDotFileGenerator;
 import org.arachna.netweaver.nwdi.dot4j.DevelopmentConfigurationDotFileGenerator;
 import org.arachna.netweaver.nwdi.dot4j.DotFileWriter;
 import org.arachna.netweaver.nwdi.dot4j.UsingDevelopmentComponentsDotFileGenerator;
+import org.arachna.velocity.VelocityHelper;
 
 /**
  * Writer for reports on development configurations.
@@ -39,16 +44,20 @@ public final class DevelopmentConfigurationReportWriter {
 
     private final IDevelopmentComponentFilter vendorFilter;
 
+    private final PrintStream logger;
+
     /**
      * Create an instance of a {@link DevelopmentConfigurationReportWriter}.
+     * @param logger 
      * 
      * @param dcFactory
      *            registry for development components
      * @param writerConfiguration
      *            configuration to be used creating the reports
      */
-    public DevelopmentConfigurationReportWriter(final DevelopmentComponentFactory dcFactory,
+    public DevelopmentConfigurationReportWriter(PrintStream logger, final DevelopmentComponentFactory dcFactory,
         final ReportWriterConfiguration writerConfiguration, final IDevelopmentComponentFilter vendorFilter) {
+        this.logger = logger;
         this.dcFactory = dcFactory;
         this.writerConfiguration = writerConfiguration;
         this.vendorFilter = vendorFilter;
@@ -170,12 +179,25 @@ public final class DevelopmentConfigurationReportWriter {
 
             final DotFileWriter dotFileWriter = new DotFileWriter(imageOutput);
 
+            final VelocityEngine velocityEngine = new VelocityHelper(this.logger).getVelocityEngine();
+
+            final DevelopmentComponentReportGenerator generator =
+                new DevelopmentComponentReportGenerator(dcFactory, velocityEngine,
+                    "/org/arachna/netweaver/nwdi/documenter/report/DevelopmentComponentHtmlTemplate.vm",
+                    ResourceBundle.getBundle("org/arachna/netweaver/nwdi/documenter/report/DevelopmentComponentReport",
+                        Locale.GERMAN), Locale.GERMAN);
+
             for (final DevelopmentComponent component : compartment.getDevelopmentComponents()) {
-                // FIXME: dependency graphs should only be generated for DCs matching the vendor filter, were affected (transitively) be the 
-                if (vendorFilter.accept(component) && component.isNeedsRebuild()) {
+                // FIXME: dependency graphs should only be generated for DCs
+                // matching the vendor filter, were affected (transitively) be
+                // the
+                if (!vendorFilter.accept(component)) {
                     String componentName = component.getVendor() + "~" + component.getName().replace("/", "~");
-                    new DevelopmentComponentHtmlReportWriter(new FileWriter(baseDir.getAbsolutePath() + File.separator
-                        + componentName + ".html"), writerConfiguration, component, dcFactory).write();
+                    FileWriter writer =
+                        new FileWriter(String.format("%s%c%s.html", baseDir.getAbsolutePath(), File.separatorChar,
+                            componentName));
+                    generator.execute(writer, component);
+                    writer.close();
                     dotFileWriter.write(new DevelopmentComponentDotFileGenerator(dcFactory, component,
                         this.vendorFilter), componentName);
 

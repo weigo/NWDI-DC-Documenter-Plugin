@@ -3,12 +3,9 @@
 BODY {
 	FONT-SIZE: 9pt;
 	CURSOR: default;
-	FONT-FAMILY: Tahoma, Verdana;
+	FONT-FAMILY: Tahoma, Verdana, Helvetica, Sans-Serif;
 	background-color: white;
-}
-
-TD {
-	BORDER: 1px solid #000;
+	width: 800px;
 }
 
 H1 {
@@ -26,25 +23,38 @@ H2 {
 }
 
 table {
-	BORDER: 1px solid silver;
-	border-colappse: collapse;
-	empty-cells:show;
+	border-collapse: collapse;
+	empty-cells: show;
+	caption-side: bottom;
+	border-spacing: 0px;
+	cell-spacing: 0px;
 }
 
 th {
-	PADDING-RIGHT : 5px;
+	PADDING-RIGHT: 5px;
 	PADDING-LEFT: 5px;
 	PADDING-BOTTOM: 2px;
 	PADDING-TOP: 2px;
+	text-align: left;
+	BORDER: 1px solid black;
 	BACKGROUND-COLOR: #5E7CB1;
 	color: White;
+}
+
+td {
+	PADDING-RIGHT: 5px;
+	PADDING-LEFT: 5px;
+	PADDING-BOTTOM: 2px;
+	PADDING-TOP: 2px;
 	text-align: left;
+	BORDER: 1px solid black;
 }
 
 caption {
-	color: White;
 	text-align: left;
-	BACKGROUND-COLOR: #5E7CB1;
+	font-weight: bold;
+	PADDING-TOP: 10px;
+	PADDING-BOTTOM: 20px;
 }
 
 .odd {
@@ -52,7 +62,7 @@ caption {
 }
 
 .even {
-
+	
 }
 
 .developmentConfiguration {
@@ -71,7 +81,7 @@ caption {
 }
 
 a img {
-  margin: 5px;
+	margin: 5px;
 }
 
 .developmentConfiguration hr {
@@ -85,7 +95,8 @@ a img {
 }
 
 .compartment {
-	clear: left; border : #535353 solid 1px;
+	clear: left;
+	border: #535353 solid 1px;
 	background: #6dace7;
 	width: 200px;
 	position: relative;

@@ -4,9 +4,9 @@
 package org.arachna.netweaver.nwdi.documenter.report;
 
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.Formatter;
 import java.util.Locale;
@@ -83,6 +83,7 @@ public final class DevelopmentComponentReportGenerator {
         context.put("usedDCs", component.getUsedDevelopmentComponents());
         context.put("formatter", new Formatter(locale));
         context.put("dcFactory", dcFactory);
+        context.put("StringClass", "");
         velocityEngine.evaluate(context, writer, "", getTemplateReader());
         writer.flush();
     }
@@ -105,10 +106,13 @@ public final class DevelopmentComponentReportGenerator {
                     Locale.GERMAN), Locale.GERMAN);
 
         final DevelopmentConfigurationReader reader = new DevelopmentConfigurationReader(dcFactory);
-        final String workspace = "/home/weigo/tmp";
+        final String workspace = "/tmp";
         new XmlReaderHelper(reader).parse(new FileReader(workspace + "/DevelopmentConfiguration.xml"));
+        dcFactory.updateUsingDCs();
 
-        final DevelopmentComponent component = dcFactory.get("example.com", "lib/webdynpro/helper");
-        generator.execute(new OutputStreamWriter(System.err), component);
+        final DevelopmentComponent component = dcFactory.get("example.com", "lib/webdynpro/helper/impl");
+        FileWriter writer = new FileWriter(String.format("/tmp/%s.html", component.getName().replace('/', '~')));
+        generator.execute(writer, component);
+        writer.close();
     }
 }

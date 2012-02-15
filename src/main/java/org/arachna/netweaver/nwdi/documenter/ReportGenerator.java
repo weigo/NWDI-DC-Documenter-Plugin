@@ -32,7 +32,7 @@ public class ReportGenerator {
     /**
      * timeout for dependency diagram generation.
      */
-    private static final int TIMEOUT = 1000 * 60 * 2;
+    private static final int TIMEOUT = 1000 * 30;
 
     /**
      * Logger.
@@ -105,7 +105,7 @@ public class ReportGenerator {
         final ReportWriterConfiguration writerConfiguration = new ReportWriterConfiguration();
         writerConfiguration.setOutputLocation(outputLocation);
         final DevelopmentConfigurationReportWriter reportWriter =
-            new DevelopmentConfigurationReportWriter(dcFactory, writerConfiguration,
+            new DevelopmentConfigurationReportWriter(logger, dcFactory, writerConfiguration,
                 new DevelopmentComponentByVendorFilter(this.ignorableVendorRgexp));
 
         try {
@@ -156,7 +156,7 @@ public class ReportGenerator {
         task.setProject(new Project());
         task.setTimeout(Integer.valueOf(TIMEOUT));
         task.setVerbose(true);
-        
+
         return task;
     }
 
@@ -186,9 +186,9 @@ public class ReportGenerator {
     public static void main(final String[] args) throws IOException, SAXException {
         final DevelopmentComponentFactory dcFactory = new DevelopmentComponentFactory();
         final DevelopmentConfigurationReader reader = new DevelopmentConfigurationReader(dcFactory);
+        new XmlReaderHelper(reader).parse(new FileReader("/tmp/jenkins/jobs/enviaM/workspace/DevelopmentConfiguration.xml"));
         // new XmlReaderHelper(reader).parse(new
-        // FileReader("/home/weigo/tmp/PN3_enviaMPr_D.xml"));
-        new XmlReaderHelper(reader).parse(new FileReader("/home/weigo/tmp/PN3_enviaMPr_D-refactored.xml"));
+        // FileReader("/home/weigo/tmp/PN3_enviaMPr_D-refactored.xml"));
 
         dcFactory.updateUsingDCs();
 
@@ -198,8 +198,12 @@ public class ReportGenerator {
             }
         }
 
-        new ReportGenerator(System.err, reader.getDevelopmentConfiguration(), dcFactory, "/tmp/enviaMPR",
-            "/usr/bin/dot", Pattern.compile("sap\\.com")).execute();
+//        String dot = "/usr/bin/dot";
+        String dot = "/ZusatzSW/GraphViz/bin/dot.exe";
+        PrintStream s = new PrintStream(new File("/tmp/report.log"));
+        new ReportGenerator(s, reader.getDevelopmentConfiguration(), dcFactory, "/tmp/enviaMPR",
+            dot, Pattern.compile("sap\\.com")).execute();
+        s.close();
     }
 
 }

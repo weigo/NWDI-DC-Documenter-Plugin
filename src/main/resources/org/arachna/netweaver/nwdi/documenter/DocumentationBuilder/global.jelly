@@ -11,18 +11,8 @@
 		<!-- Optional @help points to the help document HTML. /plugin/NWDI-DC-Documenter-Plugin
 			is mapped to our webapp/ directory, so this is a convenient way to serve
 			static resources. -->
-		<f:entry title="vendor pattern"
-			description="regular expression for excluding vendors from generated documentation"
-			help="/plugin/NWDI-DC-Documenter-Plugin/help-globalConfig.html">
-			<f:textbox name="ignoreVendorRegexp" value="${descriptor.getIgnoreVendorRegexp()}" />
-		</f:entry>
-		<f:entry title="software component pattern"
-			description="regular expression for excluding vendors from generated documentation"
-			help="/plugin/NWDI-DC-Documenter-Plugin/help-globalConfig.html">
-			<f:textbox name="ignoreSoftwareComponentRegex" value="${descriptor.getIgnoreSoftwareComponentRegex()}" />
-		</f:entry>
-		<f:entry title="path to dot executable"
-			description="Please enter the absolute path to the GraphViz dot executable"
+		<f:entry title="${%dot.path.title}"
+			description="${%dot.path.description}"
 			help="/plugin/NWDI-DC-Documenter-Plugin/help-globalConfig.html">
 			<f:textbox name="dotExecutable" value="${descriptor.getDotExecutable()}" />
 		</f:entry>

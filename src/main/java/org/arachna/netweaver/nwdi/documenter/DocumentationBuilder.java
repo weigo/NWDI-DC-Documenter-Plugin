@@ -7,14 +7,9 @@ import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
-import hudson.util.FormValidation;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
-
-import javax.servlet.ServletException;
 
 import net.sf.json.JSONObject;
 
@@ -22,33 +17,20 @@ import org.arachna.netweaver.hudson.nwdi.AntTaskBuilder;
 import org.arachna.netweaver.hudson.nwdi.NWDIBuild;
 import org.arachna.netweaver.hudson.nwdi.NWDIProject;
 import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 
 /**
- * Sample {@link Builder}.
+ * Builder for generating documentation of a development configuration.
  * 
- * <p>
- * When the user configures the project and enables this builder,
- * {@link DescriptorImpl#newInstance(StaplerRequest)} is invoked and a new
- * {@link DocumentationBuilder} is created. The created instance is persisted to
- * the project configuration XML by using XStream, so this allows you to use
- * instance fields (like {@link #name}) to remember the configuration.
- * 
- * <p>
- * When a build is performed, the
- * {@link #perform(AbstractBuild, Launcher, BuildListener)} method will be
- * invoked.
- * 
- * @author Kohsuke Kawaguchi
+ * @author Dirk Weigenand
  */
 public class DocumentationBuilder extends AntTaskBuilder {
     /**
-     * 
+     * descriptor for DocumentationBuilder.
      */
-    private static final int TEN_MINUTES = 1000 * 60 * 10;
     @Extension
     public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
+
     /**
      * regular expression for ignoring development components of certain
      * vendors.
@@ -58,15 +40,21 @@ public class DocumentationBuilder extends AntTaskBuilder {
     /**
      * regular expression for ignoring development components of certain
      * software components.
+     * 
+     * @deprecated Not used anymore!
      */
-    private final Pattern ignoreSoftwareComponentRegex;
+    private final transient Pattern ignoreSoftwareComponentRegex = null;
 
-    // Fields in config.jelly must match the parameter names in the
-    // "DataBoundConstructor"
+    /**
+     * Create a new instance of a <code>DocumentationBuilder</code> using the
+     * given regular expression for vendors to ignore when building
+     * documentation.
+     * 
+     * @param ignoreVendorRegexp
+     */
     @DataBoundConstructor
-    public DocumentationBuilder(final String ignoreVendorRegexp, final String ignoreSoftwareComponentRegex) {
+    public DocumentationBuilder(final String ignoreVendorRegexp) {
         this.ignoreVendorRegexp = Pattern.compile(ignoreVendorRegexp);
-        this.ignoreSoftwareComponentRegex = Pattern.compile(ignoreSoftwareComponentRegex);
     }
 
     /**
@@ -118,14 +106,18 @@ public class DocumentationBuilder extends AntTaskBuilder {
         /**
          * regular expression for ignoring development components of certain
          * vendors.
+         * 
+         * @deprecated Not used anymore
          */
-        private Pattern ignoreVendorRegexp;
+        private transient Pattern ignoreVendorRegexp;
 
         /**
          * regular expression for ignoring development components of certain
          * software components.
+         * 
+         * @deprecated Not used anymore.
          */
-        private Pattern ignoreSoftwareComponentRegex;
+        private transient Pattern ignoreSoftwareComponentRegex;
 
         /**
          * Path to the 'dot' executable.
@@ -134,25 +126,6 @@ public class DocumentationBuilder extends AntTaskBuilder {
 
         public DescriptorImpl() {
             load();
-        }
-
-        /**
-         * Performs on-the-fly validation of the form field 'name'.
-         * 
-         * @param value
-         *            This parameter receives the value that the user has typed.
-         * @return Indicates the outcome of the validation. This is sent to the
-         *         browser.
-         */
-        public FormValidation doCheckVendorRegexp(@QueryParameter final String value) throws IOException,
-            ServletException {
-            if (value.length() == 0) {
-                return FormValidation.error("Please set a name");
-            }
-            if (value.length() < 4) {
-                return FormValidation.warning("Isn't the name too short?");
-            }
-            return FormValidation.ok();
         }
 
         /**
@@ -173,20 +146,6 @@ public class DocumentationBuilder extends AntTaskBuilder {
 
         @Override
         public boolean configure(final StaplerRequest req, final JSONObject formData) throws FormException {
-            try {
-                setIgnoreVendorRegexp(formData.getString("ignoreVendorRegexp"));
-            }
-            catch (final PatternSyntaxException pse) {
-                throw new FormException(pse.getLocalizedMessage(), pse, "ignoreVendorRegexp");
-            }
-
-            try {
-                setIgnoreSoftwareComponentRegex(formData.getString("ignoreSoftwareComponentRegex"));
-            }
-            catch (final PatternSyntaxException pse) {
-                throw new FormException(pse.getLocalizedMessage(), pse, "ignoreSoftwareComponentRegex");
-            }
-
             dotExecutable = formData.getString("dotExecutable");
 
             save();
@@ -269,7 +228,6 @@ public class DocumentationBuilder extends AntTaskBuilder {
      */
     @Override
     protected String getAntProperties() {
-        // TODO Auto-generated method stub
         return null;
     }
 }
