@@ -1,0 +1,1550 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- MetaDataAPI generated on: Tuesday, July 5, 2005 2:32:18 PM CEST -->
+<VirtualInterface xmlns="http://xml.sap.com/2002/10/metamodel/vi" xmlns:IDX="urn:sap.com:VI.VirtualInterface:2.0" mmRelease="6.30" mmVersion="2.0" mmTimestamp="1120566738293" guid="17fd343_11d28d6a838__7fbe_172_28_136_98_1224752477112" interfaceType="javaclass" name="ExampleWebServiceVi" package="com.example.webservice" masterLanguage="de">
+    <VirtualInterface.EndpointReference>
+        <ClassEndpointReference name="EndpointReference" qualifiedClassName="com.example.webservice.ExampleWebService">
+        </ClassEndpointReference>
+    </VirtualInterface.EndpointReference>
+    <VirtualInterface.Functions>
+        <Function isExposed="true" name="exampleMethod1(java.lang.String,java.lang.String,java.lang.String,java.lang.String)" nameMappedTo="exampleMethod1" originalName="exampleMethod1">
+            <Function.IncomingParameters>
+                <Parameter name="surName" nameMappedTo="surName">
+                    <Parameter.MappedTypeReference>
+                        <ConvertedTypeReference name="java.lang.String" originalType="java.lang.String">
+                            <ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                                <SoapExtensionConvertedTypeRef name="SoapExtensionConvertedTypeRef">
+                                </SoapExtensionConvertedTypeRef>
+                            </ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                        </ConvertedTypeReference>
+                    </Parameter.MappedTypeReference>
+                    <Parameter.SoapExtensionParameter>
+                        <SoapExtensionParameter name="SoapExtensionParameter">
+                        </SoapExtensionParameter>
+                    </Parameter.SoapExtensionParameter>
+                </Parameter>
+                <Parameter name="firstName" nameMappedTo="firstName">
+                    <Parameter.MappedTypeReference>
+                        <ConvertedTypeReference name="java.lang.String" originalType="java.lang.String">
+                            <ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                                <SoapExtensionConvertedTypeRef name="SoapExtensionConvertedTypeRef">
+                                </SoapExtensionConvertedTypeRef>
+                            </ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                        </ConvertedTypeReference>
+                    </Parameter.MappedTypeReference>
+                    <Parameter.SoapExtensionParameter>
+                        <SoapExtensionParameter name="SoapExtensionParameter">
+                        </SoapExtensionParameter>
+                    </Parameter.SoapExtensionParameter>
+                </Parameter>
+                <Parameter name="streetPostalCode" nameMappedTo="streetPostalCode">
+                    <Parameter.MappedTypeReference>
+                        <ConvertedTypeReference name="java.lang.String" originalType="java.lang.String">
+                            <ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                                <SoapExtensionConvertedTypeRef name="SoapExtensionConvertedTypeRef">
+                                </SoapExtensionConvertedTypeRef>
+                            </ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                        </ConvertedTypeReference>
+                    </Parameter.MappedTypeReference>
+                    <Parameter.SoapExtensionParameter>
+                        <SoapExtensionParameter name="SoapExtensionParameter">
+                        </SoapExtensionParameter>
+                    </Parameter.SoapExtensionParameter>
+                </Parameter>
+                <Parameter name="contractAccountId" nameMappedTo="contractAccountId">
+                    <Parameter.MappedTypeReference>
+                        <ConvertedTypeReference name="java.lang.String" originalType="java.lang.String">
+                            <ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                                <SoapExtensionConvertedTypeRef name="SoapExtensionConvertedTypeRef">
+                                </SoapExtensionConvertedTypeRef>
+                            </ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                        </ConvertedTypeReference>
+                    </Parameter.MappedTypeReference>
+                    <Parameter.SoapExtensionParameter>
+                        <SoapExtensionParameter name="SoapExtensionParameter">
+                        </SoapExtensionParameter>
+                    </Parameter.SoapExtensionParameter>
+                </Parameter>
+            </Function.IncomingParameters>
+            <Function.OutgoingParameters>
+                <Parameter name="Response" nameMappedTo="Response">
+                    <Parameter.MappedTypeReference>
+                        <ConvertedTypeReference name="boolean" originalType="boolean">
+                            <ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                                <SoapExtensionConvertedTypeRef name="SoapExtensionConvertedTypeRef">
+                                </SoapExtensionConvertedTypeRef>
+                            </ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                        </ConvertedTypeReference>
+                    </Parameter.MappedTypeReference>
+                    <Parameter.SoapExtensionParameter>
+                        <SoapExtensionParameter name="SoapExtensionParameter">
+                        </SoapExtensionParameter>
+                    </Parameter.SoapExtensionParameter>
+                </Parameter>
+            </Function.OutgoingParameters>
+            <Function.SoapExtensionFunction>
+                <SoapExtensionFunction SOAPRequestName="exampleMethod1" SOAPResponseName="exampleMethod1Response" name="SoapExtensionFunction" namespace="urn:ExampleWebServiceVi">
+                </SoapExtensionFunction>
+            </Function.SoapExtensionFunction>
+        </Function>
+        <Function isExposed="true" name="getAccountManagers(java.lang.String[])" nameMappedTo="getAccountManagers" originalName="getAccountManagers">
+            <Function.IncomingParameters>
+                <Parameter name="businessPartnerIds" nameMappedTo="businessPartnerIds">
+                    <Parameter.MappedTypeReference>
+                        <ConvertedTableReference dimension="1" name="java.lang.String[]">
+                            <ConvertedTableReference.LineType>
+                                <ConvertedTypeReference name="java.lang.String" originalType="java.lang.String">
+                                    <ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                                        <SoapExtensionConvertedTypeRef name="SoapExtensionConvertedTypeRef">
+                                        </SoapExtensionConvertedTypeRef>
+                                    </ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                                </ConvertedTypeReference>
+                            </ConvertedTableReference.LineType>
+                        </ConvertedTableReference>
+                    </Parameter.MappedTypeReference>
+                    <Parameter.SoapExtensionParameter>
+                        <SoapExtensionParameter name="SoapExtensionParameter">
+                        </SoapExtensionParameter>
+                    </Parameter.SoapExtensionParameter>
+                </Parameter>
+            </Function.IncomingParameters>
+            <Function.OutgoingParameters>
+                <Parameter name="Response" nameMappedTo="accountManagers">
+                    <Parameter.MappedTypeReference>
+                        <ComplexTypeReference name="de.enviam.em.services.common.businesspartner.AccountManagerData[]">
+                        </ComplexTypeReference>
+                    </Parameter.MappedTypeReference>
+                    <Parameter.SoapExtensionParameter>
+                        <SoapExtensionParameter name="SoapExtensionParameter">
+                        </SoapExtensionParameter>
+                    </Parameter.SoapExtensionParameter>
+                </Parameter>
+            </Function.OutgoingParameters>
+            <Function.SoapExtensionFunction>
+                <SoapExtensionFunction SOAPRequestName="getAccountManagers" SOAPResponseName="getAccountManagersResponse" name="SoapExtensionFunction" namespace="urn:ExampleWebServiceVi">
+                </SoapExtensionFunction>
+            </Function.SoapExtensionFunction>
+        </Function>
+        <Function isExposed="true" name="getAllContractAccountsByBusinessPartner(java.lang.String)" nameMappedTo="getAllContractAccountsByBusinessPartner" originalName="getAllContractAccountsByBusinessPartner">
+            <Function.IncomingParameters>
+                <Parameter name="businessPartnerId" nameMappedTo="businessPartnerId">
+                    <Parameter.MappedTypeReference>
+                        <ConvertedTypeReference name="java.lang.String" originalType="java.lang.String">
+                            <ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                                <SoapExtensionConvertedTypeRef name="SoapExtensionConvertedTypeRef">
+                                </SoapExtensionConvertedTypeRef>
+                            </ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                        </ConvertedTypeReference>
+                    </Parameter.MappedTypeReference>
+                    <Parameter.SoapExtensionParameter>
+                        <SoapExtensionParameter name="SoapExtensionParameter">
+                        </SoapExtensionParameter>
+                    </Parameter.SoapExtensionParameter>
+                </Parameter>
+            </Function.IncomingParameters>
+            <Function.OutgoingParameters>
+                <Parameter name="Response" nameMappedTo="Response">
+                    <Parameter.MappedTypeReference>
+                        <ComplexTypeReference name="de.enviam.em.services.common.businesspartner.Contract[]">
+                        </ComplexTypeReference>
+                    </Parameter.MappedTypeReference>
+                    <Parameter.SoapExtensionParameter>
+                        <SoapExtensionParameter name="SoapExtensionParameter">
+                        </SoapExtensionParameter>
+                    </Parameter.SoapExtensionParameter>
+                </Parameter>
+            </Function.OutgoingParameters>
+            <Function.SoapExtensionFunction>
+                <SoapExtensionFunction SOAPRequestName="getAllContractAccountsByBusinessPartner" SOAPResponseName="getAllContractAccountsByBusinessPartnerResponse" name="SoapExtensionFunction" namespace="urn:ExampleWebServiceVi">
+                </SoapExtensionFunction>
+            </Function.SoapExtensionFunction>
+        </Function>
+        <Function isExposed="true" name="getBusinessPartnerByContractAccount(java.lang.String)" nameMappedTo="getBusinessPartnerByContractAccount" originalName="getBusinessPartnerByContractAccount">
+            <Function.IncomingParameters>
+                <Parameter name="contractAccountId" nameMappedTo="contractAccountId">
+                    <Parameter.MappedTypeReference>
+                        <ConvertedTypeReference name="java.lang.String" originalType="java.lang.String">
+                            <ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                                <SoapExtensionConvertedTypeRef name="SoapExtensionConvertedTypeRef">
+                                </SoapExtensionConvertedTypeRef>
+                            </ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                        </ConvertedTypeReference>
+                    </Parameter.MappedTypeReference>
+                    <Parameter.SoapExtensionParameter>
+                        <SoapExtensionParameter name="SoapExtensionParameter">
+                        </SoapExtensionParameter>
+                    </Parameter.SoapExtensionParameter>
+                </Parameter>
+            </Function.IncomingParameters>
+            <Function.OutgoingParameters>
+                <Parameter name="Response" nameMappedTo="Response">
+                    <Parameter.MappedTypeReference>
+                        <ConvertedTypeReference name="java.lang.String" originalType="java.lang.String">
+                            <ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                                <SoapExtensionConvertedTypeRef name="SoapExtensionConvertedTypeRef">
+                                </SoapExtensionConvertedTypeRef>
+                            </ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                        </ConvertedTypeReference>
+                    </Parameter.MappedTypeReference>
+                    <Parameter.SoapExtensionParameter>
+                        <SoapExtensionParameter name="SoapExtensionParameter">
+                        </SoapExtensionParameter>
+                    </Parameter.SoapExtensionParameter>
+                </Parameter>
+            </Function.OutgoingParameters>
+            <Function.SoapExtensionFunction>
+                <SoapExtensionFunction SOAPRequestName="getBusinessPartnerByContractAccount" SOAPResponseName="getBusinessPartnerByContractAccountResponse" name="SoapExtensionFunction" namespace="urn:ExampleWebServiceVi">
+                </SoapExtensionFunction>
+            </Function.SoapExtensionFunction>
+        </Function>
+        <Function isExposed="true" name="getBusinessPartnerData(java.lang.String)" nameMappedTo="getBusinessPartnerData" originalName="getBusinessPartnerData">
+            <Function.IncomingParameters>
+                <Parameter name="businessPartnerId" nameMappedTo="businessPartnerId">
+                    <Parameter.MappedTypeReference>
+                        <ConvertedTypeReference name="java.lang.String" originalType="java.lang.String">
+                            <ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                                <SoapExtensionConvertedTypeRef name="SoapExtensionConvertedTypeRef">
+                                </SoapExtensionConvertedTypeRef>
+                            </ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                        </ConvertedTypeReference>
+                    </Parameter.MappedTypeReference>
+                    <Parameter.SoapExtensionParameter>
+                        <SoapExtensionParameter name="SoapExtensionParameter">
+                        </SoapExtensionParameter>
+                    </Parameter.SoapExtensionParameter>
+                </Parameter>
+            </Function.IncomingParameters>
+            <Function.OutgoingParameters>
+                <Parameter name="Response" nameMappedTo="Response">
+                    <Parameter.MappedTypeReference>
+                        <ComplexTypeReference name="de.enviam.em.services.common.businesspartner.BusinessPartner">
+                        </ComplexTypeReference>
+                    </Parameter.MappedTypeReference>
+                    <Parameter.SoapExtensionParameter>
+                        <SoapExtensionParameter name="SoapExtensionParameter">
+                        </SoapExtensionParameter>
+                    </Parameter.SoapExtensionParameter>
+                </Parameter>
+            </Function.OutgoingParameters>
+            <Function.SoapExtensionFunction>
+                <SoapExtensionFunction SOAPRequestName="getBusinessPartnerData" SOAPResponseName="getBusinessPartnerDataResponse" name="SoapExtensionFunction" namespace="urn:ExampleWebServiceVi">
+                </SoapExtensionFunction>
+            </Function.SoapExtensionFunction>
+        </Function>
+        <Function isExposed="true" name="getBusinessPartnerData(java.lang.String[])" nameMappedTo="getBusinessPartners" originalName="getBusinessPartnerData">
+            <Function.IncomingParameters>
+                <Parameter name="businessPartnerIds" nameMappedTo="businessPartnerIds">
+                    <Parameter.MappedTypeReference>
+                        <ConvertedTableReference dimension="1" name="java.lang.String[]">
+                            <ConvertedTableReference.LineType>
+                                <ConvertedTypeReference name="java.lang.String" originalType="java.lang.String">
+                                    <ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                                        <SoapExtensionConvertedTypeRef name="SoapExtensionConvertedTypeRef">
+                                        </SoapExtensionConvertedTypeRef>
+                                    </ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                                </ConvertedTypeReference>
+                            </ConvertedTableReference.LineType>
+                        </ConvertedTableReference>
+                    </Parameter.MappedTypeReference>
+                    <Parameter.SoapExtensionParameter>
+                        <SoapExtensionParameter name="SoapExtensionParameter">
+                        </SoapExtensionParameter>
+                    </Parameter.SoapExtensionParameter>
+                </Parameter>
+            </Function.IncomingParameters>
+            <Function.OutgoingParameters>
+                <Parameter name="Response" nameMappedTo="businessPartners">
+                    <Parameter.MappedTypeReference>
+                        <ComplexTypeReference name="de.enviam.em.services.common.businesspartner.BusinessPartner[]">
+                        </ComplexTypeReference>
+                    </Parameter.MappedTypeReference>
+                    <Parameter.SoapExtensionParameter>
+                        <SoapExtensionParameter name="SoapExtensionParameter">
+                        </SoapExtensionParameter>
+                    </Parameter.SoapExtensionParameter>
+                </Parameter>
+            </Function.OutgoingParameters>
+            <Function.SoapExtensionFunction>
+                <SoapExtensionFunction SOAPRequestName="getBusinessPartners" SOAPResponseName="getBusinessPartnersResponse" name="SoapExtensionFunction" namespace="urn:ExampleWebServiceVi">
+                </SoapExtensionFunction>
+            </Function.SoapExtensionFunction>
+        </Function>
+        <Function isExposed="true" name="getContactPersonByBusinessPartner(java.lang.String)" nameMappedTo="getContactPersonByBusinessPartner" originalName="getContactPersonByBusinessPartner">
+            <Function.IncomingParameters>
+                <Parameter name="BusinessPartner" nameMappedTo="BusinessPartner">
+                    <Parameter.MappedTypeReference>
+                        <ConvertedTypeReference name="java.lang.String" originalType="java.lang.String">
+                            <ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                                <SoapExtensionConvertedTypeRef name="SoapExtensionConvertedTypeRef">
+                                </SoapExtensionConvertedTypeRef>
+                            </ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                        </ConvertedTypeReference>
+                    </Parameter.MappedTypeReference>
+                    <Parameter.SoapExtensionParameter>
+                        <SoapExtensionParameter name="SoapExtensionParameter">
+                        </SoapExtensionParameter>
+                    </Parameter.SoapExtensionParameter>
+                </Parameter>
+            </Function.IncomingParameters>
+            <Function.OutgoingParameters>
+                <Parameter name="Response" nameMappedTo="Response">
+                    <Parameter.MappedTypeReference>
+                        <ComplexTypeReference name="com.example.webservice.ContactPerson[]">
+                        </ComplexTypeReference>
+                    </Parameter.MappedTypeReference>
+                    <Parameter.SoapExtensionParameter>
+                        <SoapExtensionParameter name="SoapExtensionParameter">
+                        </SoapExtensionParameter>
+                    </Parameter.SoapExtensionParameter>
+                </Parameter>
+            </Function.OutgoingParameters>
+            <Function.SoapExtensionFunction>
+                <SoapExtensionFunction SOAPRequestName="getContactPersonByBusinessPartner" SOAPResponseName="getContactPersonByBusinessPartnerResponse" name="SoapExtensionFunction" namespace="urn:ExampleWebServiceVi">
+                </SoapExtensionFunction>
+            </Function.SoapExtensionFunction>
+        </Function>
+        <Function isExposed="true" name="getContactPersonByEMailAddress(java.lang.String)" nameMappedTo="getContactPersonByEMailAddress" originalName="getContactPersonByEMailAddress">
+            <Function.IncomingParameters>
+                <Parameter name="EMail" nameMappedTo="EMail">
+                    <Parameter.MappedTypeReference>
+                        <ConvertedTypeReference name="java.lang.String" originalType="java.lang.String">
+                            <ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                                <SoapExtensionConvertedTypeRef name="SoapExtensionConvertedTypeRef">
+                                </SoapExtensionConvertedTypeRef>
+                            </ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                        </ConvertedTypeReference>
+                    </Parameter.MappedTypeReference>
+                    <Parameter.SoapExtensionParameter>
+                        <SoapExtensionParameter name="SoapExtensionParameter">
+                        </SoapExtensionParameter>
+                    </Parameter.SoapExtensionParameter>
+                </Parameter>
+            </Function.IncomingParameters>
+            <Function.OutgoingParameters>
+                <Parameter name="Response" nameMappedTo="Response">
+                    <Parameter.MappedTypeReference>
+                        <ComplexTypeReference name="com.example.webservice.ContactPerson">
+                        </ComplexTypeReference>
+                    </Parameter.MappedTypeReference>
+                    <Parameter.SoapExtensionParameter>
+                        <SoapExtensionParameter name="SoapExtensionParameter">
+                        </SoapExtensionParameter>
+                    </Parameter.SoapExtensionParameter>
+                </Parameter>
+            </Function.OutgoingParameters>
+            <Function.SoapExtensionFunction>
+                <SoapExtensionFunction SOAPRequestName="getContactPersonByEMailAddress" SOAPResponseName="getContactPersonByEMailAddressResponse" name="SoapExtensionFunction" namespace="urn:ExampleWebServiceVi">
+                </SoapExtensionFunction>
+            </Function.SoapExtensionFunction>
+        </Function>
+        <Function isExposed="true" name="getDeliveryAddressByContractAccount(java.lang.String)" nameMappedTo="getDeliveryAddressByContractAccount" originalName="getDeliveryAddressByContractAccount">
+            <Function.IncomingParameters>
+                <Parameter name="contractAccount" nameMappedTo="contractAccount">
+                    <Parameter.MappedTypeReference>
+                        <ConvertedTypeReference name="java.lang.String" originalType="java.lang.String">
+                            <ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                                <SoapExtensionConvertedTypeRef name="SoapExtensionConvertedTypeRef">
+                                </SoapExtensionConvertedTypeRef>
+                            </ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                        </ConvertedTypeReference>
+                    </Parameter.MappedTypeReference>
+                    <Parameter.SoapExtensionParameter>
+                        <SoapExtensionParameter name="SoapExtensionParameter">
+                        </SoapExtensionParameter>
+                    </Parameter.SoapExtensionParameter>
+                </Parameter>
+            </Function.IncomingParameters>
+            <Function.OutgoingParameters>
+                <Parameter name="Response" nameMappedTo="Response">
+                    <Parameter.MappedTypeReference>
+                        <ComplexTypeReference name="com.example.webservice.AddressData">
+                        </ComplexTypeReference>
+                    </Parameter.MappedTypeReference>
+                    <Parameter.SoapExtensionParameter>
+                        <SoapExtensionParameter name="SoapExtensionParameter">
+                        </SoapExtensionParameter>
+                    </Parameter.SoapExtensionParameter>
+                </Parameter>
+            </Function.OutgoingParameters>
+            <Function.SoapExtensionFunction>
+                <SoapExtensionFunction SOAPRequestName="getDeliveryAddressByContractAccount" SOAPResponseName="getDeliveryAddressByContractAccountResponse" name="SoapExtensionFunction" namespace="urn:ExampleWebServiceVi">
+                </SoapExtensionFunction>
+            </Function.SoapExtensionFunction>
+        </Function>
+        <Function isExposed="true" name="getSupplyBaseByContractAccount(java.lang.String)" nameMappedTo="getSupplyBaseByContractAccount" originalName="getSupplyBaseByContractAccount">
+            <Function.IncomingParameters>
+                <Parameter name="contractAccountId" nameMappedTo="contractAccountId">
+                    <Parameter.MappedTypeReference>
+                        <ConvertedTypeReference name="java.lang.String" originalType="java.lang.String">
+                            <ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                                <SoapExtensionConvertedTypeRef name="SoapExtensionConvertedTypeRef">
+                                </SoapExtensionConvertedTypeRef>
+                            </ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                        </ConvertedTypeReference>
+                    </Parameter.MappedTypeReference>
+                    <Parameter.SoapExtensionParameter>
+                        <SoapExtensionParameter name="SoapExtensionParameter">
+                        </SoapExtensionParameter>
+                    </Parameter.SoapExtensionParameter>
+                </Parameter>
+            </Function.IncomingParameters>
+            <Function.OutgoingParameters>
+                <Parameter name="Response" nameMappedTo="Response">
+                    <Parameter.MappedTypeReference>
+                        <ComplexTypeReference name="com.example.webservice.SupplyBase">
+                        </ComplexTypeReference>
+                    </Parameter.MappedTypeReference>
+                    <Parameter.SoapExtensionParameter>
+                        <SoapExtensionParameter name="SoapExtensionParameter">
+                        </SoapExtensionParameter>
+                    </Parameter.SoapExtensionParameter>
+                </Parameter>
+            </Function.OutgoingParameters>
+            <Function.SoapExtensionFunction>
+                <SoapExtensionFunction SOAPRequestName="getSupplyBaseByContractAccount" SOAPResponseName="getSupplyBaseByContractAccountResponse" name="SoapExtensionFunction" namespace="urn:ExampleWebServiceVi">
+                </SoapExtensionFunction>
+            </Function.SoapExtensionFunction>
+        </Function>
+        <Function isExposed="true" name="getTariffByContractAccount(java.lang.String)" nameMappedTo="getTariffByContractAccount" originalName="getTariffByContractAccount">
+            <Function.IncomingParameters>
+                <Parameter name="contractAccountId" nameMappedTo="contractAccountId">
+                    <Parameter.MappedTypeReference>
+                        <ConvertedTypeReference name="java.lang.String" originalType="java.lang.String">
+                            <ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                                <SoapExtensionConvertedTypeRef name="SoapExtensionConvertedTypeRef">
+                                </SoapExtensionConvertedTypeRef>
+                            </ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                        </ConvertedTypeReference>
+                    </Parameter.MappedTypeReference>
+                    <Parameter.SoapExtensionParameter>
+                        <SoapExtensionParameter name="SoapExtensionParameter">
+                        </SoapExtensionParameter>
+                    </Parameter.SoapExtensionParameter>
+                </Parameter>
+            </Function.IncomingParameters>
+            <Function.OutgoingParameters>
+                <Parameter name="Response" nameMappedTo="Response">
+                    <Parameter.MappedTypeReference>
+                        <ConvertedTypeReference name="java.lang.String" originalType="java.lang.String">
+                            <ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                                <SoapExtensionConvertedTypeRef name="SoapExtensionConvertedTypeRef">
+                                </SoapExtensionConvertedTypeRef>
+                            </ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                        </ConvertedTypeReference>
+                    </Parameter.MappedTypeReference>
+                    <Parameter.SoapExtensionParameter>
+                        <SoapExtensionParameter name="SoapExtensionParameter">
+                        </SoapExtensionParameter>
+                    </Parameter.SoapExtensionParameter>
+                </Parameter>
+            </Function.OutgoingParameters>
+            <Function.SoapExtensionFunction>
+                <SoapExtensionFunction SOAPRequestName="getTariffByContractAccount" SOAPResponseName="getTariffByContractAccountResponse" name="SoapExtensionFunction" namespace="urn:ExampleWebServiceVi">
+                </SoapExtensionFunction>
+            </Function.SoapExtensionFunction>
+        </Function>
+        <Function isExposed="true" name="getBusinessPartners(java.lang.String[],java.lang.String[])" nameMappedTo="getBusinessPartnersFiltered" originalName="getBusinessPartners">
+            <Function.IncomingParameters>
+                <Parameter name="businessPartnerIds" nameMappedTo="businessPartnerIds">
+                    <Parameter.MappedTypeReference>
+                        <ConvertedTableReference dimension="1" name="java.lang.String[]">
+                            <ConvertedTableReference.LineType>
+                                <ConvertedTypeReference name="java.lang.String" originalType="java.lang.String">
+                                    <ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                                        <SoapExtensionConvertedTypeRef name="SoapExtensionConvertedTypeRef">
+                                        </SoapExtensionConvertedTypeRef>
+                                    </ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                                </ConvertedTypeReference>
+                            </ConvertedTableReference.LineType>
+                        </ConvertedTableReference>
+                    </Parameter.MappedTypeReference>
+                    <Parameter.SoapExtensionParameter>
+                        <SoapExtensionParameter name="SoapExtensionParameter">
+                        </SoapExtensionParameter>
+                    </Parameter.SoapExtensionParameter>
+                </Parameter>
+                <Parameter name="serviceGroup" nameMappedTo="serviceGroups">
+                    <Parameter.MappedTypeReference>
+                        <ConvertedTableReference dimension="1" name="java.lang.String[]">
+                            <ConvertedTableReference.LineType>
+                                <ConvertedTypeReference name="java.lang.String" originalType="java.lang.String">
+                                    <ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                                        <SoapExtensionConvertedTypeRef name="SoapExtensionConvertedTypeRef">
+                                        </SoapExtensionConvertedTypeRef>
+                                    </ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                                </ConvertedTypeReference>
+                            </ConvertedTableReference.LineType>
+                        </ConvertedTableReference>
+                    </Parameter.MappedTypeReference>
+                    <Parameter.SoapExtensionParameter>
+                        <SoapExtensionParameter name="SoapExtensionParameter">
+                        </SoapExtensionParameter>
+                    </Parameter.SoapExtensionParameter>
+                </Parameter>
+            </Function.IncomingParameters>
+            <Function.OutgoingParameters>
+                <Parameter name="Response" nameMappedTo="businessPartners">
+                    <Parameter.MappedTypeReference>
+                        <ComplexTypeReference name="de.enviam.em.services.common.businesspartner.BusinessPartner[]">
+                        </ComplexTypeReference>
+                    </Parameter.MappedTypeReference>
+                    <Parameter.SoapExtensionParameter>
+                        <SoapExtensionParameter name="SoapExtensionParameter">
+                        </SoapExtensionParameter>
+                    </Parameter.SoapExtensionParameter>
+                </Parameter>
+            </Function.OutgoingParameters>
+            <Function.SoapExtensionFunction>
+                <SoapExtensionFunction SOAPRequestName="getBusinessPartnersFiltered" SOAPResponseName="getBusinessPartnersFilteredResponse" name="SoapExtensionFunction" namespace="urn:ExampleWebServiceVi">
+                </SoapExtensionFunction>
+            </Function.SoapExtensionFunction>
+        </Function>
+        <Function isExposed="true" name="getContractAccountsForBusinessPartner(java.lang.String,java.lang.String[])" nameMappedTo="getContractAccountsForBusinessPartner" originalName="getContractAccountsForBusinessPartner">
+            <Function.IncomingParameters>
+                <Parameter name="businessPartnerId" nameMappedTo="businessPartnerId">
+                    <Parameter.MappedTypeReference>
+                        <ConvertedTypeReference name="java.lang.String" originalType="java.lang.String">
+                            <ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                                <SoapExtensionConvertedTypeRef name="SoapExtensionConvertedTypeRef">
+                                </SoapExtensionConvertedTypeRef>
+                            </ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                        </ConvertedTypeReference>
+                    </Parameter.MappedTypeReference>
+                    <Parameter.SoapExtensionParameter>
+                        <SoapExtensionParameter name="SoapExtensionParameter">
+                        </SoapExtensionParameter>
+                    </Parameter.SoapExtensionParameter>
+                </Parameter>
+                <Parameter name="serviceGroup" nameMappedTo="serviceGroups">
+                    <Parameter.MappedTypeReference>
+                        <ConvertedTableReference dimension="1" name="java.lang.String[]">
+                            <ConvertedTableReference.LineType>
+                                <ConvertedTypeReference name="java.lang.String" originalType="java.lang.String">
+                                    <ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                                        <SoapExtensionConvertedTypeRef name="SoapExtensionConvertedTypeRef">
+                                        </SoapExtensionConvertedTypeRef>
+                                    </ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                                </ConvertedTypeReference>
+                            </ConvertedTableReference.LineType>
+                        </ConvertedTableReference>
+                    </Parameter.MappedTypeReference>
+                    <Parameter.SoapExtensionParameter>
+                        <SoapExtensionParameter name="SoapExtensionParameter">
+                        </SoapExtensionParameter>
+                    </Parameter.SoapExtensionParameter>
+                </Parameter>
+            </Function.IncomingParameters>
+            <Function.OutgoingParameters>
+                <Parameter name="Response" nameMappedTo="contracts">
+                    <Parameter.MappedTypeReference>
+                        <ComplexTypeReference name="de.enviam.em.services.common.businesspartner.Contract[]">
+                        </ComplexTypeReference>
+                    </Parameter.MappedTypeReference>
+                    <Parameter.SoapExtensionParameter>
+                        <SoapExtensionParameter name="SoapExtensionParameter">
+                        </SoapExtensionParameter>
+                    </Parameter.SoapExtensionParameter>
+                </Parameter>
+            </Function.OutgoingParameters>
+            <Function.SoapExtensionFunction>
+                <SoapExtensionFunction SOAPRequestName="getContractAccountsForBusinessPartner" SOAPResponseName="getContractAccountsForBusinessPartnerResponse" name="SoapExtensionFunction" namespace="urn:ExampleWebServiceVi">
+                </SoapExtensionFunction>
+            </Function.SoapExtensionFunction>
+        </Function>
+    </VirtualInterface.Functions>
+    <VirtualInterface.SoapExtensionVI>
+        <SoapExtensionVI name="SoapExtensionVI">
+        </SoapExtensionVI>
+    </VirtualInterface.SoapExtensionVI>
+    <VirtualInterface.Types>
+        <Structure name="com.example.webservice.AddressData" parentTypeName="java.lang.Object">
+            <Type.Original>
+                <ComplexTypeReference name="com.example.webservice.AddressData">
+                </ComplexTypeReference>
+            </Type.Original>
+            <Type.SoapExtensionType>
+                <SoapExtensionType localname="AddressData" name="SoapExtensionType" namespace="urn:com.example.webservice">
+                </SoapExtensionType>
+            </Type.SoapExtensionType>
+            <Structure.Fields>
+                <Field fieldName="hausNummer" name="0">
+                    <Field.TypeReference>
+                        <ConvertedTypeReference name="java.lang.String" originalType="java.lang.String">
+                            <ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                                <SoapExtensionConvertedTypeRef name="SoapExtensionConvertedTypeRef">
+                                </SoapExtensionConvertedTypeRef>
+                            </ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                        </ConvertedTypeReference>
+                    </Field.TypeReference>
+                </Field>
+                <Field fieldName="hausNummerZusatz" name="1">
+                    <Field.TypeReference>
+                        <ConvertedTypeReference name="java.lang.String" originalType="java.lang.String">
+                            <ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                                <SoapExtensionConvertedTypeRef name="SoapExtensionConvertedTypeRef">
+                                </SoapExtensionConvertedTypeRef>
+                            </ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                        </ConvertedTypeReference>
+                    </Field.TypeReference>
+                </Field>
+                <Field fieldName="laenderSchluessel" name="2">
+                    <Field.TypeReference>
+                        <ConvertedTypeReference name="java.lang.String" originalType="java.lang.String">
+                            <ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                                <SoapExtensionConvertedTypeRef name="SoapExtensionConvertedTypeRef">
+                                </SoapExtensionConvertedTypeRef>
+                            </ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                        </ConvertedTypeReference>
+                    </Field.TypeReference>
+                </Field>
+                <Field fieldName="meterPoint" name="3">
+                    <Field.TypeReference>
+                        <ConvertedTypeReference name="java.lang.String" originalType="java.lang.String">
+                            <ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                                <SoapExtensionConvertedTypeRef name="SoapExtensionConvertedTypeRef">
+                                </SoapExtensionConvertedTypeRef>
+                            </ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                        </ConvertedTypeReference>
+                    </Field.TypeReference>
+                </Field>
+                <Field fieldName="ort" name="4">
+                    <Field.TypeReference>
+                        <ConvertedTypeReference name="java.lang.String" originalType="java.lang.String">
+                            <ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                                <SoapExtensionConvertedTypeRef name="SoapExtensionConvertedTypeRef">
+                                </SoapExtensionConvertedTypeRef>
+                            </ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                        </ConvertedTypeReference>
+                    </Field.TypeReference>
+                </Field>
+                <Field fieldName="ortsTeil" name="5">
+                    <Field.TypeReference>
+                        <ConvertedTypeReference name="java.lang.String" originalType="java.lang.String">
+                            <ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                                <SoapExtensionConvertedTypeRef name="SoapExtensionConvertedTypeRef">
+                                </SoapExtensionConvertedTypeRef>
+                            </ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                        </ConvertedTypeReference>
+                    </Field.TypeReference>
+                </Field>
+                <Field fieldName="plzPostfach" name="6">
+                    <Field.TypeReference>
+                        <ConvertedTypeReference name="java.lang.String" originalType="java.lang.String">
+                            <ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                                <SoapExtensionConvertedTypeRef name="SoapExtensionConvertedTypeRef">
+                                </SoapExtensionConvertedTypeRef>
+                            </ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                        </ConvertedTypeReference>
+                    </Field.TypeReference>
+                </Field>
+                <Field fieldName="postfach" name="7">
+                    <Field.TypeReference>
+                        <ConvertedTypeReference name="java.lang.String" originalType="java.lang.String">
+                            <ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                                <SoapExtensionConvertedTypeRef name="SoapExtensionConvertedTypeRef">
+                                </SoapExtensionConvertedTypeRef>
+                            </ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                        </ConvertedTypeReference>
+                    </Field.TypeReference>
+                </Field>
+                <Field fieldName="postleitzahl" name="8">
+                    <Field.TypeReference>
+                        <ConvertedTypeReference name="java.lang.String" originalType="java.lang.String">
+                            <ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                                <SoapExtensionConvertedTypeRef name="SoapExtensionConvertedTypeRef">
+                                </SoapExtensionConvertedTypeRef>
+                            </ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                        </ConvertedTypeReference>
+                    </Field.TypeReference>
+                </Field>
+                <Field fieldName="strasse" name="9">
+                    <Field.TypeReference>
+                        <ConvertedTypeReference name="java.lang.String" originalType="java.lang.String">
+                            <ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                                <SoapExtensionConvertedTypeRef name="SoapExtensionConvertedTypeRef">
+                                </SoapExtensionConvertedTypeRef>
+                            </ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                        </ConvertedTypeReference>
+                    </Field.TypeReference>
+                </Field>
+            </Structure.Fields>
+            <Structure.SoapExtensionStructure>
+                <SoapExtensionStructure name="SoapExtensionStructure">
+                </SoapExtensionStructure>
+            </Structure.SoapExtensionStructure>
+        </Structure>
+        <Structure name="de.enviam.em.services.common.ContactData" parentTypeName="java.lang.Object">
+            <Type.Original>
+                <ComplexTypeReference name="de.enviam.em.services.common.ContactData">
+                </ComplexTypeReference>
+            </Type.Original>
+            <Type.SoapExtensionType>
+                <SoapExtensionType localname="ContactData" name="SoapExtensionType" namespace="urn:de.enviam.em.services.common">
+                </SoapExtensionType>
+            </Type.SoapExtensionType>
+            <Structure.Fields>
+                <Field fieldName="eMail" name="0">
+                    <Field.TypeReference>
+                        <ConvertedTypeReference name="java.lang.String" originalType="java.lang.String">
+                            <ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                                <SoapExtensionConvertedTypeRef name="SoapExtensionConvertedTypeRef">
+                                </SoapExtensionConvertedTypeRef>
+                            </ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                        </ConvertedTypeReference>
+                    </Field.TypeReference>
+                </Field>
+                <Field fieldName="faxNumber" name="1">
+                    <Field.TypeReference>
+                        <ConvertedTypeReference name="java.lang.String" originalType="java.lang.String">
+                            <ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                                <SoapExtensionConvertedTypeRef name="SoapExtensionConvertedTypeRef">
+                                </SoapExtensionConvertedTypeRef>
+                            </ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                        </ConvertedTypeReference>
+                    </Field.TypeReference>
+                </Field>
+                <Field fieldName="mobile" name="2">
+                    <Field.TypeReference>
+                        <ConvertedTypeReference name="java.lang.String" originalType="java.lang.String">
+                            <ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                                <SoapExtensionConvertedTypeRef name="SoapExtensionConvertedTypeRef">
+                                </SoapExtensionConvertedTypeRef>
+                            </ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                        </ConvertedTypeReference>
+                    </Field.TypeReference>
+                </Field>
+                <Field fieldName="telephoneNumber" name="3">
+                    <Field.TypeReference>
+                        <ConvertedTypeReference name="java.lang.String" originalType="java.lang.String">
+                            <ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                                <SoapExtensionConvertedTypeRef name="SoapExtensionConvertedTypeRef">
+                                </SoapExtensionConvertedTypeRef>
+                            </ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                        </ConvertedTypeReference>
+                    </Field.TypeReference>
+                </Field>
+            </Structure.Fields>
+            <Structure.SoapExtensionStructure>
+                <SoapExtensionStructure name="SoapExtensionStructure">
+                </SoapExtensionStructure>
+            </Structure.SoapExtensionStructure>
+        </Structure>
+        <Structure name="de.enviam.em.services.common.Person" parentTypeName="de.enviam.em.services.common.Party">
+            <Type.Original>
+                <ComplexTypeReference name="de.enviam.em.services.common.Person">
+                </ComplexTypeReference>
+            </Type.Original>
+            <Type.SoapExtensionType>
+                <SoapExtensionType localname="Person" name="SoapExtensionType" namespace="urn:de.enviam.em.services.common">
+                </SoapExtensionType>
+            </Type.SoapExtensionType>
+            <Structure.Fields>
+                <Field fieldName="firstName" name="0">
+                    <Field.TypeReference>
+                        <ConvertedTypeReference name="java.lang.String" originalType="java.lang.String">
+                            <ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                                <SoapExtensionConvertedTypeRef name="SoapExtensionConvertedTypeRef">
+                                </SoapExtensionConvertedTypeRef>
+                            </ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                        </ConvertedTypeReference>
+                    </Field.TypeReference>
+                </Field>
+                <Field fieldName="lastName" name="1">
+                    <Field.TypeReference>
+                        <ConvertedTypeReference name="java.lang.String" originalType="java.lang.String">
+                            <ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                                <SoapExtensionConvertedTypeRef name="SoapExtensionConvertedTypeRef">
+                                </SoapExtensionConvertedTypeRef>
+                            </ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                        </ConvertedTypeReference>
+                    </Field.TypeReference>
+                </Field>
+                <Field fieldName="salutation" name="2">
+                    <Field.TypeReference>
+                        <ConvertedTypeReference name="java.lang.String" originalType="java.lang.String">
+                            <ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                                <SoapExtensionConvertedTypeRef name="SoapExtensionConvertedTypeRef">
+                                </SoapExtensionConvertedTypeRef>
+                            </ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                        </ConvertedTypeReference>
+                    </Field.TypeReference>
+                </Field>
+            </Structure.Fields>
+            <Structure.SoapExtensionStructure>
+                <SoapExtensionStructure name="SoapExtensionStructure">
+                </SoapExtensionStructure>
+            </Structure.SoapExtensionStructure>
+        </Structure>
+        <Structure name="de.enviam.em.services.common.businesspartner.AccountManagerData" parentTypeName="java.lang.Object">
+            <Type.Original>
+                <ComplexTypeReference name="de.enviam.em.services.common.businesspartner.AccountManagerData">
+                </ComplexTypeReference>
+            </Type.Original>
+            <Type.SoapExtensionType>
+                <SoapExtensionType localname="AccountManagerData" name="SoapExtensionType" namespace="urn:de.enviam.em.services.common.businesspartner">
+                </SoapExtensionType>
+            </Type.SoapExtensionType>
+            <Structure.Fields>
+                <Field fieldName="businessPartnerId" name="0">
+                    <Field.TypeReference>
+                        <ConvertedTypeReference name="java.lang.String" originalType="java.lang.String">
+                            <ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                                <SoapExtensionConvertedTypeRef name="SoapExtensionConvertedTypeRef">
+                                </SoapExtensionConvertedTypeRef>
+                            </ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                        </ConvertedTypeReference>
+                    </Field.TypeReference>
+                </Field>
+                <Field fieldName="energyManager" name="1">
+                    <Field.TypeReference>
+                        <ComplexTypeReference name="de.enviam.em.services.common.Person">
+                        </ComplexTypeReference>
+                    </Field.TypeReference>
+                </Field>
+                <Field fieldName="serviceManager" name="2">
+                    <Field.TypeReference>
+                        <ComplexTypeReference name="de.enviam.em.services.common.Person">
+                        </ComplexTypeReference>
+                    </Field.TypeReference>
+                </Field>
+            </Structure.Fields>
+            <Structure.SoapExtensionStructure>
+                <SoapExtensionStructure name="SoapExtensionStructure">
+                </SoapExtensionStructure>
+            </Structure.SoapExtensionStructure>
+        </Structure>
+        <Structure name="com.example.webservice.ContactPerson" parentTypeName="java.io.Serializable">
+            <Type.Original>
+                <ComplexTypeReference name="com.example.webservice.ContactPerson">
+                </ComplexTypeReference>
+            </Type.Original>
+            <Type.SoapExtensionType>
+                <SoapExtensionType localname="ContactPerson" name="SoapExtensionType" namespace="urn:com.example.webservice">
+                </SoapExtensionType>
+            </Type.SoapExtensionType>
+            <Structure.Fields>
+                <Field fieldName="person1" name="0">
+                    <Field.TypeReference>
+                        <ComplexTypeReference name="de.enviam.em.services.common.Person">
+                        </ComplexTypeReference>
+                    </Field.TypeReference>
+                </Field>
+                <Field fieldName="person2" name="1">
+                    <Field.TypeReference>
+                        <ComplexTypeReference name="de.enviam.em.services.common.Person">
+                        </ComplexTypeReference>
+                    </Field.TypeReference>
+                </Field>
+            </Structure.Fields>
+            <Structure.SoapExtensionStructure>
+                <SoapExtensionStructure name="SoapExtensionStructure">
+                </SoapExtensionStructure>
+            </Structure.SoapExtensionStructure>
+        </Structure>
+        <Elementary name="java.util.Date">
+            <Type.Original>
+                <ComplexTypeReference name="java.util.Date">
+                </ComplexTypeReference>
+            </Type.Original>
+            <Type.SoapExtensionType>
+                <SoapExtensionType localname="Date" name="SoapExtensionType" namespace="urn:java.util">
+                </SoapExtensionType>
+            </Type.SoapExtensionType>
+        </Elementary>
+        <Structure name="de.enviam.em.services.common.businesspartner.BusinessPartner" parentTypeName="java.lang.Object">
+            <Type.Original>
+                <ComplexTypeReference name="de.enviam.em.services.common.businesspartner.BusinessPartner">
+                </ComplexTypeReference>
+            </Type.Original>
+            <Type.SoapExtensionType>
+                <SoapExtensionType localname="BusinessPartner" name="SoapExtensionType" namespace="urn:de.enviam.em.services.common.businesspartner">
+                </SoapExtensionType>
+            </Type.SoapExtensionType>
+            <Structure.Fields>
+                <Field fieldName="additionalName" name="0">
+                    <Field.TypeReference>
+                        <ConvertedTypeReference name="java.lang.String" originalType="java.lang.String">
+                            <ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                                <SoapExtensionConvertedTypeRef name="SoapExtensionConvertedTypeRef">
+                                </SoapExtensionConvertedTypeRef>
+                            </ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                        </ConvertedTypeReference>
+                    </Field.TypeReference>
+                </Field>
+                <Field fieldName="businessPartnerType" name="1">
+                    <Field.TypeReference>
+                        <ConvertedTypeReference name="int" originalType="int">
+                            <ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                                <SoapExtensionConvertedTypeRef name="SoapExtensionConvertedTypeRef">
+                                </SoapExtensionConvertedTypeRef>
+                            </ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                        </ConvertedTypeReference>
+                    </Field.TypeReference>
+                </Field>
+                <Field fieldName="contactData" name="2">
+                    <Field.TypeReference>
+                        <ComplexTypeReference name="de.enviam.em.services.common.ContactData">
+                        </ComplexTypeReference>
+                    </Field.TypeReference>
+                </Field>
+                <Field fieldName="contracts" name="3">
+                    <Field.TypeReference>
+                        <ComplexTypeReference name="de.enviam.em.services.common.businesspartner.Contract[]">
+                        </ComplexTypeReference>
+                    </Field.TypeReference>
+                </Field>
+                <Field fieldName="firstName" name="4">
+                    <Field.TypeReference>
+                        <ConvertedTypeReference name="java.lang.String" originalType="java.lang.String">
+                            <ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                                <SoapExtensionConvertedTypeRef name="SoapExtensionConvertedTypeRef">
+                                </SoapExtensionConvertedTypeRef>
+                            </ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                        </ConvertedTypeReference>
+                    </Field.TypeReference>
+                </Field>
+                <Field fieldName="foundingDate" name="5">
+                    <Field.TypeReference>
+                        <ComplexTypeReference name="java.util.Date">
+                        </ComplexTypeReference>
+                    </Field.TypeReference>
+                </Field>
+                <Field fieldName="id" name="6">
+                    <Field.TypeReference>
+                        <ConvertedTypeReference name="java.lang.String" originalType="java.lang.String">
+                            <ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                                <SoapExtensionConvertedTypeRef name="SoapExtensionConvertedTypeRef">
+                                </SoapExtensionConvertedTypeRef>
+                            </ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                        </ConvertedTypeReference>
+                    </Field.TypeReference>
+                </Field>
+                <Field fieldName="physicalAddress" name="7">
+                    <Field.TypeReference>
+                        <ComplexTypeReference name="de.enviam.em.services.common.PhysicalAddress">
+                        </ComplexTypeReference>
+                    </Field.TypeReference>
+                </Field>
+                <Field fieldName="salutation" name="8">
+                    <Field.TypeReference>
+                        <ConvertedTypeReference name="java.lang.String" originalType="java.lang.String">
+                            <ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                                <SoapExtensionConvertedTypeRef name="SoapExtensionConvertedTypeRef">
+                                </SoapExtensionConvertedTypeRef>
+                            </ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                        </ConvertedTypeReference>
+                    </Field.TypeReference>
+                </Field>
+                <Field fieldName="shortName" name="9">
+                    <Field.TypeReference>
+                        <ConvertedTypeReference name="java.lang.String" originalType="java.lang.String">
+                            <ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                                <SoapExtensionConvertedTypeRef name="SoapExtensionConvertedTypeRef">
+                                </SoapExtensionConvertedTypeRef>
+                            </ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                        </ConvertedTypeReference>
+                    </Field.TypeReference>
+                </Field>
+                <Field fieldName="surName" name="10">
+                    <Field.TypeReference>
+                        <ConvertedTypeReference name="java.lang.String" originalType="java.lang.String">
+                            <ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                                <SoapExtensionConvertedTypeRef name="SoapExtensionConvertedTypeRef">
+                                </SoapExtensionConvertedTypeRef>
+                            </ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                        </ConvertedTypeReference>
+                    </Field.TypeReference>
+                </Field>
+                <Field fieldName="legalEntity" name="11">
+                    <Field.TypeReference>
+                        <ConvertedTypeReference name="java.lang.String" originalType="java.lang.String">
+                            <ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                                <SoapExtensionConvertedTypeRef name="SoapExtensionConvertedTypeRef">
+                                </SoapExtensionConvertedTypeRef>
+                            </ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                        </ConvertedTypeReference>
+                    </Field.TypeReference>
+                </Field>
+                <Field fieldName="academicTitle" name="12">
+                    <Field.TypeReference>
+                        <ConvertedTypeReference name="java.lang.String" originalType="java.lang.String">
+                            <ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                                <SoapExtensionConvertedTypeRef name="SoapExtensionConvertedTypeRef">
+                                </SoapExtensionConvertedTypeRef>
+                            </ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                        </ConvertedTypeReference>
+                    </Field.TypeReference>
+                </Field>
+            </Structure.Fields>
+            <Structure.SoapExtensionStructure>
+                <SoapExtensionStructure name="SoapExtensionStructure">
+                </SoapExtensionStructure>
+            </Structure.SoapExtensionStructure>
+        </Structure>
+        <Structure name="de.enviam.em.services.common.businesspartner.Contract" parentTypeName="java.lang.Object">
+            <Type.Original>
+                <ComplexTypeReference name="de.enviam.em.services.common.businesspartner.Contract">
+                </ComplexTypeReference>
+            </Type.Original>
+            <Type.SoapExtensionType>
+                <SoapExtensionType localname="Contract" name="SoapExtensionType" namespace="urn:de.enviam.em.services.common.businesspartner">
+                </SoapExtensionType>
+            </Type.SoapExtensionType>
+            <Structure.Fields>
+                <Field fieldName="contract" name="0">
+                    <Field.TypeReference>
+                        <ConvertedTypeReference name="java.lang.String" originalType="java.lang.String">
+                            <ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                                <SoapExtensionConvertedTypeRef name="SoapExtensionConvertedTypeRef">
+                                </SoapExtensionConvertedTypeRef>
+                            </ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                        </ConvertedTypeReference>
+                    </Field.TypeReference>
+                </Field>
+                <Field fieldName="contractAccount" name="1">
+                    <Field.TypeReference>
+                        <ConvertedTypeReference name="java.lang.String" originalType="java.lang.String">
+                            <ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                                <SoapExtensionConvertedTypeRef name="SoapExtensionConvertedTypeRef">
+                                </SoapExtensionConvertedTypeRef>
+                            </ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                        </ConvertedTypeReference>
+                    </Field.TypeReference>
+                </Field>
+                <Field fieldName="data" name="2">
+                    <Field.TypeReference>
+                        <ComplexTypeReference name="de.enviam.em.services.common.businesspartner.ContractData">
+                        </ComplexTypeReference>
+                    </Field.TypeReference>
+                </Field>
+                <Field fieldName="supplyBase" name="3">
+                    <Field.TypeReference>
+                        <ComplexTypeReference name="de.enviam.em.services.common.PhysicalAddress">
+                        </ComplexTypeReference>
+                    </Field.TypeReference>
+                </Field>
+                <Field fieldName="type" name="4">
+                    <Field.TypeReference>
+                        <ComplexTypeReference name="de.enviam.em.services.common.businesspartner.ContractType">
+                        </ComplexTypeReference>
+                    </Field.TypeReference>
+                </Field>
+                <Field fieldName="contractAccountType" name="5">
+                    <Field.TypeReference>
+                        <ComplexTypeReference name="de.enviam.em.services.common.businesspartner.ContractAccountType">
+                        </ComplexTypeReference>
+                    </Field.TypeReference>
+                </Field>
+                <Field fieldName="branche" name="6">
+                    <Field.TypeReference>
+                        <ConvertedTypeReference name="java.lang.String" originalType="java.lang.String">
+                            <ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                                <SoapExtensionConvertedTypeRef name="SoapExtensionConvertedTypeRef">
+                                </SoapExtensionConvertedTypeRef>
+                            </ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                        </ConvertedTypeReference>
+                    </Field.TypeReference>
+                </Field>
+            </Structure.Fields>
+            <Structure.SoapExtensionStructure>
+                <SoapExtensionStructure name="SoapExtensionStructure">
+                </SoapExtensionStructure>
+            </Structure.SoapExtensionStructure>
+        </Structure>
+        <Elementary name="java.lang.Object">
+            <Type.Original>
+                <ComplexTypeReference name="java.lang.Object">
+                </ComplexTypeReference>
+            </Type.Original>
+            <Type.SoapExtensionType>
+                <SoapExtensionType localname="Object" name="SoapExtensionType" namespace="urn:java.lang">
+                </SoapExtensionType>
+            </Type.SoapExtensionType>
+        </Elementary>
+        <Table name="com.example.webservice.ContactPerson[]">
+            <Type.Original>
+                <ComplexTypeReference name="com.example.webservice.ContactPerson[]">
+                </ComplexTypeReference>
+            </Type.Original>
+            <Type.SoapExtensionType>
+                <SoapExtensionType localname="ArrayOfContactPerson" name="SoapExtensionType" namespace="urn:com.example.webservice">
+                </SoapExtensionType>
+            </Type.SoapExtensionType>
+            <Table.LineType>
+                <ComplexTypeReference name="com.example.webservice.ContactPerson">
+                </ComplexTypeReference>
+            </Table.LineType>
+            <Table.SoapExtensionTable>
+                <SoapExtensionTable name="SoapExtensionTable">
+                </SoapExtensionTable>
+            </Table.SoapExtensionTable>
+        </Table>
+        <Structure name="de.enviam.em.services.common.Party" parentTypeName="java.lang.Object">
+            <Type.Original>
+                <ComplexTypeReference name="de.enviam.em.services.common.Party">
+                </ComplexTypeReference>
+            </Type.Original>
+            <Type.SoapExtensionType>
+                <SoapExtensionType localname="Party" name="SoapExtensionType" namespace="urn:de.enviam.em.services.common">
+                </SoapExtensionType>
+            </Type.SoapExtensionType>
+            <Structure.Fields>
+                <Field fieldName="address" name="0">
+                    <Field.TypeReference>
+                        <ComplexTypeReference name="de.enviam.em.services.common.PhysicalAddress">
+                        </ComplexTypeReference>
+                    </Field.TypeReference>
+                </Field>
+                <Field fieldName="contact" name="1">
+                    <Field.TypeReference>
+                        <ComplexTypeReference name="de.enviam.em.services.common.ContactData">
+                        </ComplexTypeReference>
+                    </Field.TypeReference>
+                </Field>
+                <Field fieldName="id" name="2">
+                    <Field.TypeReference>
+                        <ConvertedTypeReference name="java.lang.String" originalType="java.lang.String">
+                            <ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                                <SoapExtensionConvertedTypeRef name="SoapExtensionConvertedTypeRef">
+                                </SoapExtensionConvertedTypeRef>
+                            </ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                        </ConvertedTypeReference>
+                    </Field.TypeReference>
+                </Field>
+            </Structure.Fields>
+            <Structure.SoapExtensionStructure>
+                <SoapExtensionStructure name="SoapExtensionStructure">
+                </SoapExtensionStructure>
+            </Structure.SoapExtensionStructure>
+        </Structure>
+        <Elementary name="java.sql.Date">
+            <Type.Original>
+                <ComplexTypeReference name="java.sql.Date">
+                </ComplexTypeReference>
+            </Type.Original>
+            <Type.SoapExtensionType>
+                <SoapExtensionType localname="Date" name="SoapExtensionType" namespace="urn:java.sql">
+                </SoapExtensionType>
+            </Type.SoapExtensionType>
+        </Elementary>
+        <Structure name="de.enviam.em.services.common.businesspartner.ContractData" parentTypeName="java.lang.Object">
+            <Type.Original>
+                <ComplexTypeReference name="de.enviam.em.services.common.businesspartner.ContractData">
+                </ComplexTypeReference>
+            </Type.Original>
+            <Type.SoapExtensionType>
+                <SoapExtensionType localname="ContractData" name="SoapExtensionType" namespace="urn:de.enviam.em.services.common.businesspartner">
+                </SoapExtensionType>
+            </Type.SoapExtensionType>
+            <Structure.Fields>
+                <Field fieldName="contractAccountOld" name="0">
+                    <Field.TypeReference>
+                        <ConvertedTypeReference name="java.lang.String" originalType="java.lang.String">
+                            <ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                                <SoapExtensionConvertedTypeRef name="SoapExtensionConvertedTypeRef">
+                                </SoapExtensionConvertedTypeRef>
+                            </ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                        </ConvertedTypeReference>
+                    </Field.TypeReference>
+                </Field>
+                <Field fieldName="contractDesc" name="1">
+                    <Field.TypeReference>
+                        <ConvertedTypeReference name="java.lang.String" originalType="java.lang.String">
+                            <ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                                <SoapExtensionConvertedTypeRef name="SoapExtensionConvertedTypeRef">
+                                </SoapExtensionConvertedTypeRef>
+                            </ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                        </ConvertedTypeReference>
+                    </Field.TypeReference>
+                </Field>
+                <Field fieldName="contractEnd" name="2">
+                    <Field.TypeReference>
+                        <ComplexTypeReference name="java.sql.Date">
+                        </ComplexTypeReference>
+                    </Field.TypeReference>
+                </Field>
+                <Field fieldName="contractEndPlan" name="3">
+                    <Field.TypeReference>
+                        <ComplexTypeReference name="java.sql.Date">
+                        </ComplexTypeReference>
+                    </Field.TypeReference>
+                </Field>
+                <Field fieldName="contractStart" name="4">
+                    <Field.TypeReference>
+                        <ComplexTypeReference name="java.sql.Date">
+                        </ComplexTypeReference>
+                    </Field.TypeReference>
+                </Field>
+                <Field fieldName="contractStartDesire" name="5">
+                    <Field.TypeReference>
+                        <ComplexTypeReference name="java.sql.Date">
+                        </ComplexTypeReference>
+                    </Field.TypeReference>
+                </Field>
+                <Field fieldName="contractState" name="6">
+                    <Field.TypeReference>
+                        <ConvertedTypeReference name="java.lang.String" originalType="java.lang.String">
+                            <ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                                <SoapExtensionConvertedTypeRef name="SoapExtensionConvertedTypeRef">
+                                </SoapExtensionConvertedTypeRef>
+                            </ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                        </ConvertedTypeReference>
+                    </Field.TypeReference>
+                </Field>
+                <Field fieldName="frameContractNumber" name="7">
+                    <Field.TypeReference>
+                        <ConvertedTypeReference name="java.lang.String" originalType="java.lang.String">
+                            <ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                                <SoapExtensionConvertedTypeRef name="SoapExtensionConvertedTypeRef">
+                                </SoapExtensionConvertedTypeRef>
+                            </ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                        </ConvertedTypeReference>
+                    </Field.TypeReference>
+                </Field>
+                <Field fieldName="meterNumber" name="8">
+                    <Field.TypeReference>
+                        <ConvertedTypeReference name="java.lang.String" originalType="java.lang.String">
+                            <ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                                <SoapExtensionConvertedTypeRef name="SoapExtensionConvertedTypeRef">
+                                </SoapExtensionConvertedTypeRef>
+                            </ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                        </ConvertedTypeReference>
+                    </Field.TypeReference>
+                </Field>
+                <Field fieldName="procurementType" name="9">
+                    <Field.TypeReference>
+                        <ConvertedTypeReference name="java.lang.String" originalType="java.lang.String">
+                            <ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                                <SoapExtensionConvertedTypeRef name="SoapExtensionConvertedTypeRef">
+                                </SoapExtensionConvertedTypeRef>
+                            </ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                        </ConvertedTypeReference>
+                    </Field.TypeReference>
+                </Field>
+                <Field fieldName="productType" name="10">
+                    <Field.TypeReference>
+                        <ConvertedTypeReference name="java.lang.String" originalType="java.lang.String">
+                            <ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                                <SoapExtensionConvertedTypeRef name="SoapExtensionConvertedTypeRef">
+                                </SoapExtensionConvertedTypeRef>
+                            </ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                        </ConvertedTypeReference>
+                    </Field.TypeReference>
+                </Field>
+                <Field fieldName="providedPower" name="11">
+                    <Field.TypeReference>
+                        <ConvertedTypeReference name="double" originalType="double">
+                            <ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                                <SoapExtensionConvertedTypeRef name="SoapExtensionConvertedTypeRef">
+                                </SoapExtensionConvertedTypeRef>
+                            </ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                        </ConvertedTypeReference>
+                    </Field.TypeReference>
+                </Field>
+                <Field fieldName="supplyCapacity" name="12">
+                    <Field.TypeReference>
+                        <ConvertedTypeReference name="double" originalType="double">
+                            <ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                                <SoapExtensionConvertedTypeRef name="SoapExtensionConvertedTypeRef">
+                                </SoapExtensionConvertedTypeRef>
+                            </ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                        </ConvertedTypeReference>
+                    </Field.TypeReference>
+                </Field>
+                <Field fieldName="tariff" name="13">
+                    <Field.TypeReference>
+                        <ConvertedTypeReference name="java.lang.String" originalType="java.lang.String">
+                            <ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                                <SoapExtensionConvertedTypeRef name="SoapExtensionConvertedTypeRef">
+                                </SoapExtensionConvertedTypeRef>
+                            </ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                        </ConvertedTypeReference>
+                    </Field.TypeReference>
+                </Field>
+                <Field fieldName="internalMeterHash" name="14">
+                    <Field.TypeReference>
+                        <ConvertedTypeReference name="java.lang.String" originalType="java.lang.String">
+                            <ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                                <SoapExtensionConvertedTypeRef name="SoapExtensionConvertedTypeRef">
+                                </SoapExtensionConvertedTypeRef>
+                            </ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                        </ConvertedTypeReference>
+                    </Field.TypeReference>
+                </Field>
+                <Field fieldName="orderType" name="15">
+                    <Field.TypeReference>
+                        <ConvertedTypeReference name="java.lang.String" originalType="java.lang.String">
+                            <ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                                <SoapExtensionConvertedTypeRef name="SoapExtensionConvertedTypeRef">
+                                </SoapExtensionConvertedTypeRef>
+                            </ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                        </ConvertedTypeReference>
+                    </Field.TypeReference>
+                </Field>
+            </Structure.Fields>
+            <Structure.SoapExtensionStructure>
+                <SoapExtensionStructure name="SoapExtensionStructure">
+                </SoapExtensionStructure>
+            </Structure.SoapExtensionStructure>
+        </Structure>
+        <Structure name="de.enviam.em.services.common.businesspartner.ContractType" parentTypeName="java.lang.Object">
+            <Type.Original>
+                <ComplexTypeReference name="de.enviam.em.services.common.businesspartner.ContractType">
+                </ComplexTypeReference>
+            </Type.Original>
+            <Type.SoapExtensionType>
+                <SoapExtensionType localname="ContractType" name="SoapExtensionType" namespace="urn:de.enviam.em.services.common.businesspartner">
+                </SoapExtensionType>
+            </Type.SoapExtensionType>
+            <Structure.Fields>
+                <Field fieldName="type" name="0">
+                    <Field.TypeReference>
+                        <ConvertedTypeReference name="java.lang.String" originalType="java.lang.String">
+                            <ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                                <SoapExtensionConvertedTypeRef name="SoapExtensionConvertedTypeRef">
+                                </SoapExtensionConvertedTypeRef>
+                            </ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                        </ConvertedTypeReference>
+                    </Field.TypeReference>
+                </Field>
+            </Structure.Fields>
+            <Structure.SoapExtensionStructure>
+                <SoapExtensionStructure name="SoapExtensionStructure">
+                </SoapExtensionStructure>
+            </Structure.SoapExtensionStructure>
+        </Structure>
+        <Structure name="de.enviam.em.services.common.businesspartner.ContractAccountType" parentTypeName="java.lang.Object">
+            <Type.Original>
+                <ComplexTypeReference name="de.enviam.em.services.common.businesspartner.ContractAccountType">
+                </ComplexTypeReference>
+            </Type.Original>
+            <Type.SoapExtensionType>
+                <SoapExtensionType localname="ContractAccountType" name="SoapExtensionType" namespace="urn:de.enviam.em.services.common.businesspartner">
+                </SoapExtensionType>
+            </Type.SoapExtensionType>
+            <Structure.Fields>
+                <Field fieldName="key" name="0">
+                    <Field.TypeReference>
+                        <ConvertedTypeReference name="java.lang.String" originalType="java.lang.String">
+                            <ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                                <SoapExtensionConvertedTypeRef name="SoapExtensionConvertedTypeRef">
+                                </SoapExtensionConvertedTypeRef>
+                            </ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                        </ConvertedTypeReference>
+                    </Field.TypeReference>
+                </Field>
+                <Field fieldName="description" name="1">
+                    <Field.TypeReference>
+                        <ConvertedTypeReference name="java.lang.String" originalType="java.lang.String">
+                            <ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                                <SoapExtensionConvertedTypeRef name="SoapExtensionConvertedTypeRef">
+                                </SoapExtensionConvertedTypeRef>
+                            </ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                        </ConvertedTypeReference>
+                    </Field.TypeReference>
+                </Field>
+            </Structure.Fields>
+            <Structure.SoapExtensionStructure>
+                <SoapExtensionStructure name="SoapExtensionStructure">
+                </SoapExtensionStructure>
+            </Structure.SoapExtensionStructure>
+        </Structure>
+        <Elementary isAbstract="true" name="java.io.Serializable">
+            <Type.Original>
+                <ComplexTypeReference name="java.io.Serializable">
+                </ComplexTypeReference>
+            </Type.Original>
+            <Type.SoapExtensionType>
+                <SoapExtensionType localname="Serializable" name="SoapExtensionType" namespace="urn:java.io">
+                </SoapExtensionType>
+            </Type.SoapExtensionType>
+        </Elementary>
+        <Table name="de.enviam.em.services.common.businesspartner.AccountManagerData[]">
+            <Type.Original>
+                <ComplexTypeReference name="de.enviam.em.services.common.businesspartner.AccountManagerData[]">
+                </ComplexTypeReference>
+            </Type.Original>
+            <Type.SoapExtensionType>
+                <SoapExtensionType localname="ArrayOfAccountManagerData" name="SoapExtensionType" namespace="urn:de.enviam.em.services.common.businesspartner">
+                </SoapExtensionType>
+            </Type.SoapExtensionType>
+            <Table.LineType>
+                <ComplexTypeReference name="de.enviam.em.services.common.businesspartner.AccountManagerData">
+                </ComplexTypeReference>
+            </Table.LineType>
+            <Table.SoapExtensionTable>
+                <SoapExtensionTable name="SoapExtensionTable">
+                </SoapExtensionTable>
+            </Table.SoapExtensionTable>
+        </Table>
+        <Structure name="com.example.webservice.SupplyBase" parentTypeName="java.lang.Object">
+            <Type.Original>
+                <ComplexTypeReference name="com.example.webservice.SupplyBase">
+                </ComplexTypeReference>
+            </Type.Original>
+            <Type.SoapExtensionType>
+                <SoapExtensionType localname="SupplyBase" name="SoapExtensionType" namespace="urn:com.example.webservice">
+                </SoapExtensionType>
+            </Type.SoapExtensionType>
+            <Structure.Fields>
+                <Field fieldName="address" name="0">
+                    <Field.TypeReference>
+                        <ComplexTypeReference name="de.enviam.em.services.common.PhysicalAddress">
+                        </ComplexTypeReference>
+                    </Field.TypeReference>
+                </Field>
+                <Field fieldName="annualConsumption" name="1">
+                    <Field.TypeReference>
+                        <ConvertedTypeReference name="java.lang.String" originalType="java.lang.String">
+                            <ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                                <SoapExtensionConvertedTypeRef name="SoapExtensionConvertedTypeRef">
+                                </SoapExtensionConvertedTypeRef>
+                            </ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                        </ConvertedTypeReference>
+                    </Field.TypeReference>
+                </Field>
+                <Field fieldName="contractId" name="2">
+                    <Field.TypeReference>
+                        <ConvertedTypeReference name="java.lang.String" originalType="java.lang.String">
+                            <ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                                <SoapExtensionConvertedTypeRef name="SoapExtensionConvertedTypeRef">
+                                </SoapExtensionConvertedTypeRef>
+                            </ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                        </ConvertedTypeReference>
+                    </Field.TypeReference>
+                </Field>
+                <Field fieldName="meterNumber" name="3">
+                    <Field.TypeReference>
+                        <ConvertedTypeReference name="java.lang.String" originalType="java.lang.String">
+                            <ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                                <SoapExtensionConvertedTypeRef name="SoapExtensionConvertedTypeRef">
+                                </SoapExtensionConvertedTypeRef>
+                            </ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                        </ConvertedTypeReference>
+                    </Field.TypeReference>
+                </Field>
+                <Field fieldName="supplyStart" name="4">
+                    <Field.TypeReference>
+                        <ComplexTypeReference name="java.sql.Date">
+                        </ComplexTypeReference>
+                    </Field.TypeReference>
+                </Field>
+            </Structure.Fields>
+            <Structure.SoapExtensionStructure>
+                <SoapExtensionStructure name="SoapExtensionStructure">
+                </SoapExtensionStructure>
+            </Structure.SoapExtensionStructure>
+        </Structure>
+        <Table name="de.enviam.em.services.common.businesspartner.BusinessPartner[]">
+            <Type.Original>
+                <ComplexTypeReference name="de.enviam.em.services.common.businesspartner.BusinessPartner[]">
+                </ComplexTypeReference>
+            </Type.Original>
+            <Type.SoapExtensionType>
+                <SoapExtensionType localname="ArrayOfBusinessPartner" name="SoapExtensionType" namespace="urn:de.enviam.em.services.common.businesspartner">
+                </SoapExtensionType>
+            </Type.SoapExtensionType>
+            <Table.LineType>
+                <ComplexTypeReference name="de.enviam.em.services.common.businesspartner.BusinessPartner">
+                </ComplexTypeReference>
+            </Table.LineType>
+            <Table.SoapExtensionTable>
+                <SoapExtensionTable name="SoapExtensionTable">
+                </SoapExtensionTable>
+            </Table.SoapExtensionTable>
+        </Table>
+        <Structure name="de.enviam.em.services.common.PhysicalAddress" parentTypeName="java.lang.Object">
+            <Type.Original>
+                <ComplexTypeReference name="de.enviam.em.services.common.PhysicalAddress">
+                </ComplexTypeReference>
+            </Type.Original>
+            <Type.SoapExtensionType>
+                <SoapExtensionType localname="PhysicalAddress" name="SoapExtensionType" namespace="urn:de.enviam.em.services.common">
+                </SoapExtensionType>
+            </Type.SoapExtensionType>
+            <Structure.Fields>
+                <Field fieldName="additionalHouseId" name="0">
+                    <Field.TypeReference>
+                        <ConvertedTypeReference name="java.lang.String" originalType="java.lang.String">
+                            <ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                                <SoapExtensionConvertedTypeRef name="SoapExtensionConvertedTypeRef">
+                                </SoapExtensionConvertedTypeRef>
+                            </ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                        </ConvertedTypeReference>
+                    </Field.TypeReference>
+                </Field>
+                <Field fieldName="cityName" name="1">
+                    <Field.TypeReference>
+                        <ConvertedTypeReference name="java.lang.String" originalType="java.lang.String">
+                            <ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                                <SoapExtensionConvertedTypeRef name="SoapExtensionConvertedTypeRef">
+                                </SoapExtensionConvertedTypeRef>
+                            </ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                        </ConvertedTypeReference>
+                    </Field.TypeReference>
+                </Field>
+                <Field fieldName="districtName" name="2">
+                    <Field.TypeReference>
+                        <ConvertedTypeReference name="java.lang.String" originalType="java.lang.String">
+                            <ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                                <SoapExtensionConvertedTypeRef name="SoapExtensionConvertedTypeRef">
+                                </SoapExtensionConvertedTypeRef>
+                            </ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                        </ConvertedTypeReference>
+                    </Field.TypeReference>
+                </Field>
+                <Field fieldName="houseId" name="3">
+                    <Field.TypeReference>
+                        <ConvertedTypeReference name="java.lang.String" originalType="java.lang.String">
+                            <ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                                <SoapExtensionConvertedTypeRef name="SoapExtensionConvertedTypeRef">
+                                </SoapExtensionConvertedTypeRef>
+                            </ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                        </ConvertedTypeReference>
+                    </Field.TypeReference>
+                </Field>
+                <Field fieldName="streetName" name="4">
+                    <Field.TypeReference>
+                        <ConvertedTypeReference name="java.lang.String" originalType="java.lang.String">
+                            <ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                                <SoapExtensionConvertedTypeRef name="SoapExtensionConvertedTypeRef">
+                                </SoapExtensionConvertedTypeRef>
+                            </ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                        </ConvertedTypeReference>
+                    </Field.TypeReference>
+                </Field>
+                <Field fieldName="streetPostalCode" name="5">
+                    <Field.TypeReference>
+                        <ConvertedTypeReference name="java.lang.String" originalType="java.lang.String">
+                            <ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                                <SoapExtensionConvertedTypeRef name="SoapExtensionConvertedTypeRef">
+                                </SoapExtensionConvertedTypeRef>
+                            </ConvertedTypeReference.SoapExtensionConvertedTypeRef>
+                        </ConvertedTypeReference>
+                    </Field.TypeReference>
+                </Field>
+            </Structure.Fields>
+            <Structure.SoapExtensionStructure>
+                <SoapExtensionStructure name="SoapExtensionStructure">
+                </SoapExtensionStructure>
+            </Structure.SoapExtensionStructure>
+        </Structure>
+        <Table name="de.enviam.em.services.common.businesspartner.Contract[]">
+            <Type.Original>
+                <ComplexTypeReference name="de.enviam.em.services.common.businesspartner.Contract[]">
+                </ComplexTypeReference>
+            </Type.Original>
+            <Type.SoapExtensionType>
+                <SoapExtensionType localname="ArrayOfContract" name="SoapExtensionType" namespace="urn:de.enviam.em.services.common.businesspartner">
+                </SoapExtensionType>
+            </Type.SoapExtensionType>
+            <Table.LineType>
+                <ComplexTypeReference name="de.enviam.em.services.common.businesspartner.Contract">
+                </ComplexTypeReference>
+            </Table.LineType>
+            <Table.SoapExtensionTable>
+                <SoapExtensionTable name="SoapExtensionTable">
+                </SoapExtensionTable>
+            </Table.SoapExtensionTable>
+        </Table>
+    </VirtualInterface.Types>
+</VirtualInterface>
