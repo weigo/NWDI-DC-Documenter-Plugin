@@ -110,7 +110,7 @@
             <Function.OutgoingParameters>
                 <Parameter name="Response" nameMappedTo="accountManagers">
                     <Parameter.MappedTypeReference>
-                        <ComplexTypeReference name="de.enviam.em.services.common.businesspartner.AccountManagerData[]">
+                        <ComplexTypeReference name="com.example.webservice.AccountManagerData[]">
                         </ComplexTypeReference>
                     </Parameter.MappedTypeReference>
                     <Parameter.SoapExtensionParameter>
@@ -144,7 +144,7 @@
             <Function.OutgoingParameters>
                 <Parameter name="Response" nameMappedTo="Response">
                     <Parameter.MappedTypeReference>
-                        <ComplexTypeReference name="de.enviam.em.services.common.businesspartner.Contract[]">
+                        <ComplexTypeReference name="com.example.webservice.Contract[]">
                         </ComplexTypeReference>
                     </Parameter.MappedTypeReference>
                     <Parameter.SoapExtensionParameter>
@@ -216,7 +216,7 @@
             <Function.OutgoingParameters>
                 <Parameter name="Response" nameMappedTo="Response">
                     <Parameter.MappedTypeReference>
-                        <ComplexTypeReference name="de.enviam.em.services.common.businesspartner.BusinessPartner">
+                        <ComplexTypeReference name="com.example.webservice.BusinessPartner">
                         </ComplexTypeReference>
                     </Parameter.MappedTypeReference>
                     <Parameter.SoapExtensionParameter>
@@ -254,7 +254,7 @@
             <Function.OutgoingParameters>
                 <Parameter name="Response" nameMappedTo="businessPartners">
                     <Parameter.MappedTypeReference>
-                        <ComplexTypeReference name="de.enviam.em.services.common.businesspartner.BusinessPartner[]">
+                        <ComplexTypeReference name="com.example.webservice.BusinessPartner[]">
                         </ComplexTypeReference>
                     </Parameter.MappedTypeReference>
                     <Parameter.SoapExtensionParameter>
@@ -484,7 +484,7 @@
             <Function.OutgoingParameters>
                 <Parameter name="Response" nameMappedTo="businessPartners">
                     <Parameter.MappedTypeReference>
-                        <ComplexTypeReference name="de.enviam.em.services.common.businesspartner.BusinessPartner[]">
+                        <ComplexTypeReference name="com.example.webservice.BusinessPartner[]">
                         </ComplexTypeReference>
                     </Parameter.MappedTypeReference>
                     <Parameter.SoapExtensionParameter>
@@ -536,7 +536,7 @@
             <Function.OutgoingParameters>
                 <Parameter name="Response" nameMappedTo="contracts">
                     <Parameter.MappedTypeReference>
-                        <ComplexTypeReference name="de.enviam.em.services.common.businesspartner.Contract[]">
+                        <ComplexTypeReference name="com.example.webservice.Contract[]">
                         </ComplexTypeReference>
                     </Parameter.MappedTypeReference>
                     <Parameter.SoapExtensionParameter>
@@ -672,13 +672,13 @@
                 </SoapExtensionStructure>
             </Structure.SoapExtensionStructure>
         </Structure>
-        <Structure name="de.enviam.em.services.common.ContactData" parentTypeName="java.lang.Object">
+        <Structure name="com.example.webservice.ContactData" parentTypeName="java.lang.Object">
             <Type.Original>
-                <ComplexTypeReference name="de.enviam.em.services.common.ContactData">
+                <ComplexTypeReference name="com.example.webservice.ContactData">
                 </ComplexTypeReference>
             </Type.Original>
             <Type.SoapExtensionType>
-                <SoapExtensionType localname="ContactData" name="SoapExtensionType" namespace="urn:de.enviam.em.services.common">
+                <SoapExtensionType localname="ContactData" name="SoapExtensionType" namespace="urn:com.example.webservice">
                 </SoapExtensionType>
             </Type.SoapExtensionType>
             <Structure.Fields>
@@ -728,13 +728,13 @@
                 </SoapExtensionStructure>
             </Structure.SoapExtensionStructure>
         </Structure>
-        <Structure name="de.enviam.em.services.common.Person" parentTypeName="de.enviam.em.services.common.Party">
+        <Structure name="com.example.webservice.Person" parentTypeName="com.example.webservice.Party">
             <Type.Original>
-                <ComplexTypeReference name="de.enviam.em.services.common.Person">
+                <ComplexTypeReference name="com.example.webservice.Person">
                 </ComplexTypeReference>
             </Type.Original>
             <Type.SoapExtensionType>
-                <SoapExtensionType localname="Person" name="SoapExtensionType" namespace="urn:de.enviam.em.services.common">
+                <SoapExtensionType localname="Person" name="SoapExtensionType" namespace="urn:com.example.webservice">
                 </SoapExtensionType>
             </Type.SoapExtensionType>
             <Structure.Fields>
@@ -774,13 +774,13 @@
                 </SoapExtensionStructure>
             </Structure.SoapExtensionStructure>
         </Structure>
-        <Structure name="de.enviam.em.services.common.businesspartner.AccountManagerData" parentTypeName="java.lang.Object">
+        <Structure name="com.example.webservice.AccountManagerData" parentTypeName="java.lang.Object">
             <Type.Original>
-                <ComplexTypeReference name="de.enviam.em.services.common.businesspartner.AccountManagerData">
+                <ComplexTypeReference name="com.example.webservice.AccountManagerData">
                 </ComplexTypeReference>
             </Type.Original>
             <Type.SoapExtensionType>
-                <SoapExtensionType localname="AccountManagerData" name="SoapExtensionType" namespace="urn:de.enviam.em.services.common.businesspartner">
+                <SoapExtensionType localname="AccountManagerData" name="SoapExtensionType" namespace="urn:com.example.webservice">
                 </SoapExtensionType>
             </Type.SoapExtensionType>
             <Structure.Fields>
@@ -796,13 +796,13 @@
                 </Field>
                 <Field fieldName="energyManager" name="1">
                     <Field.TypeReference>
-                        <ComplexTypeReference name="de.enviam.em.services.common.Person">
+                        <ComplexTypeReference name="com.example.webservice.Person">
                         </ComplexTypeReference>
                     </Field.TypeReference>
                 </Field>
                 <Field fieldName="serviceManager" name="2">
                     <Field.TypeReference>
-                        <ComplexTypeReference name="de.enviam.em.services.common.Person">
+                        <ComplexTypeReference name="com.example.webservice.Person">
                         </ComplexTypeReference>
                     </Field.TypeReference>
                 </Field>
@@ -824,13 +824,13 @@
             <Structure.Fields>
                 <Field fieldName="person1" name="0">
                     <Field.TypeReference>
-                        <ComplexTypeReference name="de.enviam.em.services.common.Person">
+                        <ComplexTypeReference name="com.example.webservice.Person">
                         </ComplexTypeReference>
                     </Field.TypeReference>
                 </Field>
                 <Field fieldName="person2" name="1">
                     <Field.TypeReference>
-                        <ComplexTypeReference name="de.enviam.em.services.common.Person">
+                        <ComplexTypeReference name="com.example.webservice.Person">
                         </ComplexTypeReference>
                     </Field.TypeReference>
                 </Field>
@@ -850,13 +850,13 @@
                 </SoapExtensionType>
             </Type.SoapExtensionType>
         </Elementary>
-        <Structure name="de.enviam.em.services.common.businesspartner.BusinessPartner" parentTypeName="java.lang.Object">
+        <Structure name="com.example.webservice.BusinessPartner" parentTypeName="java.lang.Object">
             <Type.Original>
-                <ComplexTypeReference name="de.enviam.em.services.common.businesspartner.BusinessPartner">
+                <ComplexTypeReference name="com.example.webservice.BusinessPartner">
                 </ComplexTypeReference>
             </Type.Original>
             <Type.SoapExtensionType>
-                <SoapExtensionType localname="BusinessPartner" name="SoapExtensionType" namespace="urn:de.enviam.em.services.common.businesspartner">
+                <SoapExtensionType localname="BusinessPartner" name="SoapExtensionType" namespace="urn:com.example.webservice">
                 </SoapExtensionType>
             </Type.SoapExtensionType>
             <Structure.Fields>
@@ -882,13 +882,13 @@
                 </Field>
                 <Field fieldName="contactData" name="2">
                     <Field.TypeReference>
-                        <ComplexTypeReference name="de.enviam.em.services.common.ContactData">
+                        <ComplexTypeReference name="com.example.webservice.ContactData">
                         </ComplexTypeReference>
                     </Field.TypeReference>
                 </Field>
                 <Field fieldName="contracts" name="3">
                     <Field.TypeReference>
-                        <ComplexTypeReference name="de.enviam.em.services.common.businesspartner.Contract[]">
+                        <ComplexTypeReference name="com.example.webservice.Contract[]">
                         </ComplexTypeReference>
                     </Field.TypeReference>
                 </Field>
@@ -920,7 +920,7 @@
                 </Field>
                 <Field fieldName="physicalAddress" name="7">
                     <Field.TypeReference>
-                        <ComplexTypeReference name="de.enviam.em.services.common.PhysicalAddress">
+                        <ComplexTypeReference name="com.example.webservice.PhysicalAddress">
                         </ComplexTypeReference>
                     </Field.TypeReference>
                 </Field>
@@ -980,13 +980,13 @@
                 </SoapExtensionStructure>
             </Structure.SoapExtensionStructure>
         </Structure>
-        <Structure name="de.enviam.em.services.common.businesspartner.Contract" parentTypeName="java.lang.Object">
+        <Structure name="com.example.webservice.Contract" parentTypeName="java.lang.Object">
             <Type.Original>
-                <ComplexTypeReference name="de.enviam.em.services.common.businesspartner.Contract">
+                <ComplexTypeReference name="com.example.webservice.Contract">
                 </ComplexTypeReference>
             </Type.Original>
             <Type.SoapExtensionType>
-                <SoapExtensionType localname="Contract" name="SoapExtensionType" namespace="urn:de.enviam.em.services.common.businesspartner">
+                <SoapExtensionType localname="Contract" name="SoapExtensionType" namespace="urn:com.example.webservice">
                 </SoapExtensionType>
             </Type.SoapExtensionType>
             <Structure.Fields>
@@ -1012,25 +1012,25 @@
                 </Field>
                 <Field fieldName="data" name="2">
                     <Field.TypeReference>
-                        <ComplexTypeReference name="de.enviam.em.services.common.businesspartner.ContractData">
+                        <ComplexTypeReference name="com.example.webservice.ContractData">
                         </ComplexTypeReference>
                     </Field.TypeReference>
                 </Field>
                 <Field fieldName="supplyBase" name="3">
                     <Field.TypeReference>
-                        <ComplexTypeReference name="de.enviam.em.services.common.PhysicalAddress">
+                        <ComplexTypeReference name="com.example.webservice.PhysicalAddress">
                         </ComplexTypeReference>
                     </Field.TypeReference>
                 </Field>
                 <Field fieldName="type" name="4">
                     <Field.TypeReference>
-                        <ComplexTypeReference name="de.enviam.em.services.common.businesspartner.ContractType">
+                        <ComplexTypeReference name="com.example.webservice.ContractType">
                         </ComplexTypeReference>
                     </Field.TypeReference>
                 </Field>
                 <Field fieldName="contractAccountType" name="5">
                     <Field.TypeReference>
-                        <ComplexTypeReference name="de.enviam.em.services.common.businesspartner.ContractAccountType">
+                        <ComplexTypeReference name="com.example.webservice.ContractAccountType">
                         </ComplexTypeReference>
                     </Field.TypeReference>
                 </Field>
@@ -1078,25 +1078,25 @@
                 </SoapExtensionTable>
             </Table.SoapExtensionTable>
         </Table>
-        <Structure name="de.enviam.em.services.common.Party" parentTypeName="java.lang.Object">
+        <Structure name="com.example.webservice.Party" parentTypeName="java.lang.Object">
             <Type.Original>
-                <ComplexTypeReference name="de.enviam.em.services.common.Party">
+                <ComplexTypeReference name="com.example.webservice.Party">
                 </ComplexTypeReference>
             </Type.Original>
             <Type.SoapExtensionType>
-                <SoapExtensionType localname="Party" name="SoapExtensionType" namespace="urn:de.enviam.em.services.common">
+                <SoapExtensionType localname="Party" name="SoapExtensionType" namespace="urn:com.example.webservice">
                 </SoapExtensionType>
             </Type.SoapExtensionType>
             <Structure.Fields>
                 <Field fieldName="address" name="0">
                     <Field.TypeReference>
-                        <ComplexTypeReference name="de.enviam.em.services.common.PhysicalAddress">
+                        <ComplexTypeReference name="com.example.webservice.PhysicalAddress">
                         </ComplexTypeReference>
                     </Field.TypeReference>
                 </Field>
                 <Field fieldName="contact" name="1">
                     <Field.TypeReference>
-                        <ComplexTypeReference name="de.enviam.em.services.common.ContactData">
+                        <ComplexTypeReference name="com.example.webservice.ContactData">
                         </ComplexTypeReference>
                     </Field.TypeReference>
                 </Field>
@@ -1126,13 +1126,13 @@
                 </SoapExtensionType>
             </Type.SoapExtensionType>
         </Elementary>
-        <Structure name="de.enviam.em.services.common.businesspartner.ContractData" parentTypeName="java.lang.Object">
+        <Structure name="com.example.webservice.ContractData" parentTypeName="java.lang.Object">
             <Type.Original>
-                <ComplexTypeReference name="de.enviam.em.services.common.businesspartner.ContractData">
+                <ComplexTypeReference name="com.example.webservice.ContractData">
                 </ComplexTypeReference>
             </Type.Original>
             <Type.SoapExtensionType>
-                <SoapExtensionType localname="ContractData" name="SoapExtensionType" namespace="urn:de.enviam.em.services.common.businesspartner">
+                <SoapExtensionType localname="ContractData" name="SoapExtensionType" namespace="urn:com.example.webservice">
                 </SoapExtensionType>
             </Type.SoapExtensionType>
             <Structure.Fields>
@@ -1286,13 +1286,13 @@
                 </SoapExtensionStructure>
             </Structure.SoapExtensionStructure>
         </Structure>
-        <Structure name="de.enviam.em.services.common.businesspartner.ContractType" parentTypeName="java.lang.Object">
+        <Structure name="com.example.webservice.ContractType" parentTypeName="java.lang.Object">
             <Type.Original>
-                <ComplexTypeReference name="de.enviam.em.services.common.businesspartner.ContractType">
+                <ComplexTypeReference name="com.example.webservice.ContractType">
                 </ComplexTypeReference>
             </Type.Original>
             <Type.SoapExtensionType>
-                <SoapExtensionType localname="ContractType" name="SoapExtensionType" namespace="urn:de.enviam.em.services.common.businesspartner">
+                <SoapExtensionType localname="ContractType" name="SoapExtensionType" namespace="urn:com.example.webservice">
                 </SoapExtensionType>
             </Type.SoapExtensionType>
             <Structure.Fields>
@@ -1312,13 +1312,13 @@
                 </SoapExtensionStructure>
             </Structure.SoapExtensionStructure>
         </Structure>
-        <Structure name="de.enviam.em.services.common.businesspartner.ContractAccountType" parentTypeName="java.lang.Object">
+        <Structure name="com.example.webservice.ContractAccountType" parentTypeName="java.lang.Object">
             <Type.Original>
-                <ComplexTypeReference name="de.enviam.em.services.common.businesspartner.ContractAccountType">
+                <ComplexTypeReference name="com.example.webservice.ContractAccountType">
                 </ComplexTypeReference>
             </Type.Original>
             <Type.SoapExtensionType>
-                <SoapExtensionType localname="ContractAccountType" name="SoapExtensionType" namespace="urn:de.enviam.em.services.common.businesspartner">
+                <SoapExtensionType localname="ContractAccountType" name="SoapExtensionType" namespace="urn:com.example.webservice">
                 </SoapExtensionType>
             </Type.SoapExtensionType>
             <Structure.Fields>
@@ -1358,17 +1358,17 @@
                 </SoapExtensionType>
             </Type.SoapExtensionType>
         </Elementary>
-        <Table name="de.enviam.em.services.common.businesspartner.AccountManagerData[]">
+        <Table name="com.example.webservice.AccountManagerData[]">
             <Type.Original>
-                <ComplexTypeReference name="de.enviam.em.services.common.businesspartner.AccountManagerData[]">
+                <ComplexTypeReference name="com.example.webservice.AccountManagerData[]">
                 </ComplexTypeReference>
             </Type.Original>
             <Type.SoapExtensionType>
-                <SoapExtensionType localname="ArrayOfAccountManagerData" name="SoapExtensionType" namespace="urn:de.enviam.em.services.common.businesspartner">
+                <SoapExtensionType localname="ArrayOfAccountManagerData" name="SoapExtensionType" namespace="urn:com.example.webservice">
                 </SoapExtensionType>
             </Type.SoapExtensionType>
             <Table.LineType>
-                <ComplexTypeReference name="de.enviam.em.services.common.businesspartner.AccountManagerData">
+                <ComplexTypeReference name="com.example.webservice.AccountManagerData">
                 </ComplexTypeReference>
             </Table.LineType>
             <Table.SoapExtensionTable>
@@ -1388,7 +1388,7 @@
             <Structure.Fields>
                 <Field fieldName="address" name="0">
                     <Field.TypeReference>
-                        <ComplexTypeReference name="de.enviam.em.services.common.PhysicalAddress">
+                        <ComplexTypeReference name="com.example.webservice.PhysicalAddress">
                         </ComplexTypeReference>
                     </Field.TypeReference>
                 </Field>
@@ -1434,17 +1434,17 @@
                 </SoapExtensionStructure>
             </Structure.SoapExtensionStructure>
         </Structure>
-        <Table name="de.enviam.em.services.common.businesspartner.BusinessPartner[]">
+        <Table name="com.example.webservice.BusinessPartner[]">
             <Type.Original>
-                <ComplexTypeReference name="de.enviam.em.services.common.businesspartner.BusinessPartner[]">
+                <ComplexTypeReference name="com.example.webservice.BusinessPartner[]">
                 </ComplexTypeReference>
             </Type.Original>
             <Type.SoapExtensionType>
-                <SoapExtensionType localname="ArrayOfBusinessPartner" name="SoapExtensionType" namespace="urn:de.enviam.em.services.common.businesspartner">
+                <SoapExtensionType localname="ArrayOfBusinessPartner" name="SoapExtensionType" namespace="urn:com.example.webservice">
                 </SoapExtensionType>
             </Type.SoapExtensionType>
             <Table.LineType>
-                <ComplexTypeReference name="de.enviam.em.services.common.businesspartner.BusinessPartner">
+                <ComplexTypeReference name="com.example.webservice.BusinessPartner">
                 </ComplexTypeReference>
             </Table.LineType>
             <Table.SoapExtensionTable>
@@ -1452,13 +1452,13 @@
                 </SoapExtensionTable>
             </Table.SoapExtensionTable>
         </Table>
-        <Structure name="de.enviam.em.services.common.PhysicalAddress" parentTypeName="java.lang.Object">
+        <Structure name="com.example.webservice.PhysicalAddress" parentTypeName="java.lang.Object">
             <Type.Original>
-                <ComplexTypeReference name="de.enviam.em.services.common.PhysicalAddress">
+                <ComplexTypeReference name="com.example.webservice.PhysicalAddress">
                 </ComplexTypeReference>
             </Type.Original>
             <Type.SoapExtensionType>
-                <SoapExtensionType localname="PhysicalAddress" name="SoapExtensionType" namespace="urn:de.enviam.em.services.common">
+                <SoapExtensionType localname="PhysicalAddress" name="SoapExtensionType" namespace="urn:com.example.webservice">
                 </SoapExtensionType>
             </Type.SoapExtensionType>
             <Structure.Fields>
@@ -1528,17 +1528,17 @@
                 </SoapExtensionStructure>
             </Structure.SoapExtensionStructure>
         </Structure>
-        <Table name="de.enviam.em.services.common.businesspartner.Contract[]">
+        <Table name="com.example.webservice.Contract[]">
             <Type.Original>
-                <ComplexTypeReference name="de.enviam.em.services.common.businesspartner.Contract[]">
+                <ComplexTypeReference name="com.example.webservice.Contract[]">
                 </ComplexTypeReference>
             </Type.Original>
             <Type.SoapExtensionType>
-                <SoapExtensionType localname="ArrayOfContract" name="SoapExtensionType" namespace="urn:de.enviam.em.services.common.businesspartner">
+                <SoapExtensionType localname="ArrayOfContract" name="SoapExtensionType" namespace="urn:com.example.webservice">
                 </SoapExtensionType>
             </Type.SoapExtensionType>
             <Table.LineType>
-                <ComplexTypeReference name="de.enviam.em.services.common.businesspartner.Contract">
+                <ComplexTypeReference name="com.example.webservice.Contract">
                 </ComplexTypeReference>
             </Table.LineType>
             <Table.SoapExtensionTable>
