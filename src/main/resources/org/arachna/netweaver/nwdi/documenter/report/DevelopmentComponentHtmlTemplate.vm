@@ -20,10 +20,8 @@
 #set ($imageSuffix = '.svg')
 
 <img src="images/$component.getVendor()~$component.getName().replace('/', '~')$imageSuffix">
-#set ($message = "")
-#set ($varargs = [$component.getName()])
 <table>
-  <caption>$message.format($bundle.getString("usedComponents.table.caption"), $varargs)</caption>
+  <caption>$bundleHelper.render("usedComponents.table.caption", $component.getName())</caption>
   <thead>
   <th>$bundle.getString("developmentComponent")</th>
   <th>$bundle.getString("dcType")</th>
@@ -43,7 +41,7 @@
       <td>$pp.getName()</td>
       <td>#if($pp.isAtBuildTime())x#end</td>
       <td>#if($pp.isAtRunTime())x#end</td>
-      <td>$usedDC.getCompartment().getSoftwareComponent()</td>
+      <td>#if (!$bundleHelper.isNull($usedDC.getCompartment()))$usedDC.getCompartment().getSoftwareComponent()#end</td>
     </tr>
 #end  
   </tbody>
@@ -51,14 +49,22 @@
 #end
 
 #if (!$component.getUsingDevelopmentComponents().isEmpty())
-<h2>$StringClass.format($bundle.getString("usingComponents"), $component.getName())</h2>
+<h2>$bundleHelper.render("usingComponents", $component.getName())</h2>
+
+#set ($suffix = ".html")
+<ul>
+#foreach($usingDC in $component.getUsingDevelopmentComponents())
+  <li><a href="../$usingDC.getCompartment().getSoftwareComponent()/$usingDC.getVendor()~$usingDC.getName().replace('/', '~')$suffix">$usingDC.getName()</a></li>
+#end
+</ul>
 
 <img src="images/$component.getVendor()~$component.getName().replace('/', '~')-usingDCs.svg">
 #end
 
 #if (!$component.getPublicParts().isEmpty())
+<h2>$bundle.getString("publicParts.section.caption")</h2>
 <table>
-  <caption>$formatter.format($bundle.getString("publicParts.table.caption"), $component.getName())</caption>
+  <caption>$bundleHelper.render("publicParts.table.caption",$component.getName())</caption>
   <thead>
   <th>$bundle.getString("PublicPartName")</th>
   <th>$bundle.getString("ppType")</th>

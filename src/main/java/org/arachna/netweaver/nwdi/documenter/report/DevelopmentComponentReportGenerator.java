@@ -8,8 +8,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Writer;
-import java.util.Formatter;
 import java.util.Locale;
+import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 import org.apache.velocity.VelocityContext;
@@ -81,11 +81,37 @@ public final class DevelopmentComponentReportGenerator {
         context.put("component", component);
         context.put("bundle", bundle);
         context.put("usedDCs", component.getUsedDevelopmentComponents());
-        context.put("formatter", new Formatter(locale));
+        context.put("bundleHelper", new BundleHelper(bundle, locale));
         context.put("dcFactory", dcFactory);
-        context.put("StringClass", "");
         velocityEngine.evaluate(context, writer, "", getTemplateReader());
         writer.flush();
+    }
+
+    public class BundleHelper {
+        private final ResourceBundle bundle;
+        private final Locale locale;
+
+        BundleHelper(final ResourceBundle bundle, final Locale locale) {
+            this.bundle = bundle;
+            this.locale = locale;
+        }
+
+        public String render(String key, String arg) {
+            String message = key;
+
+            try {
+                message = bundle.getString(key);
+            }
+            catch (MissingResourceException mre) {
+                // use key as message format...
+            }
+
+            return String.format(locale, message, arg);
+        }
+
+        public boolean isNull(Object value) {
+            return value == null;
+        }
     }
 
     /**

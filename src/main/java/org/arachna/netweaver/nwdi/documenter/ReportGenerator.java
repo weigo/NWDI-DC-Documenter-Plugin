@@ -127,6 +127,14 @@ public class ReportGenerator {
         return result;
     }
 
+    // <apply executable="dot" dest="${reports.dir}">
+    // <arg value="-Tsvg" />
+    // <arg value="-o" />
+    // <targetfile />
+    // <srcfile />
+    // <fileset dir="${reports.dir}" includes="**/*.dot" />
+    // <mapper type="glob" from="*.dot" to="*.svg" />
+    // </apply>
     private void duration(final PrintStream logger, final long start) {
         logger.append(String.format("(%f sec.).\n", (System.currentTimeMillis() - start) / 1000f));
     }
@@ -201,7 +209,7 @@ public class ReportGenerator {
 //        String dot = "/usr/bin/dot";
         String dot = "/ZusatzSW/GraphViz/bin/dot.exe";
         PrintStream s = new PrintStream(new File("/tmp/report.log"));
-        new ReportGenerator(s, reader.getDevelopmentConfiguration(), dcFactory, "/tmp/enviaMPR",
+        new ReportGenerator(System.err, reader.getDevelopmentConfiguration(), dcFactory, "/tmp/enviaMPR",
             dot, Pattern.compile("sap\\.com")).execute();
         s.close();
     }

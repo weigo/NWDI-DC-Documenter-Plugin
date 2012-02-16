@@ -36,6 +36,7 @@ th {
 	PADDING-BOTTOM: 2px;
 	PADDING-TOP: 2px;
 	text-align: left;
+	vertical-align: top;
 	BORDER: 1px solid black;
 	BACKGROUND-COLOR: #5E7CB1;
 	color: White;
@@ -47,6 +48,7 @@ td {
 	PADDING-BOTTOM: 2px;
 	PADDING-TOP: 2px;
 	text-align: left;
+	vertical-align: top;
 	BORDER: 1px solid black;
 }
 
