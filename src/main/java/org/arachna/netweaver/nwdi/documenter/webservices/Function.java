@@ -28,9 +28,14 @@ public class Function {
     private String originalName;
 
     /**
+     * description of method.
+     */
+    private String description = "";
+
+    /**
      * collection of parameters.
      */
-    private Collection<Parameter> parameters = new ArrayList<Parameter>();
+    private final Collection<Parameter> parameters = new ArrayList<Parameter>();
 
     /**
      * the response to the web service call.
@@ -48,7 +53,7 @@ public class Function {
      * @param name
      *            the name to set
      */
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = name;
     }
 
@@ -63,7 +68,7 @@ public class Function {
      * @param mappedName
      *            the mappedName to set
      */
-    public void setMappedName(String mappedName) {
+    public void setMappedName(final String mappedName) {
         this.mappedName = mappedName;
     }
 
@@ -78,7 +83,7 @@ public class Function {
      * @param originalName
      *            the originalName to set
      */
-    public void setOriginalName(String originalName) {
+    public void setOriginalName(final String originalName) {
         this.originalName = originalName;
     }
 
@@ -95,8 +100,8 @@ public class Function {
      * @param parameter
      *            the parameter to add.
      */
-    public void addParameter(Parameter parameter) {
-        this.parameters.add(parameter);
+    public void addParameter(final Parameter parameter) {
+        parameters.add(parameter);
     }
 
     /**
@@ -114,7 +119,26 @@ public class Function {
      * @param response
      *            the response of this web service method call to set.
      */
-    public void setResponse(Response response) {
+    public void setResponse(final Response response) {
         this.response = response;
+    }
+
+    /**
+     * Returns the methods description.
+     * 
+     * @return the description
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * Set this methods description.
+     * 
+     * @param description
+     *            the description to set
+     */
+    public void setDescription(final String description) {
+        this.description = description;
     }
 }

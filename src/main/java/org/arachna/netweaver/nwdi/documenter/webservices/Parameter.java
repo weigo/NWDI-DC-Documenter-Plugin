@@ -20,6 +20,11 @@ public class Parameter {
     private String mappedName;
 
     /**
+     * description of a parameter.
+     */
+    private String description = "";
+
+    /**
      * the type of this parameter.
      */
     private Type type;
@@ -35,7 +40,7 @@ public class Parameter {
      * @param name
      *            the name to set
      */
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = name;
     }
 
@@ -50,7 +55,7 @@ public class Parameter {
      * @param mappedName
      *            the mappedName to set
      */
-    public void setMappedName(String mappedName) {
+    public void setMappedName(final String mappedName) {
         this.mappedName = mappedName;
     }
 
@@ -65,7 +70,22 @@ public class Parameter {
      * @param type
      *            the type to set
      */
-    public void setType(Type type) {
+    public void setType(final Type type) {
         this.type = type;
+    }
+
+    /**
+     * @return the description
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * @param description
+     *            the description to set
+     */
+    public void setDescription(final String description) {
+        this.description = description;
     }
 }
