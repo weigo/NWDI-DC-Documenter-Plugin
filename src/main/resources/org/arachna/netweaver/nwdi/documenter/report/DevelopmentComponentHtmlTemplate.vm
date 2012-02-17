@@ -83,5 +83,34 @@
   </tbody>
 </table>
 #end
+
+#if (!$webServices.isEmpty())
+<h2>$bundle.getString("WebServices")</h2>
+#foreach($service in $webServices)
+  <h3>$service.getName()</h3>
+  <p>$bundle.getString("Endpoint"): <span class="code">$service.getEndPointClass()</span></p>
+<table>
+  <caption>$bundleHelper.render("methods.table.caption",$component.getName())</caption>
+  <thead>
+  <th>$bundle.getString("signature")</th>
+  <th>$bundle.getString("originalName")</th>
+  <th>$bundle.getString("mappedName")</th>
+  <th>$bundle.getString("caption")</th>
+  <th>$bundle.getString("description")</th>
+  </thead>
+  <tbody>
+#foreach($method in $service.getMethods())
+    <tr>
+      <td>$method.getName()</td>
+      <td>$method.getOriginalName()</td>
+      <td>$method.getMappedName()</td>
+      <td>kurzbeschreibung...</td>
+      <td>Langbeschreibung...</td>
+    </tr>
+#end  
+  </tbody>
+</table>
+#end
+#end
 </body>
 </html>

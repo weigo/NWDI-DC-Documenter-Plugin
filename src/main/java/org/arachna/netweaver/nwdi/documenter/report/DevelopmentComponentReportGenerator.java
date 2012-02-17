@@ -21,6 +21,7 @@ import org.apache.velocity.exception.ResourceNotFoundException;
 import org.arachna.netweaver.dc.config.DevelopmentConfigurationReader;
 import org.arachna.netweaver.dc.types.DevelopmentComponent;
 import org.arachna.netweaver.dc.types.DevelopmentComponentFactory;
+import org.arachna.netweaver.nwdi.documenter.webservices.VirtualInterfaceDefinitionProvider;
 import org.arachna.velocity.VelocityHelper;
 import org.arachna.xml.XmlReaderHelper;
 import org.xml.sax.SAXException;
@@ -54,6 +55,8 @@ public final class DevelopmentComponentReportGenerator {
 
     private final Locale locale;
 
+    private VirtualInterfaceDefinitionProvider viDefProvider = new VirtualInterfaceDefinitionProvider(null);
+
     /**
      * 
      */
@@ -83,6 +86,7 @@ public final class DevelopmentComponentReportGenerator {
         context.put("usedDCs", component.getUsedDevelopmentComponents());
         context.put("bundleHelper", new BundleHelper(bundle, locale));
         context.put("dcFactory", dcFactory);
+        context.put("webServices", this.viDefProvider.execute(component));
         velocityEngine.evaluate(context, writer, "", getTemplateReader());
         writer.flush();
     }
