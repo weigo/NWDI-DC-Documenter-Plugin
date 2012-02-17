@@ -101,15 +101,40 @@
   <tbody>
 #foreach($method in $service.getMethods())
     <tr>
-      <td>$method.getName()</td>
+      <td><a href="#$method.getOriginalName()">$method.getName()</a></td>
       <td>$method.getOriginalName()</td>
       <td>$method.getMappedName()</td>
-      <td>kurzbeschreibung...</td>
+      <td>$method.getDescription()</td>
       <td>Langbeschreibung...</td>
     </tr>
 #end  
   </tbody>
 </table>
+
+<h3>$bundle.getString("WebServiceMethods")</h3>
+#foreach($m in $service.getMethods())
+<h4><a name="$m.getOriginalName()">$m.getMappedName()</a></h4>
+<p>$m.getDescription()</p>
+<table>
+  <caption>$bundleHelper.render("parameters.table.caption",$m.getMappedName())</caption>
+  <thead>
+  <th>$bundle.getString("parameter")</th>
+  <th>$bundle.getString("originalName")</th>
+  <th>$bundle.getString("type")</th>
+  <th>$bundle.getString("description")</th>
+  </thead>
+  <tbody>
+#foreach($parameter in $m.getParameters())
+    <tr>
+      <td>$parameter.getName()</td>
+      <td>$parameter.getMappedName()</td>
+      <td>$parameter.getType().getName()</td>
+      <td>$parameter.getDescription()</td>
+    </tr>
+#end
+  </tbody>
+</table>
+#end
 #end
 #end
 </body>
