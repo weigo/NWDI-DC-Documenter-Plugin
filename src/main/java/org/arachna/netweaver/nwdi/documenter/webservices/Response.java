@@ -25,7 +25,15 @@ public class Response {
      * @param parameter
      *            the parameter to set
      */
-    public void setParameter(Parameter parameter) {
+    public void setParameter(final Parameter parameter) {
         this.parameter = parameter;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return "Response [parameter=" + parameter + "]";
     }
 }

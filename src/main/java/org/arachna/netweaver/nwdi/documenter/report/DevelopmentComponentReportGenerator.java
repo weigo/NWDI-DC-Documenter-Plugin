@@ -55,7 +55,7 @@ public final class DevelopmentComponentReportGenerator {
 
     private final Locale locale;
 
-    private VirtualInterfaceDefinitionProvider viDefProvider = new VirtualInterfaceDefinitionProvider(null);
+    private final VirtualInterfaceDefinitionProvider viDefProvider = new VirtualInterfaceDefinitionProvider(null);
 
     /**
      * 
@@ -86,7 +86,7 @@ public final class DevelopmentComponentReportGenerator {
         context.put("usedDCs", component.getUsedDevelopmentComponents());
         context.put("bundleHelper", new BundleHelper(bundle, locale));
         context.put("dcFactory", dcFactory);
-        context.put("webServices", this.viDefProvider.execute(component));
+        context.put("webServices", viDefProvider.execute(component));
         velocityEngine.evaluate(context, writer, "", getTemplateReader());
         writer.flush();
     }
@@ -100,20 +100,20 @@ public final class DevelopmentComponentReportGenerator {
             this.locale = locale;
         }
 
-        public String render(String key, String arg) {
+        public String render(final String key, final String arg) {
             String message = key;
 
             try {
                 message = bundle.getString(key);
             }
-            catch (MissingResourceException mre) {
+            catch (final MissingResourceException mre) {
                 // use key as message format...
             }
 
             return String.format(locale, message, arg);
         }
 
-        public boolean isNull(Object value) {
+        public boolean isNull(final Object value) {
             return value == null;
         }
     }
@@ -136,12 +136,12 @@ public final class DevelopmentComponentReportGenerator {
                     Locale.GERMAN), Locale.GERMAN);
 
         final DevelopmentConfigurationReader reader = new DevelopmentConfigurationReader(dcFactory);
-        final String workspace = "/tmp";
+        final String workspace = "/home/weigo/tmp/enviaM/workspace";
         new XmlReaderHelper(reader).parse(new FileReader(workspace + "/DevelopmentConfiguration.xml"));
         dcFactory.updateUsingDCs();
 
-        final DevelopmentComponent component = dcFactory.get("example.com", "lib/webdynpro/helper/impl");
-        FileWriter writer = new FileWriter(String.format("/tmp/%s.html", component.getName().replace('/', '~')));
+        final DevelopmentComponent component = dcFactory.get("enviam.de", "lib/manage/business/partner");
+        final FileWriter writer = new FileWriter(String.format("/tmp/%s.html", component.getName().replace('/', '~')));
         generator.execute(writer, component);
         writer.close();
     }

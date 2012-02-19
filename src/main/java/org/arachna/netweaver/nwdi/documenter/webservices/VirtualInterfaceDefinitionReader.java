@@ -23,6 +23,7 @@ public class VirtualInterfaceDefinitionReader {
         setUpIncomingParameterHandling();
         setUpIncomingParameterSimpleTypeHandling();
         setUpIncomingParameterTableTypeHandling();
+        setUpIncomingParameterComplexTypeHandling();
         setUpResponseHandling();
         setUpResponseParameterHandling();
         setUpResponseParameterSimpleTypeHandling();
@@ -91,7 +92,7 @@ public class VirtualInterfaceDefinitionReader {
         digester
             .addSetProperties("VirtualInterface/VirtualInterface.Functions/Function/Function.OutgoingParameters/Parameter/Parameter.MappedTypeReference/ComplexTypeReference");
     }
-    
+
     /**
      * @param digester
      */
@@ -153,6 +154,22 @@ public class VirtualInterfaceDefinitionReader {
                 "setType");
         digester
             .addSetProperties("VirtualInterface/VirtualInterface.Functions/Function/Function.IncomingParameters/Parameter/Parameter.MappedTypeReference/ConvertedTableReference");
+    }
+
+    /**
+     * @param digester
+     */
+    private void setUpIncomingParameterComplexTypeHandling() {
+        digester
+            .addObjectCreate(
+                "VirtualInterface/VirtualInterface.Functions/Function/Function.IncomingParameters/Parameter/Parameter.MappedTypeReference/ComplexTypeReference",
+                Type.class);
+        digester
+            .addSetNext(
+                "VirtualInterface/VirtualInterface.Functions/Function/Function.IncomingParameters/Parameter/Parameter.MappedTypeReference/ComplexTypeReference",
+                "setType");
+        digester
+            .addSetProperties("VirtualInterface/VirtualInterface.Functions/Function/Function.IncomingParameters/Parameter/Parameter.MappedTypeReference/ComplexTypeReference");
     }
 
     /**

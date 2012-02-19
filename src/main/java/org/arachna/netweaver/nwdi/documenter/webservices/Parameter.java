@@ -88,4 +88,13 @@ public class Parameter {
     public void setDescription(final String description) {
         this.description = description;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return "Parameter [name=" + name + ", mappedName=" + mappedName + ", description=" + description + ", type="
+            + type + "]";
+    }
 }

@@ -141,4 +141,13 @@ public class Function {
     public void setDescription(final String description) {
         this.description = description;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return "Function [name=" + name + ", mappedName=" + mappedName + ", originalName=" + originalName
+            + ", description=" + description + ", parameters=" + parameters + ", response=" + response + "]";
+    }
 }

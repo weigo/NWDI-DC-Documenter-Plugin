@@ -106,7 +106,7 @@ public class ReportGenerator {
         writerConfiguration.setOutputLocation(outputLocation);
         final DevelopmentConfigurationReportWriter reportWriter =
             new DevelopmentConfigurationReportWriter(logger, dcFactory, writerConfiguration,
-                new DevelopmentComponentByVendorFilter(this.ignorableVendorRgexp));
+                new DevelopmentComponentByVendorFilter(ignorableVendorRgexp));
 
         try {
             long start = System.currentTimeMillis();
@@ -194,9 +194,10 @@ public class ReportGenerator {
     public static void main(final String[] args) throws IOException, SAXException {
         final DevelopmentComponentFactory dcFactory = new DevelopmentComponentFactory();
         final DevelopmentConfigurationReader reader = new DevelopmentConfigurationReader(dcFactory);
-        new XmlReaderHelper(reader).parse(new FileReader("/tmp/jenkins/jobs/enviaM/workspace/DevelopmentConfiguration.xml"));
-        // new XmlReaderHelper(reader).parse(new
-        // FileReader("/home/weigo/tmp/PN3_enviaMPr_D-refactored.xml"));
+        // new XmlReaderHelper(reader).parse(new FileReader(
+        // "/tmp/jenkins/jobs/enviaM/workspace/DevelopmentConfiguration.xml"));
+        new XmlReaderHelper(reader).parse(new FileReader(
+            "/home/weigo/tmp/enviaM/workspace/DevelopmentConfiguration.xml"));
 
         dcFactory.updateUsingDCs();
 
@@ -206,11 +207,11 @@ public class ReportGenerator {
             }
         }
 
-//        String dot = "/usr/bin/dot";
-        String dot = "/ZusatzSW/GraphViz/bin/dot.exe";
-        PrintStream s = new PrintStream(new File("/tmp/report.log"));
-        new ReportGenerator(System.err, reader.getDevelopmentConfiguration(), dcFactory, "/tmp/enviaMPR",
-            dot, Pattern.compile("sap\\.com")).execute();
+        final String dot = "/usr/bin/dot";
+        // String dot = "/ZusatzSW/GraphViz/bin/dot.exe";
+        final PrintStream s = new PrintStream(new File("/tmp/report.log"));
+        new ReportGenerator(s, reader.getDevelopmentConfiguration(), dcFactory, "/tmp/enviaMPR", dot,
+            Pattern.compile("sap\\.com")).execute();
         s.close();
     }
 

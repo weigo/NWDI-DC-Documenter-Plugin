@@ -30,7 +30,7 @@ public class Type {
      * @param name
      *            the name to set
      */
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = name;
     }
 
@@ -45,7 +45,15 @@ public class Type {
      * @param originalType
      *            the originalType to set
      */
-    public void setOriginalType(String originalType) {
+    public void setOriginalType(final String originalType) {
         this.originalType = originalType;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return "Type [name=" + name + ", originalType=" + originalType + "]";
     }
 }
