@@ -71,11 +71,17 @@ public class JavaDocMethodCommentExtractingVisitor extends VoidVisitorAdapter {
             final JavadocComment javaDoc = methodDeclaration.getJavaDoc();
 
             if (javaDoc != null) {
-                final String content = javaDoc.getContent();
+                final JavaDocCommentContainer content = new JavaDocCommentContainer(javaDoc.getContent());
 
-                if (!content.toLowerCase().contains("@inheritdoc")) {
-                    method.setDescription(content);
-                    System.err.println(method.getOriginalName() + ": " + javaDoc.getContent());
+                if (content.getTagDescriptors("@inheritdoc").isEmpty()) {
+                    method.setDescription(content.getDescription());
+                    final Iterator<Parameter> parameters = method.getParameters().iterator();
+
+                    for (final TagDescriptor descriptor : content.getTagDescriptors("@param")) {
+                        if (parameters.hasNext()) {
+                            parameters.next().setDescription(descriptor.getDescription());
+                        }
+                    }
                 }
             }
         }
