@@ -77,9 +77,16 @@ public class DocumentationBuilder extends AntTaskBuilder {
     public boolean perform(final AbstractBuild build, final Launcher launcher, final BuildListener listener) {
         final NWDIBuild nwdiBuild = (NWDIBuild)build;
 
-        return new ReportGenerator(listener.getLogger(), nwdiBuild.getDevelopmentConfiguration(),
-            nwdiBuild.getDevelopmentComponentFactory(), getAntHelper().getPathToWorkspace() + File.separatorChar
-                + "documentation", DESCRIPTOR.getDotExecutable(), ignoreVendorRegexp).execute();
+        boolean result =
+            new ReportGenerator(listener.getLogger(), nwdiBuild.getDevelopmentConfiguration(),
+                nwdiBuild.getDevelopmentComponentFactory(), getAntHelper().getPathToWorkspace() + File.separatorChar
+                    + "documentation", DESCRIPTOR.getDotExecutable(), ignoreVendorRegexp).execute();
+
+        if (result) {
+            result = super.execute(nwdiBuild, launcher, listener, "convert-all", "documentation/Dot2Svg-build.xml", this.getAntProperties());
+        }
+
+        return result;
     }
 
     // Overridden for better type safety.

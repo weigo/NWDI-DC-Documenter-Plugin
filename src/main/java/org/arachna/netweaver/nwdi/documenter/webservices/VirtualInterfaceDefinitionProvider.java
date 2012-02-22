@@ -27,6 +27,8 @@ public class VirtualInterfaceDefinitionProvider {
      */
     private final AntHelper antHelper;
 
+    private final VirtualInterfaceDefinitionReader videfReader = new VirtualInterfaceDefinitionReader();
+
     public VirtualInterfaceDefinitionProvider(final AntHelper antHelper) {
         this.antHelper = antHelper;
     }
@@ -35,7 +37,6 @@ public class VirtualInterfaceDefinitionProvider {
         final List<VirtualInterfaceDefinition> interfaces = new ArrayList<VirtualInterfaceDefinition>();
         // String base = antHelper.getBaseLocation(component);
         if (DevelopmentComponentType.Java.equals(component.getType())) {
-            final VirtualInterfaceDefinitionReader videfReader = new VirtualInterfaceDefinitionReader();
             final MethodDocumentationProvider methodDocumentationProvider = new MethodDocumentationProvider("UTF-8");
             final List<String> sourceFolders = new ArrayList<String>();
             sourceFolders.addAll(component.getSourceFolders());

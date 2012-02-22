@@ -8,6 +8,7 @@ import java.io.Reader;
 
 import org.apache.commons.digester3.Digester;
 import org.xml.sax.SAXException;
+import org.xml.sax.helpers.XMLReaderFactory;
 
 /**
  * Reader for virtual interface definitions of web services.
@@ -15,9 +16,16 @@ import org.xml.sax.SAXException;
  * @author Dirk Weigenand
  */
 public class VirtualInterfaceDefinitionReader {
-    private final Digester digester = new Digester();
+    private final Digester digester;
 
     public VirtualInterfaceDefinitionReader() {
+        try {
+            digester = new Digester(XMLReaderFactory.createXMLReader());
+        }
+        catch (SAXException e) {
+            throw new RuntimeException(e);
+        }
+        
         setUpVirtualInterfaceHandling();
         setUpFunctionHandling();
         setUpIncomingParameterHandling();

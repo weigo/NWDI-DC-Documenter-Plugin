@@ -1,20 +1,18 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"
+>
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.arachna.netweaver</groupId>
     <artifactId>NWDI-pom-Plugin</artifactId>
     <version>1.3-SNAPSHOT</version>
   </parent>
-
   <groupId>org.arachna.netweaver</groupId>
   <artifactId>NWDI-DC-Documenter-Plugin</artifactId>
   <name>NWDI-DC-Documenter-Plugin</name>
   <version>1.1-SNAPSHOT</version>
   <packaging>hpi</packaging>
-
   <description>This plugin generates documentation for SAP NetWeaver development components.</description>
-
   <url>http://github.com/weigo/NWDI-DC-Documenter-Plugin</url>
   <inceptionYear>2011</inceptionYear>
   <scm>
@@ -56,13 +54,24 @@
       <version>1.1-SNAPSHOT</version>
       <type>hpi</type>
       <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.arachna.netweaver</groupId>
-      <artifactId>NWDI-Core-Plugin</artifactId>
-      <version>1.1-SNAPSHOT</version>
-      <type>jar</type>
-      <scope>compile</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>asm</artifactId>
+          <groupId>asm-commons</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>asm</artifactId>
+          <groupId>asm-tree</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>asm</artifactId>
+          <groupId>asm</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>log4j</artifactId>
+          <groupId>log4j</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.arachna</groupId>
@@ -84,6 +93,43 @@
       <version>1.0.8</version>
       <type>jar</type>
       <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.arachna.netweaver</groupId>
+      <artifactId>NWDI-Core-Plugin</artifactId>
+      <version>1.1-SNAPSHOT</version>
+      <type>jar</type>
+      <scope>compile</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>httpcore</artifactId>
+          <groupId>org.apache.httpcomponents</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>httpclient</artifactId>
+          <groupId>org.apache.httpcomponents</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>httpmime</artifactId>
+          <groupId>org.apache.httpcomponents</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>jtidy</artifactId>
+          <groupId>net.sf.jtidy</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>xmlunit</artifactId>
+          <groupId>xmlunit</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>velocity</artifactId>
+          <groupId>org.apache.velocity</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>commons-codec</artifactId>
+          <groupId>commons-codec</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
   </dependencies>
 </project>

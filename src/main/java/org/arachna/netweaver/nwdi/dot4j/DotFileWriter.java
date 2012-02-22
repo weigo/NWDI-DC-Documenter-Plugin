@@ -39,7 +39,7 @@ public final class DotFileWriter {
      *            generator to use to generate the content
      * @param dotFileName
      *            name of .dot file
-     * @return absolute path to the create file
+     * @return absolute path to the created file
      * @throws IOException
      *             when an error occurs writing the file
      */

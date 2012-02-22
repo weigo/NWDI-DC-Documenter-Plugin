@@ -10,8 +10,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.velocity.app.VelocityEngine;
@@ -20,6 +22,7 @@ import org.arachna.netweaver.dc.types.DevelopmentComponent;
 import org.arachna.netweaver.dc.types.DevelopmentComponentFactory;
 import org.arachna.netweaver.dc.types.DevelopmentConfiguration;
 import org.arachna.netweaver.hudson.nwdi.IDevelopmentComponentFilter;
+import org.arachna.netweaver.nwdi.documenter.CompartmentByVendorFilter;
 import org.arachna.netweaver.nwdi.dot4j.DevelopmentComponentDotFileGenerator;
 import org.arachna.netweaver.nwdi.dot4j.DevelopmentConfigurationDotFileGenerator;
 import org.arachna.netweaver.nwdi.dot4j.DotFileWriter;
@@ -42,25 +45,45 @@ public final class DevelopmentConfigurationReportWriter {
      */
     private final ReportWriterConfiguration writerConfiguration;
 
+    /**
+     * filter development components by vendor.
+     */
     private final IDevelopmentComponentFilter vendorFilter;
 
     private final PrintStream logger;
 
     /**
+     * filter compartments by vendor.
+     */
+    private final CompartmentByVendorFilter compartmentByVendorFilter;
+
+    /**
+     * Collection of dotFiles created when generating the report.
+     */
+    private Set<String> dotFiles = new HashSet<String>();
+
+    /**
      * Create an instance of a {@link DevelopmentConfigurationReportWriter}.
-     * @param logger 
+     * 
+     * @param logger
      * 
      * @param dcFactory
      *            registry for development components
      * @param writerConfiguration
      *            configuration to be used creating the reports
+     * @param vendorFilter
+     *            filter development components by vendor
+     * @param compartmentByVendorFilter
+     *            filter compartments by vendor
      */
     public DevelopmentConfigurationReportWriter(PrintStream logger, final DevelopmentComponentFactory dcFactory,
-        final ReportWriterConfiguration writerConfiguration, final IDevelopmentComponentFilter vendorFilter) {
+        final ReportWriterConfiguration writerConfiguration, final IDevelopmentComponentFilter vendorFilter,
+        CompartmentByVendorFilter compartmentByVendorFilter) {
         this.logger = logger;
         this.dcFactory = dcFactory;
         this.writerConfiguration = writerConfiguration;
         this.vendorFilter = vendorFilter;
+        this.compartmentByVendorFilter = compartmentByVendorFilter;
     }
 
     /**
@@ -69,10 +92,11 @@ public final class DevelopmentConfigurationReportWriter {
      * @param configurations
      *            development configurations for which the reports shall be
      *            created.
+     * @return collection of generated .dot files.
      * @throws IOException
      *             when an error occurs writing a report
      */
-    public void write(final DevelopmentConfiguration configuration) throws IOException {
+    public Collection<String> write(final DevelopmentConfiguration configuration) throws IOException {
         final File baseDir = createDirectoryIffNotExists(writerConfiguration.getOutputLocation());
 
         final FileWriter indexHtmlWriter =
@@ -89,9 +113,13 @@ public final class DevelopmentConfigurationReportWriter {
         copyResources(writerConfiguration);
 
         final DotFileWriter dotFileWriter = new DotFileWriter(imageOutput);
-        dotFileWriter.write(new DevelopmentConfigurationDotFileGenerator(configuration), configuration.getName());
+        dotFileWriter.write(
+            new DevelopmentConfigurationDotFileGenerator(configuration, this.compartmentByVendorFilter),
+            configuration.getName());
 
         writeDevelopmentConfigurationReport(configuration);
+
+        return this.dotFiles;
     }
 
     /**
@@ -198,20 +226,21 @@ public final class DevelopmentConfigurationReportWriter {
                             componentName));
                     generator.execute(writer, component);
                     writer.close();
-                    dotFileWriter.write(new DevelopmentComponentDotFileGenerator(dcFactory, component,
-                        this.vendorFilter), componentName);
+                    dotFiles.add(dotFileWriter.write(new DevelopmentComponentDotFileGenerator(dcFactory, component,
+                        this.vendorFilter), componentName));
 
                     componentName = componentName + "-usingDCs";
-                    dotFileWriter.write(new UsingDevelopmentComponentsDotFileGenerator(component, this.vendorFilter),
-                        componentName);
+                    dotFiles.add(dotFileWriter.write(new UsingDevelopmentComponentsDotFileGenerator(component,
+                        this.vendorFilter), componentName));
                 }
             }
 
-            dotFileWriter.write(new UsingDevelopmentComponentsDotFileGenerator(compartment.getDevelopmentComponents(),
-                this.vendorFilter), compartment.getName() + "-usingDCs");
-            dotFileWriter.write(
+            dotFiles.add(dotFileWriter.write(
+                new UsingDevelopmentComponentsDotFileGenerator(compartment.getDevelopmentComponents(),
+                    this.vendorFilter), compartment.getName() + "-usingDCs"));
+            dotFiles.add(dotFileWriter.write(
                 new DevelopmentComponentDotFileGenerator(dcFactory, compartment.getDevelopmentComponents(),
-                    this.vendorFilter), compartment.getName() + "-usedDCs");
+                    this.vendorFilter), compartment.getName() + "-usedDCs"));
         }
     }
 }

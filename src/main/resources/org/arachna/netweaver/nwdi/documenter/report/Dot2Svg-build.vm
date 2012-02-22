@@ -1,0 +1,13 @@
+<project name="Dot2Svg" default="convert-all">
+  <target name="convert-all">
+#foreach($dotFile in $dotFiles)
+    <echo message="Converting $dotFile to SVG." />
+    <exec executable="$dot" timeout="$timeout">
+      <arg value="-Tsvg" />
+      <arg value="-o" />
+      <arg value="$dotFile.replace('.dot', '.svg')" />
+      <arg value="$dotFile" />
+    </exec>
+#end
+  </target>
+</project>
