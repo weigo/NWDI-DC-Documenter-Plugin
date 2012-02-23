@@ -6,6 +6,7 @@ package org.arachna.netweaver.nwdi.documenter.java;
 import japa.parser.JavaParser;
 import japa.parser.ParseException;
 import japa.parser.ast.CompilationUnit;
+import japa.parser.ast.PackageDeclaration;
 import japa.parser.ast.body.ClassOrInterfaceDeclaration;
 import japa.parser.ast.body.TypeDeclaration;
 import japa.parser.ast.type.ClassOrInterfaceType;
@@ -127,9 +128,10 @@ public class MethodDocumentationProvider {
         System.err.println("Update description for " + endPointClass);
         final CompilationUnit compilationUnit =
             JavaParser.parse(getEndPointSource(sourceFolders, endPointClass), encoding);
+
+        PackageDeclaration packageDescriptor = compilationUnit.getPackage();
         final ClassNameResolver classNameResolver =
-            new ClassNameResolver(virtualInterface.getEndPointClass().substring(0,
-                virtualInterface.getEndPointClass().lastIndexOf('.')), compilationUnit.getImports());
+            new ClassNameResolver(packageDescriptor.getName().toString(), compilationUnit.getImports());
 
         final JavaDocMethodCommentExtractingVisitor visitor =
             new JavaDocMethodCommentExtractingVisitor(classNameResolver,

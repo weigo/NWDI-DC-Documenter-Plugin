@@ -85,6 +85,13 @@ public class JavaDocCommentContainerTest {
     }
 
     @Test
+    public final void testParseCommentWithInheritDocInBracesTagOnlyHasEmptyDescription() {
+        container = new JavaDocCommentContainer("/**\n * {@inheritDoc}\n */");
+        final TagDescriptor descriptor = container.getTagDescriptors("@inheritdoc").iterator().next();
+        assertThat(descriptor.getDescription(), equalTo(""));
+    }
+
+    @Test
     public final void testParseCommentWithAuthorTagOnlyHasCorrectDescription() {
         container = new JavaDocCommentContainer("/**\n * @author weigo\n */");
         final TagDescriptor descriptor = container.getTagDescriptors("@author").iterator().next();
@@ -106,4 +113,6 @@ public class JavaDocCommentContainerTest {
         final TagDescriptor descriptor = container.getTagDescriptors("@throws").iterator().next();
         assertThat(descriptor.getDescription(), equalTo("IllegalStateException"));
     }
+    
+    
 }

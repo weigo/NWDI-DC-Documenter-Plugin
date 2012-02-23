@@ -104,7 +104,7 @@ public class JavaDocCommentContainer {
         while (lines.hasNext()) {
             line = trimStarsFromStartOfStringAndTrimSpaces(lines.next());
 
-            if (!line.isEmpty() && '@' == line.charAt(0)) {
+            if (this.pattern.matcher(line).matches()) {
                 lines.previous();
                 break;
             }
@@ -151,13 +151,9 @@ public class JavaDocCommentContainer {
                     break;
                 }
 
-                if (matcher.groupCount() > 1) {
-                    tagName = matcher.group(1);
-                    description.append(matcher.group(2));
-                }
-                else {
-                    tagName = matcher.group(0);
-                }
+                tagName = matcher.group(1);
+                String descriptionGroupMatch = matcher.group(2);
+                description.append(descriptionGroupMatch == null ? "" : descriptionGroupMatch);
 
                 continue;
             }

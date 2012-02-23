@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.arachna.netweaver.nwdi.documenter.webservices.Function;
@@ -35,7 +36,7 @@ public class JavaDocMethodCommentExtractingVisitor extends VoidVisitorAdapter {
      */
     private final ClassNameResolver classNameResolver;
 
-    private final Pattern pattern = Pattern.compile(".*@inheritdoc.*", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
+    private Pattern parameterPattern = Pattern.compile("(\\w+)\\s+(.*)");
 
     /**
      * Create an instance of a
@@ -71,23 +72,35 @@ public class JavaDocMethodCommentExtractingVisitor extends VoidVisitorAdapter {
             final JavadocComment javaDoc = methodDeclaration.getJavaDoc();
 
             if (javaDoc != null) {
-                final JavaDocCommentContainer content = new JavaDocCommentContainer(javaDoc.getContent());
+                updateDescriptions(method, javaDoc);
+            }
+        }
+    }
 
-                if (content.getTagDescriptors("@inheritdoc").isEmpty()) {
-                    method.setDescription(content.getDescription());
-                    final Iterator<Parameter> parameters = method.getParameters().iterator();
+    /**
+     * @param method
+     * @param javaDoc
+     */
+    private void updateDescriptions(final Function method, final JavadocComment javaDoc) {
+        final JavaDocCommentContainer content = new JavaDocCommentContainer(javaDoc.getContent());
 
-                    for (final TagDescriptor descriptor : content.getTagDescriptors("@param")) {
-                        if (parameters.hasNext()) {
-                            parameters.next().setDescription(descriptor.getDescription());
-                        }
+        if (content.getTagDescriptors("@inheritdoc").isEmpty()) {
+            method.setDescription(content.getDescription());
+            final Iterator<Parameter> parameters = method.getParameters().iterator();
+
+            for (final TagDescriptor descriptor : content.getTagDescriptors("@param")) {
+                if (parameters.hasNext()) {
+                    Matcher matcher = this.parameterPattern.matcher(descriptor.getDescription());
+
+                    if (matcher.matches()) {
+                        parameters.next().setDescription(matcher.group(2));
                     }
                 }
             }
         }
     }
 
-    Function getFunction(final MethodDeclaration methodDeclaration) {
+    private Function getFunction(final MethodDeclaration methodDeclaration) {
         final List<Function> mappedMethods = methodMapping.get(methodDeclaration.getName());
         Function method = null;
 

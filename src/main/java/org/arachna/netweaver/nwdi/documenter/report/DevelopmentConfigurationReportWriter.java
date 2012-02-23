@@ -113,9 +113,8 @@ public final class DevelopmentConfigurationReportWriter {
         copyResources(writerConfiguration);
 
         final DotFileWriter dotFileWriter = new DotFileWriter(imageOutput);
-        dotFileWriter.write(
-            new DevelopmentConfigurationDotFileGenerator(configuration, this.compartmentByVendorFilter),
-            configuration.getName());
+        this.dotFiles.add(dotFileWriter.write(new DevelopmentConfigurationDotFileGenerator(configuration,
+            this.compartmentByVendorFilter), configuration.getName()));
 
         writeDevelopmentConfigurationReport(configuration);
 
@@ -219,7 +218,7 @@ public final class DevelopmentConfigurationReportWriter {
                 // FIXME: dependency graphs should only be generated for DCs
                 // matching the vendor filter, were affected (transitively) be
                 // the
-                if (!vendorFilter.accept(component)) {
+                if (!vendorFilter.accept(component) && component.isNeedsRebuild()) {
                     String componentName = component.getVendor() + "~" + component.getName().replace("/", "~");
                     FileWriter writer =
                         new FileWriter(String.format("%s%c%s.html", baseDir.getAbsolutePath(), File.separatorChar,
