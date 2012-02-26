@@ -8,7 +8,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Locale;
@@ -22,12 +21,6 @@ import org.arachna.netweaver.dc.types.DevelopmentComponent;
 import org.arachna.netweaver.dc.types.DevelopmentComponentFactory;
 import org.arachna.netweaver.dc.types.DevelopmentConfiguration;
 import org.arachna.netweaver.hudson.nwdi.IDevelopmentComponentFilter;
-import org.arachna.netweaver.nwdi.documenter.CompartmentByVendorFilter;
-import org.arachna.netweaver.nwdi.dot4j.DevelopmentComponentDotFileGenerator;
-import org.arachna.netweaver.nwdi.dot4j.DevelopmentConfigurationDotFileGenerator;
-import org.arachna.netweaver.nwdi.dot4j.DotFileWriter;
-import org.arachna.netweaver.nwdi.dot4j.UsingDevelopmentComponentsDotFileGenerator;
-import org.arachna.velocity.VelocityHelper;
 
 /**
  * Writer for reports on development configurations.
@@ -50,22 +43,15 @@ public final class DevelopmentConfigurationReportWriter {
      */
     private final IDevelopmentComponentFilter vendorFilter;
 
-    private final PrintStream logger;
-
-    /**
-     * filter compartments by vendor.
-     */
-    private final CompartmentByVendorFilter compartmentByVendorFilter;
+    private final DevelopmentComponentReportGenerator generator;
 
     /**
      * Collection of dotFiles created when generating the report.
      */
-    private Set<String> dotFiles = new HashSet<String>();
+    private final Set<String> dotFiles = new HashSet<String>();
 
     /**
      * Create an instance of a {@link DevelopmentConfigurationReportWriter}.
-     * 
-     * @param logger
      * 
      * @param dcFactory
      *            registry for development components
@@ -73,17 +59,19 @@ public final class DevelopmentConfigurationReportWriter {
      *            configuration to be used creating the reports
      * @param vendorFilter
      *            filter development components by vendor
-     * @param compartmentByVendorFilter
-     *            filter compartments by vendor
+     * @param velocityEngine
      */
-    public DevelopmentConfigurationReportWriter(PrintStream logger, final DevelopmentComponentFactory dcFactory,
+    public DevelopmentConfigurationReportWriter(final DevelopmentComponentFactory dcFactory,
         final ReportWriterConfiguration writerConfiguration, final IDevelopmentComponentFilter vendorFilter,
-        CompartmentByVendorFilter compartmentByVendorFilter) {
-        this.logger = logger;
+        final VelocityEngine velocityEngine) {
         this.dcFactory = dcFactory;
         this.writerConfiguration = writerConfiguration;
         this.vendorFilter = vendorFilter;
-        this.compartmentByVendorFilter = compartmentByVendorFilter;
+        generator =
+            new DevelopmentComponentReportGenerator(dcFactory, velocityEngine,
+                "/org/arachna/netweaver/nwdi/documenter/report/DevelopmentComponentHtmlTemplate.vm",
+                ResourceBundle.getBundle("org/arachna/netweaver/nwdi/documenter/report/DevelopmentComponentReport",
+                    Locale.GERMAN), Locale.GERMAN);
     }
 
     /**
@@ -97,28 +85,26 @@ public final class DevelopmentConfigurationReportWriter {
      *             when an error occurs writing a report
      */
     public Collection<String> write(final DevelopmentConfiguration configuration) throws IOException {
-        final File baseDir = createDirectoryIffNotExists(writerConfiguration.getOutputLocation());
+        createOverviewPage(configuration);
+        copyResources();
 
-        final FileWriter indexHtmlWriter =
-            new FileWriter(baseDir.getAbsolutePath() + File.separatorChar + "index.html");
+        writeDevelopmentConfigurationReport(configuration);
+
+        return dotFiles;
+    }
+
+    /**
+     * @param configuration
+     * @param baseDir
+     * @throws IOException
+     */
+    protected void createOverviewPage(final DevelopmentConfiguration configuration) throws IOException {
+        final File baseDir = createDirectoryIffNotExists(writerConfiguration.getOutputLocation());
+        final FileWriter indexHtmlWriter = new FileWriter(new File(baseDir, "index.html"));
         final DevelopmentConfigurationsHtmlWriter cfgWriter =
             new DevelopmentConfigurationsHtmlWriter(indexHtmlWriter, writerConfiguration, configuration, dcFactory);
         cfgWriter.write();
         indexHtmlWriter.close();
-
-        final String imageOutput =
-            writerConfiguration.getOutputLocation() + File.separator + writerConfiguration.getImagesLocation();
-        createDirectoryIffNotExists(imageOutput);
-
-        copyResources(writerConfiguration);
-
-        final DotFileWriter dotFileWriter = new DotFileWriter(imageOutput);
-        this.dotFiles.add(dotFileWriter.write(new DevelopmentConfigurationDotFileGenerator(configuration,
-            this.compartmentByVendorFilter), configuration.getName()));
-
-        writeDevelopmentConfigurationReport(configuration);
-
-        return this.dotFiles;
     }
 
     /**
@@ -126,12 +112,14 @@ public final class DevelopmentConfigurationReportWriter {
      * @throws IOException
      * @throws FileNotFoundException
      */
-    private void copyResources(final ReportWriterConfiguration config) throws IOException, FileNotFoundException {
+    private void copyResources() throws IOException, FileNotFoundException {
         final File cssFolder =
-            createDirectoryIffNotExists(config.getOutputLocation() + File.separator + config.getCssLocation());
+            createDirectoryIffNotExists(writerConfiguration.getOutputLocation() + File.separator
+                + writerConfiguration.getCssLocation());
         copyResourceToTargetFolder(cssFolder, "/org/arachna/netweaver/nwdi/documenter/report/report.css", "report.css");
         final File jsFolder =
-            createDirectoryIffNotExists(config.getOutputLocation() + File.separator + config.getJsLocation());
+            createDirectoryIffNotExists(writerConfiguration.getOutputLocation() + File.separator
+                + writerConfiguration.getJsLocation());
         copyResourceToTargetFolder(jsFolder, "/org/arachna/netweaver/nwdi/documenter/report/search.js", "search.js");
         copyResourceToTargetFolder(jsFolder, "/org/arachna/netweaver/nwdi/documenter/report/xpath.js", "xpath.js");
     }
@@ -176,11 +164,7 @@ public final class DevelopmentConfigurationReportWriter {
      *             when an error writing the reports occurs
      */
     private void writeDevelopmentConfigurationReport(final DevelopmentConfiguration configuration) throws IOException {
-        final Collection<Compartment> compartments = configuration.getCompartments(/*
-                                                                                    * CompartmentState
-                                                                                    * .
-                                                                                    * Source
-                                                                                    */);
+        final Collection<Compartment> compartments = configuration.getCompartments();
 
         new CompartmentsHtmlReportWriter(new FileWriter(writerConfiguration.getOutputLocation() + File.separatorChar
             + "compartments.html"), writerConfiguration, compartments, dcFactory).write();
@@ -200,46 +184,16 @@ public final class DevelopmentConfigurationReportWriter {
             new CompartmentHtmlReportWriter(new FileWriter(baseDir.getAbsolutePath() + File.separatorChar
                 + "index.html"), writerConfiguration, compartment, dcFactory).write();
 
-            final String imageOutput =
-                baseDir.getAbsolutePath() + File.separator + this.writerConfiguration.getImagesLocation();
-            createDirectoryIffNotExists(imageOutput);
-
-            final DotFileWriter dotFileWriter = new DotFileWriter(imageOutput);
-
-            final VelocityEngine velocityEngine = new VelocityHelper(this.logger).getVelocityEngine();
-
-            final DevelopmentComponentReportGenerator generator =
-                new DevelopmentComponentReportGenerator(dcFactory, velocityEngine,
-                    "/org/arachna/netweaver/nwdi/documenter/report/DevelopmentComponentHtmlTemplate.vm",
-                    ResourceBundle.getBundle("org/arachna/netweaver/nwdi/documenter/report/DevelopmentComponentReport",
-                        Locale.GERMAN), Locale.GERMAN);
-
             for (final DevelopmentComponent component : compartment.getDevelopmentComponents()) {
-                // FIXME: dependency graphs should only be generated for DCs
-                // matching the vendor filter, were affected (transitively) be
-                // the
                 if (!vendorFilter.accept(component) && component.isNeedsRebuild()) {
-                    String componentName = component.getVendor() + "~" + component.getName().replace("/", "~");
-                    FileWriter writer =
+                    final String componentName = component.getVendor() + "~" + component.getName().replace("/", "~");
+                    final FileWriter writer =
                         new FileWriter(String.format("%s%c%s.html", baseDir.getAbsolutePath(), File.separatorChar,
                             componentName));
                     generator.execute(writer, component);
                     writer.close();
-                    dotFiles.add(dotFileWriter.write(new DevelopmentComponentDotFileGenerator(dcFactory, component,
-                        this.vendorFilter), componentName));
-
-                    componentName = componentName + "-usingDCs";
-                    dotFiles.add(dotFileWriter.write(new UsingDevelopmentComponentsDotFileGenerator(component,
-                        this.vendorFilter), componentName));
                 }
             }
-
-            dotFiles.add(dotFileWriter.write(
-                new UsingDevelopmentComponentsDotFileGenerator(compartment.getDevelopmentComponents(),
-                    this.vendorFilter), compartment.getName() + "-usingDCs"));
-            dotFiles.add(dotFileWriter.write(
-                new DevelopmentComponentDotFileGenerator(dcFactory, compartment.getDevelopmentComponents(),
-                    this.vendorFilter), compartment.getName() + "-usedDCs"));
         }
     }
 }
