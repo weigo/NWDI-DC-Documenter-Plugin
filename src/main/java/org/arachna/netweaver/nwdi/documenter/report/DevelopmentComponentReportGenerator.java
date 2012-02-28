@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.io.Writer;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -70,7 +71,6 @@ public final class DevelopmentComponentReportGenerator {
 
     /**
      * 
-     * @param writer
      * @param component
      * @throws IOException
      * @throws ResourceNotFoundException
@@ -82,7 +82,6 @@ public final class DevelopmentComponentReportGenerator {
         final Context context = new VelocityContext();
         context.put("component", component);
         context.put("bundle", bundle);
-        context.put("usedDCs", component.getUsedDevelopmentComponents());
         context.put("bundleHelper", new BundleHelper(bundle, locale));
         context.put("dcFactory", dcFactory);
         context.put("webServices", viDefProvider.execute(component));
@@ -91,9 +90,9 @@ public final class DevelopmentComponentReportGenerator {
     }
 
     /**
-     * 
+     * Return
      */
-    protected InputStreamReader getTemplateReader() {
+    protected Reader getTemplateReader() {
         return new InputStreamReader(this.getClass().getResourceAsStream(template));
     }
 

@@ -21,7 +21,8 @@ import org.arachna.netweaver.dc.config.DevelopmentConfigurationReader;
 import org.arachna.netweaver.dc.types.DevelopmentComponent;
 import org.arachna.netweaver.dc.types.DevelopmentComponentFactory;
 import org.arachna.netweaver.dc.types.DevelopmentConfiguration;
-import org.arachna.netweaver.nwdi.documenter.report.DevelopmentConfigurationReportWriter;
+import org.arachna.netweaver.nwdi.documenter.report.DependencyGraphGenerator;
+import org.arachna.netweaver.nwdi.documenter.report.DevelopmentConfigurationHtmlGenerator;
 import org.arachna.netweaver.nwdi.documenter.report.ReportWriterConfiguration;
 import org.arachna.velocity.VelocityHelper;
 import org.arachna.xml.XmlReaderHelper;
@@ -70,6 +71,11 @@ public class ReportGenerator {
     private final Pattern ignorableVendorRgexp;
 
     /**
+     * Velocity engine for transformations.
+     */
+    private final VelocityEngine engine;
+
+    /**
      * Create an report generator instance using the given configuration
      * parameters.
      * 
@@ -87,11 +93,12 @@ public class ReportGenerator {
      *            vendors to ignore
      */
     ReportGenerator(final PrintStream logger, final DevelopmentConfiguration config,
-        final DevelopmentComponentFactory dcFactory, final String outputLocation, final String dotExecutable,
-        final Pattern ignorableVendorRgexp) {
+        final DevelopmentComponentFactory dcFactory, final VelocityEngine engine, final String outputLocation,
+        final String dotExecutable, final Pattern ignorableVendorRgexp) {
         this.logger = logger;
         this.config = config;
         this.dcFactory = dcFactory;
+        this.engine = engine;
         this.outputLocation = outputLocation;
         this.dotExecutable = dotExecutable;
         this.ignorableVendorRgexp = ignorableVendorRgexp;
@@ -106,27 +113,28 @@ public class ReportGenerator {
      */
     boolean execute() {
         boolean result = true;
+        final DevelopmentComponentByVendorFilter vendorFilter =
+            new DevelopmentComponentByVendorFilter(ignorableVendorRgexp);
+        final CompartmentByVendorFilter compartmentByVendorFilter = new CompartmentByVendorFilter(ignorableVendorRgexp);
+
+        final DependencyGraphGenerator dependenciesGeneratory =
+            new DependencyGraphGenerator(dcFactory, compartmentByVendorFilter, vendorFilter, new File(outputLocation));
+        config.accept(dependenciesGeneratory);
+
+        // TODO: Factory oder ähnlichen Mechanismus zum Erzeugen der
+        // eigentlichen Dokumentation (zum einfachen Umschalten zwischen HTML &
+        // Wiki)
         final ReportWriterConfiguration writerConfiguration = new ReportWriterConfiguration();
         writerConfiguration.setOutputLocation(outputLocation);
-        final DevelopmentConfigurationReportWriter reportWriter =
-            new DevelopmentConfigurationReportWriter(logger, dcFactory, writerConfiguration,
-                new DevelopmentComponentByVendorFilter(ignorableVendorRgexp), new CompartmentByVendorFilter(
-                    ignorableVendorRgexp));
 
         try {
-            long start = System.currentTimeMillis();
+            final long start = System.currentTimeMillis();
             logger.append("Creating development configuration report...");
-            Collection<String> dotFiles = reportWriter.write(config);
+            config.accept(new DevelopmentConfigurationHtmlGenerator(writerConfiguration, dcFactory, vendorFilter,
+                engine));
             duration(logger, start);
 
-            VelocityEngine engine = new VelocityHelper(logger).getVelocityEngine();
-            Context context = new VelocityContext();
-            context.put("dotFiles", dotFiles);
-            context.put("dot", this.dotExecutable);
-            context.put("timeout", Integer.toString(TIMEOUT));
-            Writer writer = new FileWriter(new File(this.outputLocation, "Dot2Svg-build.xml"));
-            engine.evaluate(context, writer, "", getTemplateReader());
-            writer.close();
+            materializeDot2SvgBuildXml(dependenciesGeneratory.getDotFiles());
         }
         catch (final IOException e) {
             result = false;
@@ -134,6 +142,26 @@ public class ReportGenerator {
         }
 
         return result;
+    }
+
+    /**
+     * Create an Ant build file for translating GraphViz <code>.dot</code> files
+     * int SVG graphics.
+     * 
+     * @param dotFiles
+     *            collection of GraphViz <code>.dot</code> to translate into
+     *            SVG.
+     * @throws IOException
+     *             when writing the build file fails.
+     */
+    protected void materializeDot2SvgBuildXml(final Collection<String> dotFiles) throws IOException {
+        final Context context = new VelocityContext();
+        context.put("dotFiles", dotFiles);
+        context.put("dot", dotExecutable);
+        context.put("timeout", Integer.toString(TIMEOUT));
+        final Writer writer = new FileWriter(new File(outputLocation, "Dot2Svg-build.xml"));
+        engine.evaluate(context, writer, "", getTemplateReader());
+        writer.close();
     }
 
     private void duration(final PrintStream logger, final long start) {
@@ -148,12 +176,12 @@ public class ReportGenerator {
     public static void main(final String[] args) throws IOException, SAXException {
         final DevelopmentComponentFactory dcFactory = new DevelopmentComponentFactory();
         final DevelopmentConfigurationReader reader = new DevelopmentConfigurationReader(dcFactory);
-//        new XmlReaderHelper(reader).parse(new FileReader(
-//            "/tmp/jenkins/jobs/enviaM/workspace/DevelopmentConfiguration.xml"));
-        new XmlReaderHelper(reader).parse(new FileReader(
-            "/NWDI-Redesign/PN3_enviaMPr_D-refactored.xml"));
         // new XmlReaderHelper(reader).parse(new FileReader(
-        // "/home/weigo/tmp/enviaM/workspace/DevelopmentConfiguration.xml"));
+        // "/tmp/jenkins/jobs/enviaM/workspace/DevelopmentConfiguration.xml"));
+        // new XmlReaderHelper(reader).parse(new FileReader(
+        // "/NWDI-Redesign/PN3_enviaMPr_D-refactored.xml"));
+        new XmlReaderHelper(reader).parse(new FileReader(
+            "/home/weigo/tmp/enviaM/workspace/DevelopmentConfiguration.xml"));
 
         dcFactory.updateUsingDCs();
 
@@ -163,11 +191,11 @@ public class ReportGenerator {
             }
         }
 
-        // final String dot = "/usr/bin/dot";
-        String dot = "/ZusatzSW/GraphViz/bin/dot.exe";
+        final String dot = "/usr/local/bin/dot";
+        // final String dot = "/ZusatzSW/GraphViz/bin/dot.exe";
         final PrintStream s = new PrintStream(new File("/tmp/report.log"));
-        new ReportGenerator(s, reader.getDevelopmentConfiguration(), dcFactory, "/tmp/enviaMPR", dot,
-            Pattern.compile("sap\\.com")).execute();
+        new ReportGenerator(s, reader.getDevelopmentConfiguration(), dcFactory,
+            new VelocityHelper(s).getVelocityEngine(), "/tmp/enviaMPR", dot, Pattern.compile("sap\\.com")).execute();
         s.close();
     }
 

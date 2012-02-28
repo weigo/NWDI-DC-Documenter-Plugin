@@ -43,6 +43,7 @@ public class DocumentationBuilder extends AntTaskBuilder {
      * 
      * @deprecated Not used anymore!
      */
+    @Deprecated
     private final transient Pattern ignoreSoftwareComponentRegex = null;
 
     /**
@@ -79,11 +80,14 @@ public class DocumentationBuilder extends AntTaskBuilder {
 
         boolean result =
             new ReportGenerator(listener.getLogger(), nwdiBuild.getDevelopmentConfiguration(),
-                nwdiBuild.getDevelopmentComponentFactory(), getAntHelper().getPathToWorkspace() + File.separatorChar
-                    + "documentation", DESCRIPTOR.getDotExecutable(), ignoreVendorRegexp).execute();
+                nwdiBuild.getDevelopmentComponentFactory(), getVelocityEngine(listener.getLogger()), getAntHelper()
+                    .getPathToWorkspace() + File.separatorChar + "documentation", DESCRIPTOR.getDotExecutable(),
+                ignoreVendorRegexp).execute();
 
         if (result) {
-            result = super.execute(nwdiBuild, launcher, listener, "convert-all", "documentation/Dot2Svg-build.xml", this.getAntProperties());
+            result =
+                super.execute(nwdiBuild, launcher, listener, "convert-all", "documentation/Dot2Svg-build.xml",
+                    getAntProperties());
         }
 
         return result;
@@ -116,6 +120,7 @@ public class DocumentationBuilder extends AntTaskBuilder {
          * 
          * @deprecated Not used anymore
          */
+        @Deprecated
         private transient Pattern ignoreVendorRegexp;
 
         /**
@@ -124,6 +129,7 @@ public class DocumentationBuilder extends AntTaskBuilder {
          * 
          * @deprecated Not used anymore.
          */
+        @Deprecated
         private transient Pattern ignoreSoftwareComponentRegex;
 
         /**

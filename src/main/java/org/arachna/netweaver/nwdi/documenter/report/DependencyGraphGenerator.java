@@ -100,7 +100,7 @@ public final class DependencyGraphGenerator implements DevelopmentConfigurationV
      *            for.
      */
     @Override
-    public void visitDevelopmentConfiguration(final DevelopmentConfiguration configuration) {
+    public void visit(final DevelopmentConfiguration configuration) {
         try {
             final File images = createDirectoryIffNotExists(baseDirectory, "images");
             final DotFileWriter dotFileWriter = new DotFileWriter(images.getAbsolutePath());
@@ -114,7 +114,7 @@ public final class DependencyGraphGenerator implements DevelopmentConfigurationV
     }
 
     @Override
-    public void visitCompartment(final Compartment compartment) {
+    public void visit(final Compartment compartment) {
         try {
             final File baseDir =
                 createDirectoryIffNotExists(baseDirectory,
@@ -133,7 +133,7 @@ public final class DependencyGraphGenerator implements DevelopmentConfigurationV
     }
 
     @Override
-    public void visitDevelopmentComponent(final DevelopmentComponent component) {
+    public void visit(final DevelopmentComponent component) {
         if (!vendorFilter.accept(component) && component.isNeedsRebuild()) {
             try {
                 final File baseDir =

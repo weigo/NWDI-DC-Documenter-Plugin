@@ -1,13 +1,19 @@
 <project name="Dot2Svg" default="convert-all">
-  <target name="convert-all">
-#foreach($dotFile in $dotFiles)
-    <echo message="Converting $dotFile to SVG." />
+  <macrodef name="convert-single">
+    <attribute name="source" />
+    <sequential>
     <exec executable="$dot" timeout="$timeout">
       <arg value="-Tsvg" />
       <arg value="-o" />
-      <arg value="$dotFile.replace('.dot', '.svg')" />
-      <arg value="$dotFile" />
+      <arg value="@{source}.svg" />
+      <arg value="@{source}.dot" />
     </exec>
+    </sequential>
+  </macrodef>
+  <target name="convert-all">
+#foreach($dotFile in $dotFiles)
+    <echo message="Converting $dotFile to SVG." />
+    <convert-single source="$dotFile.replace('.dot', '')" />
 #end
   </target>
 </project>
