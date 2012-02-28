@@ -69,7 +69,7 @@ public final class DevelopmentConfigurationHtmlGenerator extends AbstractDevelop
      * {@inheritDoc}
      */
     @Override
-    public void visitDevelopmentConfiguration(final DevelopmentConfiguration configuration) {
+    public void visit(final DevelopmentConfiguration configuration) {
         try {
             createOverviewPage(configuration);
             copyResources();
@@ -98,7 +98,7 @@ public final class DevelopmentConfigurationHtmlGenerator extends AbstractDevelop
      * {@inheritDoc}
      */
     @Override
-    public void visitCompartment(final Compartment compartment) {
+    public void visit(final Compartment compartment) {
         final File baseDir =
             createDirectoryIffNotExists(writerConfiguration.getOutputLocation() + File.separatorChar
                 + compartment.getSoftwareComponent());
@@ -119,7 +119,7 @@ public final class DevelopmentConfigurationHtmlGenerator extends AbstractDevelop
      * {@inheritDoc}
      */
     @Override
-    public void visitDevelopmentComponent(final DevelopmentComponent component) {
+    public void visit(final DevelopmentComponent component) {
         final File baseDir =
             createDirectoryIffNotExists(writerConfiguration.getOutputLocation() + File.separatorChar
                 + component.getCompartment().getSoftwareComponent());
@@ -131,8 +131,8 @@ public final class DevelopmentConfigurationHtmlGenerator extends AbstractDevelop
 
             try {
                 writer =
-                    new FileWriter(String.format("%s%c%s.html", baseDir.getAbsolutePath(), File.separatorChar,
-                        String.format("%s~%s", component.getVendor(), component.getName().replace("/", "~"))));
+                    new FileWriter(new File(baseDir, String.format("%s~%s.html", component.getVendor(), component
+                        .getName().replace("/", "~"))));
                 generator.execute(writer, component);
             }
             catch (final IOException e) {
