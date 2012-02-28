@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Writer;
 import java.util.Locale;
-import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 import org.apache.velocity.VelocityContext;
@@ -91,33 +90,6 @@ public final class DevelopmentComponentReportGenerator {
         writer.flush();
     }
 
-    public class BundleHelper {
-        private final ResourceBundle bundle;
-        private final Locale locale;
-
-        BundleHelper(final ResourceBundle bundle, final Locale locale) {
-            this.bundle = bundle;
-            this.locale = locale;
-        }
-
-        public String render(final String key, final String arg) {
-            String message = key;
-
-            try {
-                message = bundle.getString(key);
-            }
-            catch (final MissingResourceException mre) {
-                // use key as message format...
-            }
-
-            return String.format(locale, message, arg);
-        }
-
-        public boolean isNull(final Object value) {
-            return value == null;
-        }
-    }
-
     /**
      * 
      */
@@ -136,7 +108,8 @@ public final class DevelopmentComponentReportGenerator {
                     Locale.GERMAN), Locale.GERMAN);
 
         final DevelopmentConfigurationReader reader = new DevelopmentConfigurationReader(dcFactory);
-        final String workspace = "/home/weigo/tmp/enviaM/workspace";
+//        final String workspace = "/home/weigo/tmp/enviaM/workspace";
+        final String workspace = "/tmp/jenkins/jobs/enviaM/workspace/";
         new XmlReaderHelper(reader).parse(new FileReader(workspace + "/DevelopmentConfiguration.xml"));
         dcFactory.updateUsingDCs();
 
