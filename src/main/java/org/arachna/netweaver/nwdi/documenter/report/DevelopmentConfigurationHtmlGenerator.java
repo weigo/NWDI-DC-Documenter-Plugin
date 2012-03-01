@@ -130,9 +130,7 @@ public final class DevelopmentConfigurationHtmlGenerator extends AbstractDevelop
             FileWriter writer = null;
 
             try {
-                writer =
-                    new FileWriter(new File(baseDir, String.format("%s~%s.html", component.getVendor(), component
-                        .getName().replace("/", "~"))));
+                writer = new FileWriter(new File(baseDir, String.format("%s.html", component.getNormalizedName('~'))));
                 generator.execute(writer, component);
             }
             catch (final IOException e) {

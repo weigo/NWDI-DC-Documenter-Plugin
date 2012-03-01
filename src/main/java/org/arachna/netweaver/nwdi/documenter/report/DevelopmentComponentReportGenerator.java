@@ -107,7 +107,8 @@ public final class DevelopmentComponentReportGenerator {
                     Locale.GERMAN), Locale.GERMAN);
 
         final DevelopmentConfigurationReader reader = new DevelopmentConfigurationReader(dcFactory);
-        final String workspace = "/home/weigo/tmp/enviaM/workspace";
+//        final String workspace = "/home/weigo/tmp/enviaM/workspace";
+        final String workspace = "/tmp/jenkins/jobs/enviaM/workspace/";
         new XmlReaderHelper(reader).parse(new FileReader(workspace + "/DevelopmentConfiguration.xml"));
         dcFactory.updateUsingDCs();
 
