@@ -36,7 +36,10 @@ public class JavaDocMethodCommentExtractingVisitor extends VoidVisitorAdapter {
      */
     private final ClassNameResolver classNameResolver;
 
-    private Pattern parameterPattern = Pattern.compile("(\\w+)\\s+(.*)");
+    /**
+     * regular expression for parameters.
+     */
+    private final Pattern parameterPattern = Pattern.compile("(\\w+)\\s+(.*)");
 
     /**
      * Create an instance of a
@@ -90,7 +93,7 @@ public class JavaDocMethodCommentExtractingVisitor extends VoidVisitorAdapter {
 
             for (final TagDescriptor descriptor : content.getTagDescriptors("@param")) {
                 if (parameters.hasNext()) {
-                    Matcher matcher = this.parameterPattern.matcher(descriptor.getDescription());
+                    final Matcher matcher = parameterPattern.matcher(descriptor.getDescription());
 
                     if (matcher.matches()) {
                         parameters.next().setDescription(matcher.group(2));
@@ -117,33 +120,44 @@ public class JavaDocMethodCommentExtractingVisitor extends VoidVisitorAdapter {
         return method;
     }
 
+    /**
+     * Determine whether the parameter list from the parsed java source matches
+     * that of a web service method.
+     * 
+     * @param methodParameters
+     *            parameters of method from java source
+     * @param parameters
+     *            parameters from web service method
+     * @return <code>true</code> when the parameters match by type or the given
+     *         list of method parameters is <code>null</code> and the web
+     *         service parameters are empty, <code>false</code> otherwise.
+     */
     private boolean parametersMatch(final List<japa.parser.ast.body.Parameter> methodParameters,
         final Collection<Parameter> parameters) {
         if (methodParameters == null && parameters.isEmpty()) {
             return true;
         }
 
-        if (methodParameters.size() != parameters.size()) {
-            return false;
-        }
+        boolean matches = methodParameters.size() == parameters.size();
 
-        final Iterator<japa.parser.ast.body.Parameter> params = methodParameters.iterator();
-        boolean matches = true;
-        japa.parser.ast.body.Parameter parameter;
+        if (matches) {
+            final Iterator<japa.parser.ast.body.Parameter> params = methodParameters.iterator();
 
-        for (final Parameter param : parameters) {
-            parameter = params.next();
+            japa.parser.ast.body.Parameter parameter;
 
-            final String className = classNameResolver.resolveClassName(parameter);
-            final org.arachna.netweaver.nwdi.documenter.webservices.Type type = param.getType();
+            for (final Parameter param : parameters) {
+                parameter = params.next();
 
-            if (!type.getName().equals(className)) {
-                matches = false;
-                break;
+                final String className = classNameResolver.resolveClassName(parameter);
+                final org.arachna.netweaver.nwdi.documenter.webservices.Type type = param.getType();
+
+                if (!type.getName().equals(className)) {
+                    matches = false;
+                    break;
+                }
             }
         }
 
         return matches;
-
     }
 }

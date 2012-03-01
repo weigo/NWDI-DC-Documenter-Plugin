@@ -17,118 +17,46 @@ import java.util.Map;
  * @author Dirk Weigenand
  */
 public class ClassNameResolver {
+    /**
+     * a class name ending with [] indicates an array.
+     */
+    private static final String BRACKETS = "[]";
+
+    /**
+     * Mapping for classes in java.lang.
+     */
     private static final Map<String, String> JAVA_LANG = new HashMap<String, String>();
 
+    // initialize mapping for classes in java.lang
     static {
-        JAVA_LANG.put(Appendable.class.getSimpleName(), Appendable.class.getCanonicalName());
-        JAVA_LANG.put(CharSequence.class.getSimpleName(), CharSequence.class.getCanonicalName());
-        JAVA_LANG.put(Cloneable.class.getSimpleName(), Cloneable.class.getCanonicalName());
-        JAVA_LANG.put(Comparable.class.getSimpleName(), Comparable.class.getCanonicalName());
-        JAVA_LANG.put(Iterable.class.getSimpleName(), Iterable.class.getCanonicalName());
-        JAVA_LANG.put(Readable.class.getSimpleName(), Readable.class.getCanonicalName());
-        JAVA_LANG.put(Runnable.class.getSimpleName(), Runnable.class.getCanonicalName());
-        JAVA_LANG.put(Thread.UncaughtExceptionHandler.class.getSimpleName(),
-            Thread.UncaughtExceptionHandler.class.getCanonicalName());
-        JAVA_LANG.put(Boolean.class.getSimpleName(), Boolean.class.getCanonicalName());
-        JAVA_LANG.put(Byte.class.getSimpleName(), Byte.class.getCanonicalName());
-        JAVA_LANG.put(Character.class.getSimpleName(), Character.class.getCanonicalName());
-        JAVA_LANG.put(Character.Subset.class.getSimpleName(), Character.Subset.class.getCanonicalName());
-        JAVA_LANG.put(Character.UnicodeBlock.class.getSimpleName(), Character.UnicodeBlock.class.getCanonicalName());
-        JAVA_LANG.put(Class.class.getSimpleName(), Class.class.getCanonicalName());
-        JAVA_LANG.put(ClassLoader.class.getSimpleName(), ClassLoader.class.getCanonicalName());
-        JAVA_LANG.put(Compiler.class.getSimpleName(), Compiler.class.getCanonicalName());
-        JAVA_LANG.put(Double.class.getSimpleName(), Double.class.getCanonicalName());
-        JAVA_LANG.put(Enum.class.getSimpleName(), Enum.class.getCanonicalName());
-        JAVA_LANG.put(Float.class.getSimpleName(), Float.class.getCanonicalName());
-        JAVA_LANG.put(InheritableThreadLocal.class.getSimpleName(), InheritableThreadLocal.class.getCanonicalName());
-        JAVA_LANG.put(Integer.class.getSimpleName(), Integer.class.getCanonicalName());
-        JAVA_LANG.put(Long.class.getSimpleName(), Long.class.getCanonicalName());
-        JAVA_LANG.put(Math.class.getSimpleName(), Math.class.getCanonicalName());
-        JAVA_LANG.put(Number.class.getSimpleName(), Number.class.getCanonicalName());
-        JAVA_LANG.put(Object.class.getSimpleName(), Object.class.getCanonicalName());
-        JAVA_LANG.put(Package.class.getSimpleName(), Package.class.getCanonicalName());
-        JAVA_LANG.put(Process.class.getSimpleName(), Process.class.getCanonicalName());
-        JAVA_LANG.put(ProcessBuilder.class.getSimpleName(), ProcessBuilder.class.getCanonicalName());
-        JAVA_LANG.put(Runtime.class.getSimpleName(), Runtime.class.getCanonicalName());
-        JAVA_LANG.put(RuntimePermission.class.getSimpleName(), RuntimePermission.class.getCanonicalName());
-        JAVA_LANG.put(SecurityManager.class.getSimpleName(), SecurityManager.class.getCanonicalName());
-        JAVA_LANG.put(Short.class.getSimpleName(), Short.class.getCanonicalName());
-        JAVA_LANG.put(StackTraceElement.class.getSimpleName(), StackTraceElement.class.getCanonicalName());
-        JAVA_LANG.put(StrictMath.class.getSimpleName(), StrictMath.class.getCanonicalName());
-        JAVA_LANG.put(String.class.getSimpleName(), String.class.getCanonicalName());
-        JAVA_LANG.put(StringBuffer.class.getSimpleName(), StringBuffer.class.getCanonicalName());
-        JAVA_LANG.put(StringBuilder.class.getSimpleName(), StringBuilder.class.getCanonicalName());
-        JAVA_LANG.put(System.class.getSimpleName(), System.class.getCanonicalName());
-        JAVA_LANG.put(Thread.class.getSimpleName(), Thread.class.getCanonicalName());
-        JAVA_LANG.put(ThreadGroup.class.getSimpleName(), ThreadGroup.class.getCanonicalName());
-        JAVA_LANG.put(ThreadLocal.class.getSimpleName(), ThreadLocal.class.getCanonicalName());
-        JAVA_LANG.put(Throwable.class.getSimpleName(), Throwable.class.getCanonicalName());
-        JAVA_LANG.put(Void.class.getSimpleName(), Void.class.getCanonicalName());
-        JAVA_LANG.put(Thread.State.class.getSimpleName(), Thread.State.class.getCanonicalName());
-        JAVA_LANG.put(ArithmeticException.class.getSimpleName(), ArithmeticException.class.getCanonicalName());
-        JAVA_LANG.put(ArrayIndexOutOfBoundsException.class.getSimpleName(),
-            ArrayIndexOutOfBoundsException.class.getCanonicalName());
-        JAVA_LANG.put(ArrayStoreException.class.getSimpleName(), ArrayStoreException.class.getCanonicalName());
-        JAVA_LANG.put(ClassCastException.class.getSimpleName(), ClassCastException.class.getCanonicalName());
-        JAVA_LANG.put(ClassNotFoundException.class.getSimpleName(), ClassNotFoundException.class.getCanonicalName());
-        JAVA_LANG.put(CloneNotSupportedException.class.getSimpleName(),
-            CloneNotSupportedException.class.getCanonicalName());
-        JAVA_LANG.put(EnumConstantNotPresentException.class.getSimpleName(),
-            EnumConstantNotPresentException.class.getCanonicalName());
-        JAVA_LANG.put(Exception.class.getSimpleName(), Exception.class.getCanonicalName());
-        JAVA_LANG.put(IllegalAccessException.class.getSimpleName(), IllegalAccessException.class.getCanonicalName());
-        JAVA_LANG
-            .put(IllegalArgumentException.class.getSimpleName(), IllegalArgumentException.class.getCanonicalName());
-        JAVA_LANG.put(IllegalMonitorStateException.class.getSimpleName(),
-            IllegalMonitorStateException.class.getCanonicalName());
-        JAVA_LANG.put(IllegalStateException.class.getSimpleName(), IllegalStateException.class.getCanonicalName());
-        JAVA_LANG.put(IllegalThreadStateException.class.getSimpleName(),
-            IllegalThreadStateException.class.getCanonicalName());
-        JAVA_LANG.put(IndexOutOfBoundsException.class.getSimpleName(),
-            IndexOutOfBoundsException.class.getCanonicalName());
-        JAVA_LANG.put(InstantiationException.class.getSimpleName(), InstantiationException.class.getCanonicalName());
-        JAVA_LANG.put(InterruptedException.class.getSimpleName(), InterruptedException.class.getCanonicalName());
-        JAVA_LANG.put(NegativeArraySizeException.class.getSimpleName(),
-            NegativeArraySizeException.class.getCanonicalName());
-        JAVA_LANG.put(NoSuchFieldException.class.getSimpleName(), NoSuchFieldException.class.getCanonicalName());
-        JAVA_LANG.put(NoSuchMethodException.class.getSimpleName(), NoSuchMethodException.class.getCanonicalName());
-        JAVA_LANG.put(NullPointerException.class.getSimpleName(), NullPointerException.class.getCanonicalName());
-        JAVA_LANG.put(NumberFormatException.class.getSimpleName(), NumberFormatException.class.getCanonicalName());
-        JAVA_LANG.put(RuntimeException.class.getSimpleName(), RuntimeException.class.getCanonicalName());
-        JAVA_LANG.put(SecurityException.class.getSimpleName(), SecurityException.class.getCanonicalName());
-        JAVA_LANG.put(StringIndexOutOfBoundsException.class.getSimpleName(),
-            StringIndexOutOfBoundsException.class.getCanonicalName());
-        JAVA_LANG.put(TypeNotPresentException.class.getSimpleName(), TypeNotPresentException.class.getCanonicalName());
-        JAVA_LANG.put(UnsupportedOperationException.class.getSimpleName(),
-            UnsupportedOperationException.class.getCanonicalName());
-        JAVA_LANG.put(AbstractMethodError.class.getSimpleName(), AbstractMethodError.class.getCanonicalName());
-        JAVA_LANG.put(AssertionError.class.getSimpleName(), AssertionError.class.getCanonicalName());
-        JAVA_LANG.put(ClassCircularityError.class.getSimpleName(), ClassCircularityError.class.getCanonicalName());
-        JAVA_LANG.put(ClassFormatError.class.getSimpleName(), ClassFormatError.class.getCanonicalName());
-        JAVA_LANG.put(Error.class.getSimpleName(), Error.class.getCanonicalName());
-        JAVA_LANG.put(ExceptionInInitializerError.class.getSimpleName(),
-            ExceptionInInitializerError.class.getCanonicalName());
-        JAVA_LANG.put(IllegalAccessError.class.getSimpleName(), IllegalAccessError.class.getCanonicalName());
-        JAVA_LANG.put(IncompatibleClassChangeError.class.getSimpleName(),
-            IncompatibleClassChangeError.class.getCanonicalName());
-        JAVA_LANG.put(InstantiationError.class.getSimpleName(), InstantiationError.class.getCanonicalName());
-        JAVA_LANG.put(InternalError.class.getSimpleName(), InternalError.class.getCanonicalName());
-        JAVA_LANG.put(LinkageError.class.getSimpleName(), LinkageError.class.getCanonicalName());
-        JAVA_LANG.put(NoClassDefFoundError.class.getSimpleName(), NoClassDefFoundError.class.getCanonicalName());
-        JAVA_LANG.put(NoSuchFieldError.class.getSimpleName(), NoSuchFieldError.class.getCanonicalName());
-        JAVA_LANG.put(NoSuchMethodError.class.getSimpleName(), NoSuchMethodError.class.getCanonicalName());
-        JAVA_LANG.put(OutOfMemoryError.class.getSimpleName(), OutOfMemoryError.class.getCanonicalName());
-        JAVA_LANG.put(StackOverflowError.class.getSimpleName(), StackOverflowError.class.getCanonicalName());
-        JAVA_LANG.put(ThreadDeath.class.getSimpleName(), ThreadDeath.class.getCanonicalName());
-        JAVA_LANG.put(UnknownError.class.getSimpleName(), UnknownError.class.getCanonicalName());
-        JAVA_LANG.put(UnsatisfiedLinkError.class.getSimpleName(), UnsatisfiedLinkError.class.getCanonicalName());
-        JAVA_LANG.put(UnsupportedClassVersionError.class.getSimpleName(),
-            UnsupportedClassVersionError.class.getCanonicalName());
-        JAVA_LANG.put(VerifyError.class.getSimpleName(), VerifyError.class.getCanonicalName());
-        JAVA_LANG.put(VirtualMachineError.class.getSimpleName(), VirtualMachineError.class.getCanonicalName());
-        JAVA_LANG.put(Deprecated.class.getSimpleName(), Deprecated.class.getCanonicalName());
-        JAVA_LANG.put(Override.class.getSimpleName(), Override.class.getCanonicalName());
-        JAVA_LANG.put(SuppressWarnings.class.getSimpleName(), SuppressWarnings.class.getCanonicalName());
+        final Class classes[] =
+            new Class[] { Appendable.class, CharSequence.class, Cloneable.class, Comparable.class, Iterable.class,
+                Readable.class, Runnable.class, Thread.UncaughtExceptionHandler.class, Boolean.class, Byte.class,
+                Character.class, Character.Subset.class, Character.UnicodeBlock.class, Class.class, ClassLoader.class,
+                Compiler.class, Double.class, Enum.class, Float.class, InheritableThreadLocal.class, Integer.class,
+                Long.class, Math.class, Number.class, Object.class, Package.class, Process.class, ProcessBuilder.class,
+                Runtime.class, RuntimePermission.class, SecurityManager.class, Short.class, StackTraceElement.class,
+                StrictMath.class, String.class, StringBuffer.class, StringBuilder.class, System.class, Thread.class,
+                ThreadGroup.class, ThreadLocal.class, Throwable.class, Void.class, Thread.State.class,
+                ArithmeticException.class, ArrayIndexOutOfBoundsException.class, ArrayStoreException.class,
+                ClassCastException.class, ClassNotFoundException.class, CloneNotSupportedException.class,
+                EnumConstantNotPresentException.class, Exception.class, IllegalAccessException.class,
+                IllegalArgumentException.class, IllegalMonitorStateException.class, IllegalStateException.class,
+                IllegalThreadStateException.class, IndexOutOfBoundsException.class, InstantiationException.class,
+                InterruptedException.class, NegativeArraySizeException.class, NoSuchFieldException.class,
+                NoSuchMethodException.class, NullPointerException.class, NumberFormatException.class,
+                RuntimeException.class, SecurityException.class, StringIndexOutOfBoundsException.class,
+                TypeNotPresentException.class, UnsupportedOperationException.class, AbstractMethodError.class,
+                AssertionError.class, ClassCircularityError.class, ClassFormatError.class, Error.class,
+                ExceptionInInitializerError.class, IllegalAccessError.class, IncompatibleClassChangeError.class,
+                InstantiationError.class, InternalError.class, LinkageError.class, NoClassDefFoundError.class,
+                NoSuchFieldError.class, NoSuchMethodError.class, OutOfMemoryError.class, StackOverflowError.class,
+                ThreadDeath.class, UnknownError.class, UnsatisfiedLinkError.class, UnsupportedClassVersionError.class,
+                VerifyError.class, VirtualMachineError.class, Deprecated.class, Override.class, SuppressWarnings.class, };
+
+        for (final Class clazz : classes) {
+            JAVA_LANG.put(clazz.getSimpleName(), clazz.getCanonicalName());
+        }
     }
 
     /**
@@ -136,11 +64,19 @@ public class ClassNameResolver {
      */
     private final Map<String, NameExpr> classNameMapping = new HashMap<String, NameExpr>();
 
+    /**
+     * Name of package this ClassNameResolver shall resolve class names for.
+     */
     private final String packageName;
 
     /**
+     * Create a <code>ClassNameResolver</code> using the given package name and
+     * list of imports.
      * 
+     * @param packageName
+     *            package name for which to resolve class names.
      * @param imports
+     *            list of imports of the class
      */
     public ClassNameResolver(final String packageName, final Collection<ImportDeclaration> imports) {
         this.packageName = packageName;
@@ -159,33 +95,42 @@ public class ClassNameResolver {
      * 
      * @param parameter
      *            the Parameter to determine the class name for.
+     * @return the class name resolved either from the <code>java.lang</code>
+     *         package, from the imported classes or the current package.
      */
     public String resolveClassName(final Parameter parameter) {
         return resolveClassName(parameter.getType().toString());
     }
 
     /**
+     * Determine the full class name (i.e. String --> java.lang.String) of the
+     * given unqualified class name.
+     * 
      * @param className
-     * @return
+     *            unqualified class name to determine the fully qualified class
+     *            name for.
+     * @return the class name resolved either from the <code>java.lang</code>
+     *         package, from the imported classes or the current package.
      */
-    public String resolveClassName(String className) {
+    public String resolveClassName(final String className) {
         boolean isVarArgs = false;
+        String resolvedClassName = className;
 
-        if (className.endsWith("[]")) {
-            className = className.substring(0, className.length() - 2);
+        if (className.endsWith(BRACKETS)) {
+            resolvedClassName = className.substring(0, className.length() - 2);
             isVarArgs = true;
         }
 
-        if (JAVA_LANG.containsKey(className)) {
-            className = JAVA_LANG.get(className);
+        if (JAVA_LANG.containsKey(resolvedClassName)) {
+            resolvedClassName = JAVA_LANG.get(resolvedClassName);
         }
-        else if (classNameMapping.containsKey(className)) {
-            className = classNameMapping.get(className).toString();
+        else if (classNameMapping.containsKey(resolvedClassName)) {
+            resolvedClassName = classNameMapping.get(resolvedClassName).toString();
         }
         else {
-            className = packageName + '.' + className;
+            resolvedClassName = packageName + '.' + resolvedClassName;
         }
 
-        return isVarArgs ? className + "[]" : className;
+        return isVarArgs ? resolvedClassName + BRACKETS : resolvedClassName;
     }
 }
