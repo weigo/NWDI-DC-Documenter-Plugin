@@ -6,9 +6,12 @@ package org.arachna.netweaver.nwdi.documenter.report;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.StringWriter;
-import java.io.Writer;
 import java.util.Locale;
 import java.util.ResourceBundle;
+
+import jenkins.plugins.confluence.soap.v1.RemotePageSummary;
+import jenkins.plugins.confluence.soap.v2.RemotePage;
+import jenkins.plugins.confluence.soap.v2.RemotePageUpdateOptions;
 
 import org.apache.velocity.app.VelocityEngine;
 import org.arachna.netweaver.dc.types.AbstractDevelopmentConfigurationVisitor;
@@ -42,7 +45,11 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator extends Abstr
      */
     private final DevelopmentComponentReportGenerator generator;
 
-    private String spaceKey;
+    /**
+     * the key of the confluence space used to store the generated
+     * documentation.
+     */
+    private final String spaceKey;
 
     /**
      * Create an instance of the confluence wiki content generator for
@@ -54,12 +61,18 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator extends Abstr
      *            filter for development components by vendor.
      * @param velocityEngine
      *            velocity engine for doing transformations.
+     * @param session
+     *            the confluence session
+     * @param spaceKey
+     *            the key of the confluence space used to store the generated
+     *            documentation.
      */
     public DevelopmentConfigurationConfluenceWikiGenerator(final DevelopmentComponentFactory dcFactory,
         final IDevelopmentComponentFilter vendorFilter, final VelocityEngine velocityEngine,
-        final ConfluenceSession session) {
+        final ConfluenceSession session, final String spaceKey) {
         this.vendorFilter = vendorFilter;
         this.session = session;
+        this.spaceKey = spaceKey;
         generator =
             new DevelopmentComponentReportGenerator(dcFactory, velocityEngine,
                 "/org/arachna/netweaver/nwdi/documenter/report/DevelopmentComponentWikiTemplate.vm",
@@ -95,7 +108,7 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator extends Abstr
     @Override
     public void visit(final DevelopmentComponent component) {
         if (!vendorFilter.accept(component) && component.isNeedsRebuild()) {
-            final Writer writer = new StringWriter();
+            final StringWriter writer = new StringWriter();
 
             try {
                 generator.execute(writer, component);
@@ -104,13 +117,24 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator extends Abstr
                 throw new RuntimeException(e);
             }
             finally {
-                if (writer != null) {
-                    try {
-                        writer.close();
+                try {
+                    writer.close();
+                    final RemotePageSummary pageSummary =
+                        session.getPageSummary(spaceKey, component.getNormalizedName('_'));
+                    RemotePage page = null;
+
+                    if (pageSummary != null) {
+                        page = session.getPageV2(pageSummary.getId());
                     }
-                    catch (final IOException e) {
-                        throw new RuntimeException(e);
-                    }
+
+                    page = new RemotePage();
+                    page.setVersion(page.getVersion() + 1);
+                    page.setContent(writer.toString());
+
+                    session.updatePageV2(page, new RemotePageUpdateOptions(true, ""));
+                }
+                catch (final IOException e) {
+                    throw new RuntimeException(e);
                 }
             }
         }

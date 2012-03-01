@@ -11,6 +11,7 @@ import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.io.Reader;
 import java.io.Writer;
+import java.net.URL;
 import java.util.Collection;
 import java.util.regex.Pattern;
 
@@ -22,11 +23,14 @@ import org.arachna.netweaver.dc.types.DevelopmentComponent;
 import org.arachna.netweaver.dc.types.DevelopmentComponentFactory;
 import org.arachna.netweaver.dc.types.DevelopmentConfiguration;
 import org.arachna.netweaver.nwdi.documenter.report.DependencyGraphGenerator;
-import org.arachna.netweaver.nwdi.documenter.report.DevelopmentConfigurationHtmlGenerator;
+import org.arachna.netweaver.nwdi.documenter.report.DevelopmentConfigurationConfluenceWikiGenerator;
 import org.arachna.netweaver.nwdi.documenter.report.ReportWriterConfiguration;
 import org.arachna.velocity.VelocityHelper;
 import org.arachna.xml.XmlReaderHelper;
 import org.xml.sax.SAXException;
+
+import com.myyearbook.hudson.plugins.confluence.ConfluenceSession;
+import com.myyearbook.hudson.plugins.confluence.ConfluenceSite;
 
 /**
  * (HTML-)Documentation generator for a development configuration.
@@ -130,8 +134,16 @@ public class ReportGenerator {
         try {
             final long start = System.currentTimeMillis();
             logger.append("Creating development configuration report...");
-            config.accept(new DevelopmentConfigurationHtmlGenerator(writerConfiguration, dcFactory, vendorFilter,
-                engine));
+
+            final ConfluenceSite site =
+                new ConfluenceSite(new URL("http://localhost:8080/confluence/rpc/xmlrpc"), "xmlapi", "xmlapi");
+            final ConfluenceSession confluenceSession = site.createSession();
+            config.accept(new DevelopmentConfigurationConfluenceWikiGenerator(dcFactory, vendorFilter, engine,
+                confluenceSession, "NETW"));
+            // config.accept(new
+            // DevelopmentConfigurationHtmlGenerator(writerConfiguration,
+            // dcFactory, vendorFilter,
+            // engine));
             duration(logger, start);
 
             materializeDot2SvgBuildXml(dependenciesGeneratory.getDotFiles());
@@ -146,7 +158,7 @@ public class ReportGenerator {
 
     /**
      * Create an Ant build file for translating GraphViz <code>.dot</code> files
-     * int SVG graphics.
+     * into SVG graphics.
      * 
      * @param dotFiles
      *            collection of GraphViz <code>.dot</code> to translate into
