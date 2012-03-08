@@ -3,28 +3,19 @@
  */
 package org.arachna.netweaver.nwdi.documenter.report;
 
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.Writer;
-import java.util.Locale;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.context.Context;
-import org.apache.velocity.exception.MethodInvocationException;
-import org.apache.velocity.exception.ParseErrorException;
-import org.apache.velocity.exception.ResourceNotFoundException;
-import org.arachna.netweaver.dc.config.DevelopmentConfigurationReader;
 import org.arachna.netweaver.dc.types.DevelopmentComponent;
 import org.arachna.netweaver.dc.types.DevelopmentComponentFactory;
 import org.arachna.netweaver.nwdi.documenter.webservices.VirtualInterfaceDefinitionProvider;
-import org.arachna.velocity.VelocityHelper;
-import org.arachna.xml.XmlReaderHelper;
-import org.xml.sax.SAXException;
 
 /**
  * Generator for a report of the properties of a {@link DevelopmentComponent}.
@@ -53,68 +44,76 @@ public final class DevelopmentComponentReportGenerator {
      */
     private final DevelopmentComponentFactory dcFactory;
 
-    private final Locale locale;
-
-    private final VirtualInterfaceDefinitionProvider viDefProvider = new VirtualInterfaceDefinitionProvider(null);
+    /**
+     * Provider for virtual interfaces of web services.
+     */
+    private final VirtualInterfaceDefinitionProvider viDefProvider = new VirtualInterfaceDefinitionProvider();
 
     /**
+     * Create a <code>DevelopmentComponentReportGenerator</code> using the given
+     * {@link DevelopmentComponentFactory}, {@link VelocityEngine}, velocity
+     * template and resource bundle.
      * 
+     * The given {@link ResourceBundle} is used for internationalization.
+     * 
+     * @param dcFactory
+     *            used in template to resolve public part references into
+     *            development components.
+     * @param velocityEngine
+     *            VelocityEngine used to transform template.
+     * @param template
+     *            name of template to use for generating the documentation.
+     * @param bundle
+     *            the ResourceBundle used for I18N.
      */
     public DevelopmentComponentReportGenerator(final DevelopmentComponentFactory dcFactory,
-        final VelocityEngine velocityEngine, final String template, final ResourceBundle bundle, final Locale locale) {
+        final VelocityEngine velocityEngine, final String template, final ResourceBundle bundle) {
         this.dcFactory = dcFactory;
         this.velocityEngine = velocityEngine;
         this.template = template;
         this.bundle = bundle;
-        this.locale = locale;
     }
 
     /**
+     * Generate documentation for the given development component into the given
+     * writer object.
      * 
+     * @param writer
+     *            writer to generate documentation into.
      * @param component
-     * @throws IOException
-     * @throws ResourceNotFoundException
-     * @throws MethodInvocationException
-     * @throws ParseErrorException
+     *            development component to document.
+     * @param additionalContext
+     *            additional context attributes supplied externally
      */
-    public void execute(final Writer writer, final DevelopmentComponent component) throws ParseErrorException,
-        MethodInvocationException, ResourceNotFoundException, IOException {
+    public void execute(final Writer writer, final DevelopmentComponent component,
+        final Map<String, Object> additionalContext) {
         final Context context = new VelocityContext();
         context.put("component", component);
         context.put("bundle", bundle);
-        context.put("bundleHelper", new BundleHelper(bundle, locale));
+        context.put("bundleHelper", new BundleHelper(bundle));
         context.put("dcFactory", dcFactory);
         context.put("webServices", viDefProvider.execute(component));
+
+        for (final Map.Entry<String, Object> entry : additionalContext.entrySet()) {
+            context.put(entry.getKey(), entry.getValue());
+        }
+
         velocityEngine.evaluate(context, writer, "", getTemplateReader());
-        writer.flush();
+        try {
+            writer.close();
+        }
+        catch (final IOException ioe) {
+            throw new RuntimeException(ioe);
+        }
     }
 
     /**
-     * Return
+     * Return a reader for the template to use for generation of documentation.
+     * 
+     * @return {@link Reader} for velocity template used to generate
+     *         documentation.
      */
     protected Reader getTemplateReader() {
         return new InputStreamReader(this.getClass().getResourceAsStream(template));
-    }
-
-    public static void main(final String[] args) throws IOException, SAXException {
-        final VelocityEngine velocityEngine = new VelocityHelper(System.err).getVelocityEngine();
-        final DevelopmentComponentFactory dcFactory = new DevelopmentComponentFactory();
-
-        final DevelopmentComponentReportGenerator generator =
-            new DevelopmentComponentReportGenerator(dcFactory, velocityEngine,
-                "/org/arachna/netweaver/nwdi/documenter/report/DevelopmentComponentHtmlTemplate.vm",
-                ResourceBundle.getBundle("org/arachna/netweaver/nwdi/documenter/report/DevelopmentComponentReport",
-                    Locale.GERMAN), Locale.GERMAN);
-
-        final DevelopmentConfigurationReader reader = new DevelopmentConfigurationReader(dcFactory);
-//        final String workspace = "/home/weigo/tmp/enviaM/workspace";
-        final String workspace = "/tmp/jenkins/jobs/enviaM/workspace/";
-        new XmlReaderHelper(reader).parse(new FileReader(workspace + "/DevelopmentConfiguration.xml"));
-        dcFactory.updateUsingDCs();
-
-        final DevelopmentComponent component = dcFactory.get("enviam.de", "lib/manage/business/partner");
-        final FileWriter writer = new FileWriter(String.format("/tmp/%s.html", component.getName().replace('/', '~')));
-        generator.execute(writer, component);
-        writer.close();
     }
 }

@@ -10,7 +10,7 @@ import java.util.Set;
 import org.arachna.dot4j.model.Attributes;
 import org.arachna.dot4j.model.Edge;
 import org.arachna.netweaver.dc.types.DevelopmentComponent;
-import org.arachna.netweaver.hudson.nwdi.IDevelopmentComponentFilter;
+import org.arachna.netweaver.nwdi.documenter.VendorFilter;
 
 /**
  * Generator for <code>.dot</code> files visualizing the relation to development
@@ -27,7 +27,7 @@ public class UsingDevelopmentComponentsDotFileGenerator extends AbstractDevelopm
     /**
      * Vendors to ignore during graph generation.
      */
-    private final IDevelopmentComponentFilter vendorFilter;
+    private final VendorFilter vendorFilter;
 
     /**
      * Create an instance of a
@@ -38,11 +38,11 @@ public class UsingDevelopmentComponentsDotFileGenerator extends AbstractDevelopm
      *            development component the using development components
      *            relation shall be visualized for.
      * @param vendorFilter
-     *            regular expression for exclusion of development components
-     *            from vendors matching it.
+     *            filter for exclusion of development components when their
+     *            vendor matches.
      */
     public UsingDevelopmentComponentsDotFileGenerator(final DevelopmentComponent component,
-        final IDevelopmentComponentFilter vendorFilter) {
+        final VendorFilter vendorFilter) {
         super(null, component);
         this.vendorFilter = vendorFilter;
     }
@@ -56,11 +56,11 @@ public class UsingDevelopmentComponentsDotFileGenerator extends AbstractDevelopm
      *            development components the using development components shall
      *            be visualized for.
      * @param vendorFilter
-     *            regular expression for exclusion of development components
-     *            from vendors matching it.
+     *            filter for exclusion of development components when their
+     *            vendor matches.
      */
     public UsingDevelopmentComponentsDotFileGenerator(final Collection<DevelopmentComponent> components,
-        final IDevelopmentComponentFilter vendorFilter) {
+        final VendorFilter vendorFilter) {
         super(null, components);
         this.vendorFilter = vendorFilter;
     }

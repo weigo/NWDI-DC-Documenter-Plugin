@@ -14,7 +14,7 @@ import org.arachna.dot4j.model.Node;
 import org.arachna.netweaver.dc.types.DevelopmentComponent;
 import org.arachna.netweaver.dc.types.DevelopmentComponentFactory;
 import org.arachna.netweaver.dc.types.PublicPartReference;
-import org.arachna.netweaver.hudson.nwdi.IDevelopmentComponentFilter;
+import org.arachna.netweaver.nwdi.documenter.VendorFilter;
 
 /**
  * Generator for graphviz <code>.dot</code> files depicting relations between a
@@ -26,7 +26,7 @@ public final class DevelopmentComponentDotFileGenerator extends AbstractDevelopm
     /**
      * Vendors to ignore during graph generation.
      */
-    private final IDevelopmentComponentFilter vendorFilter;
+    private final VendorFilter vendorFilter;
 
     /**
      * Create an instance of a <code>DevelopmentComponentDotFileGenerator</code>
@@ -34,14 +34,14 @@ public final class DevelopmentComponentDotFileGenerator extends AbstractDevelopm
      * 
      * @param dcFactory
      *            registry used to get/create development components
-     * @param component
-     *            DC to generate usage relations for
+     * @param components
+     *            DCs to generate usage relations for
      * @param vendorFilter
      *            regular expression for exclusion of development components
      *            from vendors matching it.
      */
     public DevelopmentComponentDotFileGenerator(final DevelopmentComponentFactory dcFactory,
-        final Collection<DevelopmentComponent> components, final IDevelopmentComponentFilter vendorFilter) {
+        final Collection<DevelopmentComponent> components, final VendorFilter vendorFilter) {
         super(dcFactory, components);
         this.vendorFilter = vendorFilter;
     }
@@ -59,7 +59,7 @@ public final class DevelopmentComponentDotFileGenerator extends AbstractDevelopm
      *            from vendors matching it.
      */
     public DevelopmentComponentDotFileGenerator(final DevelopmentComponentFactory dcFactory,
-        final DevelopmentComponent component, final IDevelopmentComponentFilter vendorFilter) {
+        final DevelopmentComponent component, final VendorFilter vendorFilter) {
         super(dcFactory, component);
         this.vendorFilter = vendorFilter;
     }
@@ -147,7 +147,7 @@ public final class DevelopmentComponentDotFileGenerator extends AbstractDevelopm
                 }
 
                 // exclude DCs matched by the vendor filter.
-                if (this.vendorFilter.accept(usedDC)) {
+                if (vendorFilter.accept(usedDC)) {
                     continue;
                 }
 

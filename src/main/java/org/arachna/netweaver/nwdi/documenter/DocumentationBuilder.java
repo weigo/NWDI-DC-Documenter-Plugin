@@ -5,19 +5,42 @@ import hudson.Launcher;
 import hudson.model.BuildListener;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
+import hudson.model.Hudson;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.ResourceBundle;
 import java.util.regex.Pattern;
 
 import net.sf.json.JSONObject;
 
+import org.apache.velocity.app.VelocityEngine;
+import org.arachna.ant.AntHelper;
+import org.arachna.netweaver.dc.config.DevelopmentConfigurationReader;
+import org.arachna.netweaver.dc.types.DevelopmentComponent;
+import org.arachna.netweaver.dc.types.DevelopmentComponentFactory;
+import org.arachna.netweaver.dc.types.DevelopmentConfiguration;
 import org.arachna.netweaver.hudson.nwdi.AntTaskBuilder;
-import org.arachna.netweaver.hudson.nwdi.NWDIBuild;
-import org.arachna.netweaver.hudson.nwdi.NWDIProject;
+import org.arachna.netweaver.hudson.util.FilePathHelper;
+import org.arachna.netweaver.nwdi.documenter.report.DependencyGraphGenerator;
+import org.arachna.netweaver.nwdi.documenter.report.DevelopmentComponentReportGenerator;
+import org.arachna.netweaver.nwdi.documenter.report.DevelopmentConfigurationConfluenceWikiGenerator;
+import org.arachna.xml.XmlReaderHelper;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
+import org.xml.sax.SAXException;
+
+import com.myyearbook.hudson.plugins.confluence.ConfluencePublisher;
+import com.myyearbook.hudson.plugins.confluence.ConfluenceSession;
+import com.myyearbook.hudson.plugins.confluence.ConfluenceSite;
 
 /**
  * Builder for generating documentation of a development configuration.
@@ -25,6 +48,23 @@ import org.kohsuke.stapler.StaplerRequest;
  * @author Dirk Weigenand
  */
 public class DocumentationBuilder extends AntTaskBuilder {
+    /**
+     * bundle to use for report internationalization.
+     */
+    private static final String DC_REPORT_BUNDLE =
+        "org/arachna/netweaver/nwdi/documenter/report/DevelopmentComponentReport";
+
+    /**
+     * velocity template for DC report generation.
+     */
+    private static final String DC_WIKI_TEMPLATE =
+        "/org/arachna/netweaver/nwdi/documenter/report/DevelopmentComponentWikiTemplate.vm";
+
+    /**
+     * timeout for dependency diagram generation.
+     */
+    private static final int TIMEOUT = 1000 * 60;
+
     /**
      * descriptor for DocumentationBuilder.
      */
@@ -47,20 +87,45 @@ public class DocumentationBuilder extends AntTaskBuilder {
     private final transient Pattern ignoreSoftwareComponentRegex = null;
 
     /**
+     * 
+     */
+    private final String confluenceSite;
+
+    /**
      * Create a new instance of a <code>DocumentationBuilder</code> using the
      * given regular expression for vendors to ignore when building
      * documentation.
      * 
      * @param ignoreVendorRegexp
+     *            regular expression for vendors to ignore during generation of
+     *            documentation. E.g. <code>sap\.com</code> to ignore the usual
+     *            suspects like sap.com_SAP_BUILDT, sap.com_SAP_JEE,
+     *            sap.com_SAP_JTECHS, etc. Those would only pollute the
+     *            dependency diagrams.
+     * @param confluenceSite
+     *            the selected confluence site.
      */
     @DataBoundConstructor
-    public DocumentationBuilder(final String ignoreVendorRegexp) {
+    public DocumentationBuilder(final String ignoreVendorRegexp, final String confluenceSite) {
         this.ignoreVendorRegexp = Pattern.compile(ignoreVendorRegexp);
+        this.confluenceSite = confluenceSite == null ? "" : confluenceSite;
+    }
+
+    /**
+     * Returns the selected confluence site.
+     * 
+     * @return the confluenceSite
+     */
+    public String getConfluenceSite() {
+        return confluenceSite;
     }
 
     /**
      * Return the regular expression to be used for vendors to ignore when
      * documenting development components.
+     * 
+     * @return the regular expression to be used for vendors to ignore when
+     *         documenting development components.
      */
     public String getIgnoreVendorRegexp() {
         return ignoreVendorRegexp.pattern();
@@ -74,23 +139,141 @@ public class DocumentationBuilder extends AntTaskBuilder {
         return ignoreSoftwareComponentRegex.pattern();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean perform(final AbstractBuild build, final Launcher launcher, final BuildListener listener) {
-        final NWDIBuild nwdiBuild = (NWDIBuild)build;
+        // final DevelopmentComponentFactory dcFactory =
+        // nwdiBuild.getDevelopmentComponentFactory();
+        // final DevelopmentConfiguration developmentConfiguration =
+        // nwdiBuild.getDevelopmentConfiguration();
 
-        boolean result =
-            new ReportGenerator(listener.getLogger(), nwdiBuild.getDevelopmentConfiguration(),
-                nwdiBuild.getDevelopmentComponentFactory(), getVelocityEngine(listener.getLogger()), getAntHelper()
-                    .getPathToWorkspace() + File.separatorChar + "documentation", DESCRIPTOR.getDotExecutable(),
-                ignoreVendorRegexp).execute();
+        // ------------------ set up
+        // ------------------------------------------------
+        final DCReader dcReader = new DCReader();
+        dcReader.execute();
+
+        final DevelopmentComponentFactory dcFactory = dcReader.getDcFactory();
+        setAntHelper(new AntHelper(FilePathHelper.makeAbsolute(build.getWorkspace()), dcFactory));
+        final DevelopmentConfiguration developmentConfiguration = dcReader.getConfig();
+        // ------------------ end set up
+        // ------------------------------------------------
+
+        final File workspace = new File(String.format("%s/documentation", getAntHelper().getPathToWorkspace()));
+
+        final VendorFilter vendorFilter = new VendorFilter(ignoreVendorRegexp);
+        final DependencyGraphGenerator dependenciesGenerator =
+            new DependencyGraphGenerator(dcFactory, vendorFilter, workspace);
+
+        developmentConfiguration.accept(dependenciesGenerator);
+
+        final VelocityEngine engine = getVelocityEngine(listener.getLogger());
+        final boolean result = true;
+        // super.execute(build, launcher, listener, "",
+        // dependenciesGenerator.materializeDot2SvgBuildXml(engine,
+        // DESCRIPTOR.getDotExecutable(), TIMEOUT),
+        // getAntProperties());
+
+        final boolean confluence = true;
 
         if (result) {
-            result =
-                super.execute(nwdiBuild, launcher, listener, "convert-all", "documentation/Dot2Svg-build.xml",
-                    getAntProperties());
+            if (confluence) {
+                try {
+                    final ConfluenceSite site = getSelectedConfluenceSite();
+
+                    if (site != null) {
+                        final ConfluenceSession confluenceSession = site.createSession();
+                        final DevelopmentComponentReportGenerator generator =
+                            new DevelopmentComponentReportGenerator(dcFactory, engine, DC_WIKI_TEMPLATE,
+                                ResourceBundle.getBundle(DC_REPORT_BUNDLE, Locale.GERMAN));
+                        developmentConfiguration.accept(new DevelopmentConfigurationConfluenceWikiGenerator(generator,
+                            vendorFilter, confluenceSession, "NETW", listener.getLogger(), dependenciesGenerator
+                                .getDescriptorContainer()));
+                    }
+                }
+                catch (final RemoteException e) {
+                    throw new RuntimeException(e);
+                }
+            }
         }
 
+        // new ReportGenerator(listener.getLogger(), developmentConfiguration,
+        // dcFactory, engine,
+        // workspace.getAbsolutePath(), ignoreVendorRegexp);
+
         return result;
+    }
+
+    /**
+     * Get the selected Confluence site.
+     * 
+     * @return the selected confluence site or <code>null</code> if none was
+     *         selected.
+     */
+    protected ConfluenceSite getSelectedConfluenceSite() {
+        final ConfluencePublisher.DescriptorImpl descriptor = getConfluencePublisherDescriptor();
+        return descriptor.getSiteByName(confluenceSite);
+    }
+
+    /**
+     * Look up the descriptor of the <code>ConfluencePublisher</code>.
+     * 
+     * @return the descriptor of the <code>ConfluencePublisher</code> or
+     *         <code>null</code> if the plugin is not installed.
+     */
+    protected com.myyearbook.hudson.plugins.confluence.ConfluencePublisher.DescriptorImpl getConfluencePublisherDescriptor() {
+        return Hudson.getInstance().getDescriptorByType(ConfluencePublisher.DescriptorImpl.class);
+    }
+
+    private final class DCReader {
+        private final DevelopmentComponentFactory dcFactory = new DevelopmentComponentFactory();
+
+        private DevelopmentConfiguration config;
+
+        /**
+         * @return the dcFactory
+         */
+        public DevelopmentComponentFactory getDcFactory() {
+            return dcFactory;
+        }
+
+        /**
+         * @return the config
+         */
+        public DevelopmentConfiguration getConfig() {
+            return config;
+        }
+
+        void execute() {
+            final DevelopmentConfigurationReader reader = new DevelopmentConfigurationReader(dcFactory);
+            // new XmlReaderHelper(reader).parse(new FileReader(
+            // "/tmp/jenkins/jobs/enviaM/workspace/DevelopmentConfiguration.xml"));
+            // new XmlReaderHelper(reader).parse(new FileReader(
+            // "/NWDI-Redesign/PN3_enviaMPr_D-refactored.xml"));
+            try {
+                new XmlReaderHelper(reader).parse(new FileReader(
+                    "/home/weigo/tmp/enviaM/workspace/DevelopmentConfiguration.xml"));
+                config = reader.getDevelopmentConfiguration();
+            }
+            catch (final FileNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+            catch (final IOException e) {
+                throw new RuntimeException(e);
+            }
+            catch (final SAXException e) {
+                throw new RuntimeException(e);
+            }
+
+            dcFactory.updateUsingDCs();
+
+            for (final DevelopmentComponent component : dcFactory.getAll()) {
+                if (!"sap.com".equals(component.getCompartment().getVendor())) {
+                    component.setNeedsRebuild(true);
+                }
+            }
+        }
     }
 
     // Overridden for better type safety.
@@ -146,17 +329,20 @@ public class DocumentationBuilder extends AntTaskBuilder {
          */
         @Override
         public boolean isApplicable(final Class<? extends AbstractProject> aClass) {
-            return NWDIProject.class.equals(aClass);
+            return true /* NWDIProject.class.equals(aClass) */;
         }
 
         /**
-         * This human readable name is used in the configuration screen.
+         * {@inheritDoc}
          */
         @Override
         public String getDisplayName() {
             return "NWDI Documentation Builder";
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public boolean configure(final StaplerRequest req, final JSONObject formData) throws FormException {
             dotExecutable = formData.getString("dotExecutable");
@@ -241,6 +427,18 @@ public class DocumentationBuilder extends AntTaskBuilder {
      */
     @Override
     protected String getAntProperties() {
-        return null;
+        return "";
+    }
+
+    /**
+     * Return the configured confluence sites.
+     * 
+     * @return the list of configured confluence sites. The list is empty if no
+     *         sites are configured or the confluence publisher plugin is not
+     *         installed.
+     */
+    public List<ConfluenceSite> getConfluenceSites() {
+        final ConfluencePublisher.DescriptorImpl descriptor = getConfluencePublisherDescriptor();
+        return descriptor == null ? new ArrayList<ConfluenceSite>() : descriptor.getSites();
     }
 }

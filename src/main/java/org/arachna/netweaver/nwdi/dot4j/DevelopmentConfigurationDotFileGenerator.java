@@ -7,7 +7,7 @@ import org.arachna.dot4j.model.Attributes;
 import org.arachna.dot4j.model.Node;
 import org.arachna.netweaver.dc.types.Compartment;
 import org.arachna.netweaver.dc.types.DevelopmentConfiguration;
-import org.arachna.netweaver.nwdi.documenter.CompartmentByVendorFilter;
+import org.arachna.netweaver.nwdi.documenter.VendorFilter;
 
 /**
  * Create a <code>.dot</code> file for a development configuration.
@@ -23,7 +23,7 @@ public final class DevelopmentConfigurationDotFileGenerator extends AbstractDotF
     /**
      * filter for compartments by their vendor.
      */
-    private final CompartmentByVendorFilter vendorFilter;
+    private final VendorFilter vendorFilter;
 
     /**
      * Create an instance of a
@@ -36,7 +36,7 @@ public final class DevelopmentConfigurationDotFileGenerator extends AbstractDotF
      *            filter for compartments by vendor
      */
     public DevelopmentConfigurationDotFileGenerator(final DevelopmentConfiguration configuration,
-        CompartmentByVendorFilter vendorFilter) {
+        VendorFilter vendorFilter) {
         super();
         this.configuration = configuration;
         this.vendorFilter = vendorFilter;

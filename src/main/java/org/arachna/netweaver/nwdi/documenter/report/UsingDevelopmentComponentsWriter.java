@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.arachna.netweaver.dc.types.DevelopmentComponent;
-import org.arachna.netweaver.hudson.nwdi.IDevelopmentComponentFilter;
+import org.arachna.netweaver.nwdi.documenter.VendorFilter;
 import org.arachna.netweaver.nwdi.dot4j.DotFileWriter;
 import org.arachna.netweaver.nwdi.dot4j.UsingDevelopmentComponentsDotFileGenerator;
 
@@ -22,7 +22,7 @@ public final class UsingDevelopmentComponentsWriter {
      */
     private final String outputLocation;
 
-    private final IDevelopmentComponentFilter vendorFilter;
+    private final VendorFilter vendorFilter;
 
     /**
      * Create an instance of {@link UsingDevelopmentComponentsWriter}.
@@ -30,7 +30,7 @@ public final class UsingDevelopmentComponentsWriter {
      * @param outputLocation
      * @param vendorFilter
      */
-    public UsingDevelopmentComponentsWriter(final String outputLocation, final IDevelopmentComponentFilter vendorFilter) {
+    public UsingDevelopmentComponentsWriter(final String outputLocation, final VendorFilter vendorFilter) {
         this.outputLocation = outputLocation;
         this.vendorFilter = vendorFilter;
     }
@@ -47,8 +47,8 @@ public final class UsingDevelopmentComponentsWriter {
      */
     public void write(final List<DevelopmentComponent> components) throws IOException {
         for (final DevelopmentComponent component : components) {
-            final DotFileWriter dotWriter = new DotFileWriter(this.outputLocation);
-            dotWriter.write(new UsingDevelopmentComponentsDotFileGenerator(component, this.vendorFilter),
+            final DotFileWriter dotWriter = new DotFileWriter(outputLocation);
+            dotWriter.write(new UsingDevelopmentComponentsDotFileGenerator(component, vendorFilter),
                 getComponentName(component));
         }
     }

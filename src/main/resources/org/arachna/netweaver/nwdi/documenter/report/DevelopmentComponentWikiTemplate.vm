@@ -1,33 +1,23 @@
 h1. $bundle.getString("developmentComponent") $component.getName()
 h2. $bundle.getString("caption")
-<p>$component.getCaption()</p>
+$component.getCaption()
 
 #if (!$component.getDescription().isempty())
 h2. $bundle.getString("description")
 $component.getDescription()
 #end
+
 #if (!$component.getUsedDevelopmentComponents().isEmpty())
 h2. $bundle.getString("usedComponents")
 
 #set ($imageSuffix = '.svg')
 
-!$component.getVendor()~$component.getName().replace('/', '~')$imageSuffix|border=1!
-||$bundle.getString("developmentComponent")
-||$bundle.getString("dcType")
-||$bundle.getString("vendor")
-||$bundle.getString("PublicPartName")
-||$bundle.getString("buildTime")
-||$bundle.getString("runTime")
-||$bundle.getString("softwareComponent")||
+{svgweb4a:file=$component.getNormalizedName("~")$imageSuffix|width=100%}
+
+||$bundle.getString("developmentComponent")||$bundle.getString("dcType")||$bundle.getString("vendor")||$bundle.getString("PublicPartName")||$bundle.getString("buildTime")||$bundle.getString("runTime")||$bundle.getString("softwareComponent")||
 #foreach($pp in $component.getUsedDevelopmentComponents())
 #set($usedDC = $dcFactory.get($pp))
-|$pp.getComponentName()
-|$usedDC.getType().toString()
-|$pp.getVendor()
-|$pp.getName()
-|#if($pp.isAtBuildTime())x#end
-|#if($pp.isAtRunTime())x#end
-|#if (!$bundleHelper.isNull($usedDC.getCompartment()))$usedDC.getCompartment().getSoftwareComponent()#end|
+|$pp.getComponentName()|$usedDC.getType().toString()|$pp.getVendor()| $pp.getName() |#if($pp.isAtBuildTime())x#else #end|#if($pp.isAtRunTime())x#else #end|#if (!$bundleHelper.isNull($usedDC.getCompartment()))$usedDC.getCompartment().getSoftwareComponent()#end|
 #end  
 *$bundleHelper.render("usedComponents.table.caption", $component.getName())*
 #end
@@ -35,22 +25,19 @@ h2. $bundle.getString("usedComponents")
 #if (!$component.getUsingDevelopmentComponents().isEmpty())
 h2. $bundleHelper.render("usingComponents", $component.getName())
 
-#set ($suffix = ".html")
 #foreach($usingDC in $component.getUsingDevelopmentComponents())
-[$usingDC.getName()|$wikiSpace:$usingDC.getCompartment().getSoftwareComponent() $usingDC.getVendor() $usingDC.getName().replace('/', ' ')$suffix]
+[$usingDC.getName()|$wikiSpace:$usingDC.getNormalizedName("_")]
 #end
 
-!$component.getVendor()~$component.getName().replace('/', '~')-usingDCs.svg|border=1!
+{svgweb4a:file=$component.getNormalizedName("~")-usingDCs.svg|width=100%}
+
 #end
 
 #if (!$component.getPublicParts().isEmpty())
 h2. $bundle.getString("publicParts.section.caption")
-||$bundle.getString("PublicPartName")
-||$bundle.getString("ppType")
-||$bundle.getString("caption")
-||$bundle.getString("description")||
+||$bundle.getString("PublicPartName")||$bundle.getString("ppType")||$bundle.getString("caption")||$bundle.getString("description")||
 #foreach($pp in $component.getPublicParts())
-|$pp.getPublicPart()|$pp.getType().toString()|$pp.getCaption()|$pp.getDescription()|
+|$pp.getPublicPart()|$pp.getType().toString()| $pp.getCaption() | $pp.getDescription() |
 #end  
 *$bundleHelper.render("publicParts.table.caption",$component.getName())*
 #end
@@ -60,17 +47,13 @@ h2. $bundle.getString("WebServices")
 #foreach($service in $webServices)
 h3. $service.getName()
 $bundle.getString("Endpoint"): *$service.getEndPointClass()*
-||$bundle.getString("signature")
-||$bundle.getString("originalName")
-||$bundle.getString("mappedName")
-||$bundle.getString("caption")
-||$bundle.getString("description")||
+||$bundle.getString("signature")||$bundle.getString("originalName")||$bundle.getString("mappedName")||$bundle.getString("caption")||$bundle.getString("description")||
 #foreach($method in $service.getMethods())
 |$method.getOriginalName()|$method.getMappedName()|$method.getDescription()|Langbeschreibung...|
 #end  
 *$bundleHelper.render("methods.table.caption",$component.getName())*
 
-h3 .$bundle.getString("WebServiceMethods")
+h3. $bundle.getString("WebServiceMethods")
 #foreach($m in $service.getMethods())
 h4. $m.getMappedName()
 $m.getDescription()

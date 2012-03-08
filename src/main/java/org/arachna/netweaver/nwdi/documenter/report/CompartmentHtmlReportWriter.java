@@ -45,8 +45,8 @@ public final class CompartmentHtmlReportWriter extends ReportWriter {
      *            the compartment this report is all about.
      */
     public CompartmentHtmlReportWriter(final Writer writer, final ReportWriterConfiguration writerConfiguration,
-        final Compartment compartment, DevelopmentComponentFactory dcFactory) {
-        super(STYLE_SHEET, writer, writerConfiguration,dcFactory);
+        final Compartment compartment, final DevelopmentComponentFactory dcFactory) {
+        super(STYLE_SHEET, writer, writerConfiguration, dcFactory);
         this.compartment = compartment;
         this.dcFactory = dcFactory;
     }
@@ -56,10 +56,11 @@ public final class CompartmentHtmlReportWriter extends ReportWriter {
      * 
      * @throws ParserConfigurationException
      */
+    @Override
     Document createDocument() throws ParserConfigurationException {
         final DomHelper domHelper = createDomHelper();
-        Document document = domHelper.getDocument();
-        final CompartmentDomBuilder domWriter = new CompartmentDomBuilder(domHelper, this.dcFactory);
+        final Document document = domHelper.getDocument();
+        final CompartmentDomBuilder domWriter = new CompartmentDomBuilder(domHelper, dcFactory);
         document.appendChild(domWriter.write(compartment));
 
         return document;

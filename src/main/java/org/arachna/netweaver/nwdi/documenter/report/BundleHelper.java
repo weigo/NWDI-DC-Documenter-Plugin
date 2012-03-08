@@ -3,7 +3,6 @@
  */
 package org.arachna.netweaver.nwdi.documenter.report;
 
-import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
@@ -20,22 +19,14 @@ public final class BundleHelper {
     private final ResourceBundle bundle;
 
     /**
-     * The locale to use when formatting strings.
-     */
-    private final Locale locale;
-
-    /**
      * Create an instance of the BundleHelper using the given resource bundle an
      * locale.
      * 
      * @param bundle
      *            bundle to get messages from.
-     * @param locale
-     *            locale to use when formatting messages.
      */
-    public BundleHelper(final ResourceBundle bundle, final Locale locale) {
+    public BundleHelper(final ResourceBundle bundle) {
         this.bundle = bundle;
-        this.locale = locale;
     }
 
     /**
@@ -58,7 +49,7 @@ public final class BundleHelper {
             // use key as message format...
         }
 
-        return String.format(locale, message, substitute);
+        return String.format(bundle.getLocale(), message, substitute);
     }
 
     /**

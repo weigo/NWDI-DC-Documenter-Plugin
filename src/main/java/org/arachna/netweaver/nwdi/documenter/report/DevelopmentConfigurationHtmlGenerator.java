@@ -9,8 +9,11 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.io.Writer;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import org.apache.commons.io.IOUtils;
@@ -20,7 +23,7 @@ import org.arachna.netweaver.dc.types.Compartment;
 import org.arachna.netweaver.dc.types.DevelopmentComponent;
 import org.arachna.netweaver.dc.types.DevelopmentComponentFactory;
 import org.arachna.netweaver.dc.types.DevelopmentConfiguration;
-import org.arachna.netweaver.hudson.nwdi.IDevelopmentComponentFilter;
+import org.arachna.netweaver.nwdi.documenter.VendorFilter;
 
 /**
  * Generator for documentation of a development configuration in HTML.
@@ -28,6 +31,12 @@ import org.arachna.netweaver.hudson.nwdi.IDevelopmentComponentFilter;
  * @author Dirk Weigenand
  */
 public final class DevelopmentConfigurationHtmlGenerator extends AbstractDevelopmentConfigurationVisitor {
+    /**
+     * constant for index.html in development configuration and compartment
+     * folders.
+     */
+    private static final String INDEX_HTML = "index.html";
+
     /**
      * Registry for development components.
      */
@@ -41,7 +50,7 @@ public final class DevelopmentConfigurationHtmlGenerator extends AbstractDevelop
     /**
      * filter development components by vendor.
      */
-    private final IDevelopmentComponentFilter vendorFilter;
+    private final VendorFilter vendorFilter;
 
     /**
      * Generator for a report on a development component. The target format is
@@ -50,10 +59,30 @@ public final class DevelopmentConfigurationHtmlGenerator extends AbstractDevelop
     private final DevelopmentComponentReportGenerator generator;
 
     /**
+     * Additional context to provide to velocity.
+     */
+    private final Map<String, Object> additionalContext = new HashMap<String, Object>();
+
+    /**
+     * output documentation using this encoding.
+     */
+    private final String charsetName = "UTF-8";
+
+    /**
+     * Create a new generator for HTML documentation.
      * 
+     * @param writerConfiguration
+     *            configuration to use for generation (contains locations for
+     *            CSS & JS files).
+     * @param dcFactory
+     *            registry for development components
+     * @param vendorFilter
+     *            filter for exclusion of vendors
+     * @param velocityEngine
+     *            velocity engine to documentation generation.
      */
     public DevelopmentConfigurationHtmlGenerator(final ReportWriterConfiguration writerConfiguration,
-        final DevelopmentComponentFactory dcFactory, final IDevelopmentComponentFilter vendorFilter,
+        final DevelopmentComponentFactory dcFactory, final VendorFilter vendorFilter,
         final VelocityEngine velocityEngine) {
         this.writerConfiguration = writerConfiguration;
         this.dcFactory = dcFactory;
@@ -62,7 +91,7 @@ public final class DevelopmentConfigurationHtmlGenerator extends AbstractDevelop
             new DevelopmentComponentReportGenerator(dcFactory, velocityEngine,
                 "/org/arachna/netweaver/nwdi/documenter/report/DevelopmentComponentHtmlTemplate.vm",
                 ResourceBundle.getBundle("org/arachna/netweaver/nwdi/documenter/report/DevelopmentComponentReport",
-                    Locale.GERMAN), Locale.GERMAN);
+                    Locale.GERMAN));
     }
 
     /**
@@ -82,14 +111,19 @@ public final class DevelopmentConfigurationHtmlGenerator extends AbstractDevelop
     }
 
     /**
-     * @return
+     * Create a <code>ReportWriterConfiguration</code> for suitable for a
+     * compartment (i.e. in a subdirectory).
+     * 
+     * @return a <code>ReportWriterConfiguration</code> for suitable for a
+     *         compartment
      */
     protected ReportWriterConfiguration getCurrentWriterConfiguration() {
+        final String template = "../";
         final ReportWriterConfiguration writerConfiguration = new ReportWriterConfiguration();
-        writerConfiguration.setCssLocation("../" + this.writerConfiguration.getCssLocation());
+        writerConfiguration.setCssLocation(String.format(template, this.writerConfiguration.getCssLocation()));
         writerConfiguration.setImageFormat(this.writerConfiguration.getImageFormat());
         writerConfiguration.setImagesLocation(this.writerConfiguration.getImagesLocation());
-        writerConfiguration.setJsLocation("../" + this.writerConfiguration.getJsLocation());
+        writerConfiguration.setJsLocation(String.format(template, this.writerConfiguration.getJsLocation()));
 
         return writerConfiguration;
     }
@@ -106,13 +140,28 @@ public final class DevelopmentConfigurationHtmlGenerator extends AbstractDevelop
         writerConfiguration.setOutputLocation(baseDir.getAbsolutePath());
 
         try {
-            new CompartmentHtmlReportWriter(new OutputStreamWriter(new FileOutputStream(new File(
-                baseDir.getAbsolutePath(), "index.html")), "UTF-8"), writerConfiguration, compartment, dcFactory)
-                .write();
+            new CompartmentHtmlReportWriter(getWriter(baseDir), writerConfiguration, compartment, dcFactory).write();
         }
         catch (final IOException e) {
             new RuntimeException(e);
         }
+    }
+
+    /**
+     * Create a writer for a file "index.html" in the given base directory. Use
+     * the global charsetName as encoding.
+     * 
+     * @param baseDir
+     *            base folder where to create the "index.html".
+     * @return a writer for "index.html" in the given base folder.
+     * @throws UnsupportedEncodingException
+     *             when the globally configured encoding is not supported.
+     * @throws FileNotFoundException
+     *             when the given base folder cannot be found.
+     */
+    protected Writer getWriter(final File baseDir) throws UnsupportedEncodingException, FileNotFoundException {
+        return new OutputStreamWriter(new FileOutputStream(new File(baseDir.getAbsolutePath(), INDEX_HTML)),
+            charsetName);
     }
 
     /**
@@ -130,8 +179,8 @@ public final class DevelopmentConfigurationHtmlGenerator extends AbstractDevelop
             FileWriter writer = null;
 
             try {
-                writer = new FileWriter(new File(baseDir, String.format("%s.html", component.getNormalizedName('~'))));
-                generator.execute(writer, component);
+                writer = new FileWriter(new File(baseDir, String.format("%s.html", component.getNormalizedName("~"))));
+                generator.execute(writer, component, additionalContext);
             }
             catch (final IOException e) {
                 throw new RuntimeException(e);
@@ -149,17 +198,32 @@ public final class DevelopmentConfigurationHtmlGenerator extends AbstractDevelop
         }
     }
 
+    /**
+     * Creates the overview page for the given development configuration.
+     * 
+     * @param configuration
+     *            development configuration to create overview page for.
+     * @throws IOException
+     *             when the overview page cannot be written.
+     */
     protected void createOverviewPage(final DevelopmentConfiguration configuration) throws IOException {
         final File baseDir = createDirectoryIffNotExists(writerConfiguration.getOutputLocation());
-        final Writer indexHtmlWriter =
-            new OutputStreamWriter(new FileOutputStream(new File(baseDir, "index.html")), "UTF-8");
+        final Writer indexHtmlWriter = getWriter(baseDir);
         final DevelopmentConfigurationsHtmlWriter cfgWriter =
             new DevelopmentConfigurationsHtmlWriter(indexHtmlWriter, writerConfiguration, configuration, dcFactory);
         cfgWriter.write();
         indexHtmlWriter.close();
     }
 
-    private void copyResources() throws IOException, FileNotFoundException {
+    /**
+     * Copies the resources (JavaScript and CSS) to the respective target
+     * folders.
+     * 
+     * @throws IOException
+     *             when a resource could not be copied into its respective
+     *             target folder
+     */
+    private void copyResources() throws IOException {
         final File cssFolder =
             createDirectoryIffNotExists(writerConfiguration.getOutputLocation() + File.separator
                 + writerConfiguration.getCssLocation());
@@ -171,8 +235,21 @@ public final class DevelopmentConfigurationHtmlGenerator extends AbstractDevelop
         copyResourceToTargetFolder(jsFolder, "/org/arachna/netweaver/nwdi/documenter/report/xpath.js", "xpath.js");
     }
 
+    /**
+     * Copy the given resource into its target folder using the given target
+     * file name.
+     * 
+     * @param targetFolder
+     *            folder to copy resource into.
+     * @param absoluteResourcePath
+     *            absolute class path reference to resource.
+     * @param targetName
+     *            name to use in target folder.
+     * @throws IOException
+     *             when the resource could not be copied into the target folder.
+     */
     private void copyResourceToTargetFolder(final File targetFolder, final String absoluteResourcePath,
-        final String targetName) throws IOException, FileNotFoundException {
+        final String targetName) throws IOException {
         IOUtils.copy(this.getClass().getResourceAsStream(absoluteResourcePath),
             new FileOutputStream(targetFolder.getAbsolutePath() + File.separatorChar + targetName));
     }
@@ -183,6 +260,7 @@ public final class DevelopmentConfigurationHtmlGenerator extends AbstractDevelop
      * 
      * @param folderName
      *            absolute path to folder that should be created.
+     * @return the newly created or already existing file.
      */
     private File createDirectoryIffNotExists(final String folderName) {
         final File directory = new File(folderName);
