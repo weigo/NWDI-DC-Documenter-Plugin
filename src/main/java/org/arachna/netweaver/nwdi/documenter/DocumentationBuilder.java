@@ -33,6 +33,8 @@ import org.arachna.netweaver.hudson.util.FilePathHelper;
 import org.arachna.netweaver.nwdi.documenter.report.DependencyGraphGenerator;
 import org.arachna.netweaver.nwdi.documenter.report.DevelopmentComponentReportGenerator;
 import org.arachna.netweaver.nwdi.documenter.report.DevelopmentConfigurationConfluenceWikiGenerator;
+import org.arachna.netweaver.nwdi.documenter.report.DevelopmentConfigurationHtmlGenerator;
+import org.arachna.netweaver.nwdi.documenter.report.ReportWriterConfiguration;
 import org.arachna.xml.XmlReaderHelper;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
@@ -61,21 +63,21 @@ public class DocumentationBuilder extends AntTaskBuilder {
         "/org/arachna/netweaver/nwdi/documenter/report/DevelopmentComponentWikiTemplate.vm";
 
     /**
-     * timeout for dependency diagram generation.
-     */
-    private static final int TIMEOUT = 1000 * 60;
-
-    /**
      * descriptor for DocumentationBuilder.
      */
     @Extension
     public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
 
     /**
+     * time out for creating dependency diagrams.
+     */
+    private static final int TIMEOUT = 60 * 1000;
+
+    /**
      * regular expression for ignoring development components of certain
      * vendors.
      */
-    private final Pattern ignoreVendorRegexp;
+    private Pattern ignoreVendorRegexp;
 
     /**
      * regular expression for ignoring development components of certain
@@ -87,9 +89,24 @@ public class DocumentationBuilder extends AntTaskBuilder {
     private final transient Pattern ignoreSoftwareComponentRegex = null;
 
     /**
-     * 
+     * the confluence site to publish documentation to.
      */
-    private final String confluenceSite;
+    private String confluenceSite;
+
+    /**
+     * indicate that documentation should be published to confluence.
+     */
+    private boolean publishToConfluence;
+
+    /**
+     * indicate that documentation in HTML format should be produced.
+     */
+    private boolean createHtmlDocumentation;
+
+    /**
+     * the confluence space to publish to.
+     */
+    private String confluenceSpace;
 
     /**
      * Create a new instance of a <code>DocumentationBuilder</code> using the
@@ -102,13 +119,30 @@ public class DocumentationBuilder extends AntTaskBuilder {
      *            suspects like sap.com_SAP_BUILDT, sap.com_SAP_JEE,
      *            sap.com_SAP_JTECHS, etc. Those would only pollute the
      *            dependency diagrams.
+     * @param createHtmlDocumentation
+     *            indicate that documentation in HTML format should be created.
+     * @param publishToConfluence
+     *            indicate that documentation should be published to confluence.
      * @param confluenceSite
      *            the selected confluence site.
+     * @param confluenceSpace
+     *            the confluence space to publish to.
      */
     @DataBoundConstructor
-    public DocumentationBuilder(final String ignoreVendorRegexp, final String confluenceSite) {
+    public DocumentationBuilder(final String ignoreVendorRegexp, final boolean createHtmlDocumentation,
+        final boolean publishToConfluence, final String confluenceSite, final String confluenceSpace) {
+        this.createHtmlDocumentation = createHtmlDocumentation;
+        this.publishToConfluence = publishToConfluence;
         this.ignoreVendorRegexp = Pattern.compile(ignoreVendorRegexp);
         this.confluenceSite = confluenceSite == null ? "" : confluenceSite;
+        this.confluenceSpace = confluenceSpace;
+    }
+
+    /**
+     * default no argument constructor.
+     */
+    public DocumentationBuilder() {
+
     }
 
     /**
@@ -140,10 +174,75 @@ public class DocumentationBuilder extends AntTaskBuilder {
     }
 
     /**
+     * @return the publishToConfluence
+     */
+    public boolean getPublishToConfluence() {
+        return publishToConfluence;
+    }
+
+    /**
+     * @return the createHtmlDocumentation
+     */
+    public boolean getCreateHtmlDocumentation() {
+        return createHtmlDocumentation;
+    }
+
+    /**
+     * @param ignoreVendorRegexp
+     *            the ignoreVendorRegexp to set
+     */
+    public void setIgnoreVendorRegexp(final Pattern ignoreVendorRegexp) {
+        this.ignoreVendorRegexp = ignoreVendorRegexp;
+    }
+
+    /**
+     * @param confluenceSite
+     *            the confluenceSite to set
+     */
+    public void setConfluenceSite(final String confluenceSite) {
+        this.confluenceSite = confluenceSite;
+    }
+
+    /**
+     * @param publishToConfluence
+     *            the publishToConfluence to set
+     */
+    public void setPublishToConfluence(final boolean publishToConfluence) {
+        this.publishToConfluence = publishToConfluence;
+    }
+
+    /**
+     * @param createHtmlDocumentation
+     *            the createHtmlDocumentation to set
+     */
+    public void setCreateHtmlDocumentation(final boolean createHtmlDocumentation) {
+        this.createHtmlDocumentation = createHtmlDocumentation;
+    }
+
+    /**
+     * @return the confluenceSpace
+     */
+    public String getConfluenceSpace() {
+        return confluenceSpace;
+    }
+
+    /**
+     * @param confluenceSpace
+     *            the confluenceSpace to set
+     */
+    public void setConfluenceSpace(final String confluenceSpace) {
+        this.confluenceSpace = confluenceSpace;
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
     public boolean perform(final AbstractBuild build, final Launcher launcher, final BuildListener listener) {
+        if (!createHtmlDocumentation && !publishToConfluence) {
+            return true;
+        }
+
         // final DevelopmentComponentFactory dcFactory =
         // nwdiBuild.getDevelopmentComponentFactory();
         // final DevelopmentConfiguration developmentConfiguration =
@@ -170,15 +269,12 @@ public class DocumentationBuilder extends AntTaskBuilder {
 
         final VelocityEngine engine = getVelocityEngine(listener.getLogger());
         final boolean result = true;
-        // super.execute(build, launcher, listener, "",
-        // dependenciesGenerator.materializeDot2SvgBuildXml(engine,
-        // DESCRIPTOR.getDotExecutable(), TIMEOUT),
-        // getAntProperties());
-
-        final boolean confluence = true;
+        super.execute(build, launcher, listener, "",
+            dependenciesGenerator.materializeDot2SvgBuildXml(engine, DESCRIPTOR.getDotExecutable(), TIMEOUT),
+            getAntProperties());
 
         if (result) {
-            if (confluence) {
+            if (publishToConfluence) {
                 try {
                     final ConfluenceSite site = getSelectedConfluenceSite();
 
@@ -188,19 +284,20 @@ public class DocumentationBuilder extends AntTaskBuilder {
                             new DevelopmentComponentReportGenerator(dcFactory, engine, DC_WIKI_TEMPLATE,
                                 ResourceBundle.getBundle(DC_REPORT_BUNDLE, Locale.GERMAN));
                         developmentConfiguration.accept(new DevelopmentConfigurationConfluenceWikiGenerator(generator,
-                            vendorFilter, confluenceSession, "NETW", listener.getLogger(), dependenciesGenerator
-                                .getDescriptorContainer()));
+                            vendorFilter, confluenceSession, confluenceSpace, listener.getLogger(),
+                            dependenciesGenerator.getDescriptorContainer()));
                     }
                 }
                 catch (final RemoteException e) {
                     throw new RuntimeException(e);
                 }
             }
-        }
 
-        // new ReportGenerator(listener.getLogger(), developmentConfiguration,
-        // dcFactory, engine,
-        // workspace.getAbsolutePath(), ignoreVendorRegexp);
+            if (createHtmlDocumentation) {
+                developmentConfiguration.accept(new DevelopmentConfigurationHtmlGenerator(
+                    new ReportWriterConfiguration(), dcFactory, vendorFilter, engine));
+            }
+        }
 
         return result;
     }
@@ -349,6 +446,22 @@ public class DocumentationBuilder extends AntTaskBuilder {
 
             save();
             return super.configure(req, formData);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Builder newInstance(final StaplerRequest req, final JSONObject formData) throws FormException {
+            final DocumentationBuilder builder = new DocumentationBuilder();
+
+            builder.setCreateHtmlDocumentation(Boolean.valueOf(formData.getString("createHtmlDocumentation")));
+            builder.setIgnoreVendorRegexp(Pattern.compile(formData.getString("ignoreVendorRegexp")));
+            builder.setPublishToConfluence(Boolean.valueOf(formData.getString("publishToConfluence")));
+            builder.setConfluenceSite(formData.getString("confluenceSite"));
+            builder.setConfluenceSpace(formData.getString("confluenceSpace"));
+
+            return builder;
         }
 
         /**

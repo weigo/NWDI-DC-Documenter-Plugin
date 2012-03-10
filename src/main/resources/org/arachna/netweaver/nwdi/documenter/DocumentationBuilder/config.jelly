@@ -6,12 +6,24 @@
     <f:entry title="${%ignore.vendors.title}" field="ignoreVendorRegexp">
       <f:textbox />
     </f:entry>
-    <f:entry title="Confluence Site" help="${descriptor.getHelpFile('confluenceSite')}">
+
+    <f:entry title="${%create.html}" description="${%create.html.description}" field="createHtmlDocumentation">
+      <f:checkbox default="false" value="${instance.createHtmlDocumentation}" clazz="required" />
+    </f:entry>
+
+    <f:entry title="${%publishToConfluence.title}" description="${%publishToConfluence.description}" field="publishToConfluence">
+      <f:checkbox default="false" value="${instance.publishToConfluence}" clazz="required" />
+    </f:entry>
+    <f:entry title="Confluence Site" description="${%confluence.configuration.description}" help="${descriptor.getHelpFile('confluenceSite')}"
+      field="confluenceSite">
       <select class="setting-input" name="confluenceSite">
         <j:forEach var="s" items="${instance.confluenceSites}">
           <f:option selected="${s.name==instance.confluenceSite}">${s.name}</f:option>
         </j:forEach>
       </select>
+    </f:entry>
+    <f:entry title="${%confluenceSpace.title}" description="${%confluenceSpace.description}" field="confluenceSpace">
+      <f:textbox />
     </f:entry>
   </f:section>
 </j:jelly>
