@@ -44,6 +44,8 @@ public final class DevelopmentComponentReportGenerator {
      */
     private final DevelopmentComponentFactory dcFactory;
 
+    private final DocumentationFacetProviderFactory documentationFacetProviderFactory =
+        new DocumentationFacetProviderFactory();
     /**
      * Provider for virtual interfaces of web services.
      */
@@ -92,13 +94,19 @@ public final class DevelopmentComponentReportGenerator {
         context.put("bundle", bundle);
         context.put("bundleHelper", new BundleHelper(bundle));
         context.put("dcFactory", dcFactory);
-        context.put("webServices", viDefProvider.execute(component));
+
+        for (final DocumentationFacetProvider<DevelopmentComponent> provider : documentationFacetProviderFactory
+            .getInstance(component.getType())) {
+            final DocumentationFacet facet = provider.execute(component);
+            context.put(facet.getName(), facet.getContent());
+        }
 
         for (final Map.Entry<String, Object> entry : additionalContext.entrySet()) {
             context.put(entry.getKey(), entry.getValue());
         }
 
         velocityEngine.evaluate(context, writer, "", getTemplateReader());
+
         try {
             writer.close();
         }
