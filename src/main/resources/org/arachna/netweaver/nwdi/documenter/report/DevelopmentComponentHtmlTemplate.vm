@@ -137,5 +137,24 @@
 #end
 #end
 #end
+
+#if (!$externalLibraries.isEmpty())
+<h3>$bundle.getString("external.libraries.title")</h3>
+<table>
+  <caption>$bundleHelper.render("external.libraries.caption",$component.getName())</caption>
+  <thead>
+  <th>$bundle.getString("library")</th>
+  <th>$bundle.getString("license")</th>
+  </thead>
+  <tbody>
+#foreach($descriptor in $externalLibraries)
+    <tr>
+      <td>$descriptor.getArchive()</td>
+      <td>$descriptor.getLicense().getName()</td>
+    </tr>
+#end
+  </tbody>
+</table>
+#end
 </body>
 </html>

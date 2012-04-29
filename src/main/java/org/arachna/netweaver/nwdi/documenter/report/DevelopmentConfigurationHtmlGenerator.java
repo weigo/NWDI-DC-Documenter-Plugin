@@ -12,9 +12,7 @@ import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
-import java.util.ResourceBundle;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.velocity.app.VelocityEngine;
@@ -83,15 +81,11 @@ public final class DevelopmentConfigurationHtmlGenerator extends AbstractDevelop
      */
     public DevelopmentConfigurationHtmlGenerator(final ReportWriterConfiguration writerConfiguration,
         final DevelopmentComponentFactory dcFactory, final VendorFilter vendorFilter,
-        final VelocityEngine velocityEngine) {
+        final VelocityEngine velocityEngine, final DevelopmentComponentReportGenerator generator) {
         this.writerConfiguration = writerConfiguration;
         this.dcFactory = dcFactory;
         this.vendorFilter = vendorFilter;
-        generator =
-            new DevelopmentComponentReportGenerator(dcFactory, velocityEngine,
-                "/org/arachna/netweaver/nwdi/documenter/report/DevelopmentComponentHtmlTemplate.vm",
-                ResourceBundle.getBundle("org/arachna/netweaver/nwdi/documenter/report/DevelopmentComponentReport",
-                    Locale.GERMAN));
+        this.generator = generator;
     }
 
     /**

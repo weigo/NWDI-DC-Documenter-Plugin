@@ -15,7 +15,6 @@ import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.context.Context;
 import org.arachna.netweaver.dc.types.DevelopmentComponent;
 import org.arachna.netweaver.dc.types.DevelopmentComponentFactory;
-import org.arachna.netweaver.nwdi.documenter.webservices.VirtualInterfaceDefinitionProvider;
 
 /**
  * Generator for a report of the properties of a {@link DevelopmentComponent}.
@@ -44,12 +43,10 @@ public final class DevelopmentComponentReportGenerator {
      */
     private final DevelopmentComponentFactory dcFactory;
 
-    private final DocumentationFacetProviderFactory documentationFacetProviderFactory =
-        new DocumentationFacetProviderFactory();
     /**
-     * Provider for virtual interfaces of web services.
+     * factory for provider of documentation facets.
      */
-    private final VirtualInterfaceDefinitionProvider viDefProvider = new VirtualInterfaceDefinitionProvider();
+    private final DocumentationFacetProviderFactory documentationFacetProviderFactory;
 
     /**
      * Create a <code>DevelopmentComponentReportGenerator</code> using the given
@@ -58,6 +55,8 @@ public final class DevelopmentComponentReportGenerator {
      * 
      * The given {@link ResourceBundle} is used for internationalization.
      * 
+     * @param documentationFacetProviderFactory
+     *            factory for provider of documentation facets
      * @param dcFactory
      *            used in template to resolve public part references into
      *            development components.
@@ -68,8 +67,11 @@ public final class DevelopmentComponentReportGenerator {
      * @param bundle
      *            the ResourceBundle used for I18N.
      */
-    public DevelopmentComponentReportGenerator(final DevelopmentComponentFactory dcFactory,
-        final VelocityEngine velocityEngine, final String template, final ResourceBundle bundle) {
+    public DevelopmentComponentReportGenerator(
+        final DocumentationFacetProviderFactory documentationFacetProviderFactory,
+        final DevelopmentComponentFactory dcFactory, final VelocityEngine velocityEngine, final String template,
+        final ResourceBundle bundle) {
+        this.documentationFacetProviderFactory = documentationFacetProviderFactory;
         this.dcFactory = dcFactory;
         this.velocityEngine = velocityEngine;
         this.template = template;

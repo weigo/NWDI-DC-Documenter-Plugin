@@ -9,8 +9,10 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
+import org.arachna.ant.AntHelper;
 import org.arachna.netweaver.dc.types.DevelopmentComponent;
 import org.arachna.netweaver.dc.types.DevelopmentComponentType;
+import org.arachna.netweaver.nwdi.documenter.librarydc.LicenseInspector;
 import org.arachna.netweaver.nwdi.documenter.webservices.VirtualInterfaceDefinitionProvider;
 
 /**
@@ -21,6 +23,11 @@ import org.arachna.netweaver.nwdi.documenter.webservices.VirtualInterfaceDefinit
  */
 public final class DocumentationFacetProviderFactory {
     /**
+     * 
+     */
+    private final AntHelper antHelper;
+
+    /**
      * Providers for documentation facets for development components.
      */
     private final Map<DevelopmentComponentType, Collection<DocumentationFacetProvider<DevelopmentComponent>>> providers =
@@ -29,8 +36,19 @@ public final class DocumentationFacetProviderFactory {
     /**
      * 
      */
-    public DocumentationFacetProviderFactory() {
+    public DocumentationFacetProviderFactory(final AntHelper antHelper) {
+        this.antHelper = antHelper;
         providers.put(DevelopmentComponentType.Java, createDocumentationFacetProvidersOfDCTypeJava());
+        providers.put(DevelopmentComponentType.ExternalLibrary,
+            createDocumentationFacetProvidersOfDCTypeExternalLibraries());
+    }
+
+    private Collection<DocumentationFacetProvider<DevelopmentComponent>> createDocumentationFacetProvidersOfDCTypeExternalLibraries() {
+        final Collection<DocumentationFacetProvider<DevelopmentComponent>> providers =
+            new LinkedList<DocumentationFacetProvider<DevelopmentComponent>>();
+        providers.add(new LicenseInspector(antHelper));
+
+        return providers;
     }
 
     private Collection<DocumentationFacetProvider<DevelopmentComponent>> createDocumentationFacetProvidersOfDCTypeJava() {

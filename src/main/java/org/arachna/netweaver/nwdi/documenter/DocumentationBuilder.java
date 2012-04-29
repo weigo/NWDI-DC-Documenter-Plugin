@@ -34,6 +34,7 @@ import org.arachna.netweaver.nwdi.documenter.report.DependencyGraphGenerator;
 import org.arachna.netweaver.nwdi.documenter.report.DevelopmentComponentReportGenerator;
 import org.arachna.netweaver.nwdi.documenter.report.DevelopmentConfigurationConfluenceWikiGenerator;
 import org.arachna.netweaver.nwdi.documenter.report.DevelopmentConfigurationHtmlGenerator;
+import org.arachna.netweaver.nwdi.documenter.report.DocumentationFacetProviderFactory;
 import org.arachna.netweaver.nwdi.documenter.report.ReportWriterConfiguration;
 import org.arachna.xml.XmlReaderHelper;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -247,14 +248,15 @@ public class DocumentationBuilder extends AntTaskBuilder {
         // nwdiBuild.getDevelopmentComponentFactory();
         // final DevelopmentConfiguration developmentConfiguration =
         // nwdiBuild.getDevelopmentConfiguration();
-
+        // AntHelper antHelper = nwdiBuild.getAntHelper();
         // ------------------ set up
         // ------------------------------------------------
         final DCReader dcReader = new DCReader();
         dcReader.execute();
 
         final DevelopmentComponentFactory dcFactory = dcReader.getDcFactory();
-        setAntHelper(new AntHelper(FilePathHelper.makeAbsolute(build.getWorkspace()), dcFactory));
+        final AntHelper antHelper = new AntHelper(FilePathHelper.makeAbsolute(build.getWorkspace()), dcFactory);
+        setAntHelper(antHelper);
         final DevelopmentConfiguration developmentConfiguration = dcReader.getConfig();
         // ------------------ end set up
         // ------------------------------------------------
@@ -274,6 +276,9 @@ public class DocumentationBuilder extends AntTaskBuilder {
             getAntProperties());
 
         if (result) {
+            // FIXME: use getAntHelper() in production!
+            final DocumentationFacetProviderFactory facetProviderFactory =
+                new DocumentationFacetProviderFactory(new AntHelper("/home/weigo/tmp/enviaM/workspace", dcFactory));
             if (publishToConfluence) {
                 try {
                     final ConfluenceSite site = getSelectedConfluenceSite();
@@ -281,8 +286,8 @@ public class DocumentationBuilder extends AntTaskBuilder {
                     if (site != null) {
                         final ConfluenceSession confluenceSession = site.createSession();
                         final DevelopmentComponentReportGenerator generator =
-                            new DevelopmentComponentReportGenerator(dcFactory, engine, DC_WIKI_TEMPLATE,
-                                ResourceBundle.getBundle(DC_REPORT_BUNDLE, Locale.GERMAN));
+                            new DevelopmentComponentReportGenerator(facetProviderFactory, dcFactory, engine,
+                                DC_WIKI_TEMPLATE, ResourceBundle.getBundle(DC_REPORT_BUNDLE, Locale.GERMAN));
                         developmentConfiguration.accept(new DevelopmentConfigurationConfluenceWikiGenerator(generator,
                             vendorFilter, confluenceSession, confluenceSpace, listener.getLogger(),
                             dependenciesGenerator.getDescriptorContainer()));
@@ -294,8 +299,14 @@ public class DocumentationBuilder extends AntTaskBuilder {
             }
 
             if (createHtmlDocumentation) {
+                final DevelopmentComponentReportGenerator generator =
+                    new DevelopmentComponentReportGenerator(facetProviderFactory, dcFactory, engine,
+                        "/org/arachna/netweaver/nwdi/documenter/report/DevelopmentComponentHtmlTemplate.vm",
+                        ResourceBundle.getBundle(
+                            "org/arachna/netweaver/nwdi/documenter/report/DevelopmentComponentReport", Locale.GERMAN));
+
                 developmentConfiguration.accept(new DevelopmentConfigurationHtmlGenerator(
-                    new ReportWriterConfiguration(), dcFactory, vendorFilter, engine));
+                    new ReportWriterConfiguration(), dcFactory, vendorFilter, engine, generator));
             }
         }
 
