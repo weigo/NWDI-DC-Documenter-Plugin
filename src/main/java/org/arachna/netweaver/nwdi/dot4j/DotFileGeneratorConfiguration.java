@@ -5,7 +5,7 @@ package org.arachna.netweaver.nwdi.dot4j;
 
 /**
  * Configuration for <code>.dot</code> file generation.
- *
+ * 
  * @author Dirk Weigenand
  */
 public final class DotFileGeneratorConfiguration {
@@ -20,12 +20,12 @@ public final class DotFileGeneratorConfiguration {
     private String clusterMode = "global";
 
     /**
-     * the font size to use. Default is 8.
+     * the font size to use. Default is 12.
      */
-    private int fontSize = 8;
+    private int fontSize = 12;
 
     /**
-     *
+     * 
      * @return the rankDirection
      */
     public String getRankDirection() {

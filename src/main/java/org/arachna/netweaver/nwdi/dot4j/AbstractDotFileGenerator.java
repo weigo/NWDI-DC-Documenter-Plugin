@@ -27,6 +27,11 @@ public abstract class AbstractDotFileGenerator implements DotFileGenerator {
     private Graph graph;
 
     /**
+     * Global graph attributes.
+     */
+    private final DotFileGeneratorConfiguration globalConfig = new DotFileGeneratorConfiguration();;
+
+    /**
      * house keeping of node names already generated.
      */
     private final Map<String, Node> nodeNames = new HashMap<String, Node>();
@@ -36,13 +41,15 @@ public abstract class AbstractDotFileGenerator implements DotFileGenerator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String generate() {
         graph = new Graph();
         final Attributes attributes = graph.getAttributes();
         attributes.setAttribute("shape", "record");
-        attributes.setAttribute("rankdir", "LR");
+        attributes.setAttribute("rankdir", globalConfig.getRankDirection());
         attributes.setAttribute("ranksep", "equally");
         attributes.setAttribute("compound", "true");
+        attributes.setAttribute("fontsize", Integer.toString(globalConfig.getFontSize()));
 
         graph.getNodeAttributes().setAttribute("shape", "record");
 
@@ -96,7 +103,9 @@ public abstract class AbstractDotFileGenerator implements DotFileGenerator {
     protected final Node addNode(final String name, final String clusterName) {
         final Graph cluster = getCluster(clusterName);
         final Node node = cluster.newNode();
-        node.getAttributes().setAttribute("shape", "record");
+        Attributes attributes = node.getAttributes();
+        attributes.setAttribute("shape", "record");
+        attributes.setAttribute("fontsize", Integer.toString(this.getGlobalConfig().getFontSize()));
         nodeNames.put(name, node);
 
         return node;
@@ -123,4 +132,13 @@ public abstract class AbstractDotFileGenerator implements DotFileGenerator {
      * Has to be implemented by subclasses to generate the actual graph.
      */
     protected abstract void generateInternal();
+
+    /**
+     * Return global configuration settings.
+     * 
+     * @return the global configuration settings
+     */
+    protected final DotFileGeneratorConfiguration getGlobalConfig() {
+        return globalConfig;
+    }
 }

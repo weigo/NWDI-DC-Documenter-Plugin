@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.arachna.dot4j.model.Attributes;
 import org.arachna.dot4j.model.Edge;
 import org.arachna.dot4j.model.Node;
 import org.arachna.netweaver.dc.types.DevelopmentComponent;
@@ -17,8 +18,8 @@ import org.arachna.netweaver.dc.types.PublicPartReference;
 import org.arachna.netweaver.nwdi.documenter.VendorFilter;
 
 /**
- * Generator for graphviz <code>.dot</code> files depicting relations between a
- * development component and development components used by this DC.
+ * Generator for graphviz <code>.dot</code> files depicting relations between a development component and development components used by
+ * this DC.
  * 
  * @author Dirk Weigenand
  */
@@ -29,16 +30,15 @@ public final class DevelopmentComponentDotFileGenerator extends AbstractDevelopm
     private final VendorFilter vendorFilter;
 
     /**
-     * Create an instance of a <code>DevelopmentComponentDotFileGenerator</code>
-     * using the given development component registry and development component.
+     * Create an instance of a <code>DevelopmentComponentDotFileGenerator</code> using the given development component registry and
+     * development component.
      * 
      * @param dcFactory
      *            registry used to get/create development components
      * @param components
      *            DCs to generate usage relations for
      * @param vendorFilter
-     *            regular expression for exclusion of development components
-     *            from vendors matching it.
+     *            regular expression for exclusion of development components from vendors matching it.
      */
     public DevelopmentComponentDotFileGenerator(final DevelopmentComponentFactory dcFactory,
         final Collection<DevelopmentComponent> components, final VendorFilter vendorFilter) {
@@ -47,16 +47,15 @@ public final class DevelopmentComponentDotFileGenerator extends AbstractDevelopm
     }
 
     /**
-     * Create an instance of a <code>DevelopmentComponentDotFileGenerator</code>
-     * using the given development component registry and development component.
+     * Create an instance of a <code>DevelopmentComponentDotFileGenerator</code> using the given development component registry and
+     * development component.
      * 
      * @param dcFactory
      *            registry used to get/create development components
      * @param component
      *            DC to generate usage relations for
      * @param vendorFilter
-     *            regular expression for exclusion of development components
-     *            from vendors matching it.
+     *            regular expression for exclusion of development components from vendors matching it.
      */
     public DevelopmentComponentDotFileGenerator(final DevelopmentComponentFactory dcFactory,
         final DevelopmentComponent component, final VendorFilter vendorFilter) {
@@ -67,8 +66,7 @@ public final class DevelopmentComponentDotFileGenerator extends AbstractDevelopm
     /*
      * (non-Javadoc)
      * 
-     * @seeorg.arachna.netweaver.dc.analyzer.writers.AbstractDotFileGenerator#
-     * generateInternal()
+     * @seeorg.arachna.netweaver.dc.analyzer.writers.AbstractDotFileGenerator# generateInternal()
      */
     @Override
     protected void generateInternal() {
@@ -82,8 +80,7 @@ public final class DevelopmentComponentDotFileGenerator extends AbstractDevelopm
     }
 
     /**
-     * Generates a graphviz <code>subgraph</code> for the given development
-     * component.
+     * Generates a graphviz <code>subgraph</code> for the given development component.
      * 
      * @param developmentComponent
      *            DC to generate <code>subgraph</code> for.
@@ -116,7 +113,9 @@ public final class DevelopmentComponentDotFileGenerator extends AbstractDevelopm
                 if (!hasBeenGenerated(sourceNodeName, targetNodeName, label)) {
                     targetNode = getNode(targetNodeName);
                     edge = addEdge(sourceNode, targetNode);
-                    edge.getAttributes().setAttribute("label", label);
+                    Attributes attributes = edge.getAttributes();
+                    attributes.setAttribute("label", label);
+                    attributes.setAttribute("fontsize", Integer.toString(this.getGlobalConfig().getFontSize()));
                 }
 
                 generateSubGraph(usedComponent);
@@ -125,12 +124,10 @@ public final class DevelopmentComponentDotFileGenerator extends AbstractDevelopm
     }
 
     /**
-     * Generate graphviz <code>node</code> commands for the public parts
-     * referenced by the given development component.
+     * Generate graphviz <code>node</code> commands for the public parts referenced by the given development component.
      * 
      * @param component
-     *            DC for which <code>node</code> commands of referenced public
-     *            parts shall be generated for
+     *            DC for which <code>node</code> commands of referenced public parts shall be generated for
      */
     private void generateNodes(final DevelopmentComponent component) {
         if (!nodeExists(component)) {
@@ -161,8 +158,7 @@ public final class DevelopmentComponentDotFileGenerator extends AbstractDevelopm
      * 
      * @param component
      *            development component a node should be generated for.
-     * @return <code>true</code> if a node has already been generated
-     *         <code>false</code> otherwise.
+     * @return <code>true</code> if a node has already been generated <code>false</code> otherwise.
      */
     private boolean nodeExists(final DevelopmentComponent component) {
         return getNode(this.getNodeName(component)) != null;
@@ -186,8 +182,7 @@ public final class DevelopmentComponentDotFileGenerator extends AbstractDevelopm
         private final DevelopmentComponentFactory dcFactory;
 
         /**
-         * Create an instance of a <code>PublicPartAggregator</code> with the
-         * given {@link DevelopmentComponentFactory}.
+         * Create an instance of a <code>PublicPartAggregator</code> with the given {@link DevelopmentComponentFactory}.
          * 
          * @param dcFactory
          *            registry for development components.
@@ -200,8 +195,7 @@ public final class DevelopmentComponentDotFileGenerator extends AbstractDevelopm
          * Aggregate the given public part references by development component.
          * 
          * @param references
-         *            collection of {@link PublicPartReference} to aggregate by
-         *            development component.
+         *            collection of {@link PublicPartReference} to aggregate by development component.
          */
         void aggregate(final Collection<PublicPartReference> references) {
             DevelopmentComponent component;

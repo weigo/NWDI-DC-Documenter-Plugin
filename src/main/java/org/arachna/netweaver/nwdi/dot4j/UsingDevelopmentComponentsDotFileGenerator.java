@@ -13,8 +13,7 @@ import org.arachna.netweaver.dc.types.DevelopmentComponent;
 import org.arachna.netweaver.nwdi.documenter.VendorFilter;
 
 /**
- * Generator for <code>.dot</code> files visualizing the relation to development
- * components using a development component.
+ * Generator for <code>.dot</code> files visualizing the relation to development components using a development component.
  * 
  * @author Dirk Weigenand
  */
@@ -30,16 +29,12 @@ public class UsingDevelopmentComponentsDotFileGenerator extends AbstractDevelopm
     private final VendorFilter vendorFilter;
 
     /**
-     * Create an instance of a
-     * <code>UsingDevelopmentComponentsDotFileGenerator</code> with the given
-     * development component.
+     * Create an instance of a <code>UsingDevelopmentComponentsDotFileGenerator</code> with the given development component.
      * 
      * @param component
-     *            development component the using development components
-     *            relation shall be visualized for.
+     *            development component the using development components relation shall be visualized for.
      * @param vendorFilter
-     *            filter for exclusion of development components when their
-     *            vendor matches.
+     *            filter for exclusion of development components when their vendor matches.
      */
     public UsingDevelopmentComponentsDotFileGenerator(final DevelopmentComponent component,
         final VendorFilter vendorFilter) {
@@ -48,16 +43,12 @@ public class UsingDevelopmentComponentsDotFileGenerator extends AbstractDevelopm
     }
 
     /**
-     * Create an instance of a
-     * <code>UsingDevelopmentComponentsDotFileGenerator</code> with the given
-     * development component.
+     * Create an instance of a <code>UsingDevelopmentComponentsDotFileGenerator</code> with the given development component.
      * 
      * @param components
-     *            development components the using development components shall
-     *            be visualized for.
+     *            development components the using development components shall be visualized for.
      * @param vendorFilter
-     *            filter for exclusion of development components when their
-     *            vendor matches.
+     *            filter for exclusion of development components when their vendor matches.
      */
     public UsingDevelopmentComponentsDotFileGenerator(final Collection<DevelopmentComponent> components,
         final VendorFilter vendorFilter) {
@@ -68,8 +59,7 @@ public class UsingDevelopmentComponentsDotFileGenerator extends AbstractDevelopm
     /*
      * (non-Javadoc)
      * 
-     * @seeorg.arachna.netweaver.dc.analyzer.writers.AbstractDotFileGenerator#
-     * generateInternal()
+     * @seeorg.arachna.netweaver.dc.analyzer.writers.AbstractDotFileGenerator# generateInternal()
      */
     @Override
     protected void generateInternal() {
@@ -85,12 +75,10 @@ public class UsingDevelopmentComponentsDotFileGenerator extends AbstractDevelopm
     }
 
     /**
-     * Recursively generate a dot language <code>subgraph</code> fragment for
-     * the given development component and the DCs using it.
+     * Recursively generate a dot language <code>subgraph</code> fragment for the given development component and the DCs using it.
      * 
      * @param developmentComponent
-     *            development component the dot language <code>subgraph</code>
-     *            fragment wrt. DCs using it shall be generated for.
+     *            development component the dot language <code>subgraph</code> fragment wrt. DCs using it shall be generated for.
      */
     private void generateSubGraph(final DevelopmentComponent developmentComponent) {
         final String sourceNodeName = getNodeName(developmentComponent);
@@ -112,6 +100,7 @@ public class UsingDevelopmentComponentsDotFileGenerator extends AbstractDevelopm
                 attributes.setAttribute("label", label);
                 attributes.setAttribute("dir", "forward");
                 attributes.setAttribute("arrowhead", "normal");
+                attributes.setAttribute("fontsize", Integer.toString(this.getGlobalConfig().getFontSize()));
             }
 
             generateSubGraph(usingComponent);
@@ -119,12 +108,10 @@ public class UsingDevelopmentComponentsDotFileGenerator extends AbstractDevelopm
     }
 
     /**
-     * Recursively generate dot language <code>node</code> fragments for the
-     * given DCs and the DCs using it.
+     * Recursively generate dot language <code>node</code> fragments for the given DCs and the DCs using it.
      * 
      * @param component
-     *            development component dot language <code>node</code> fragments
-     *            shall be generated for.
+     *            development component dot language <code>node</code> fragments shall be generated for.
      */
     private void generateNodes(final DevelopmentComponent component) {
         if (!generatedNodes.contains(component)) {

@@ -26,9 +26,7 @@ public final class DevelopmentConfigurationDotFileGenerator extends AbstractDotF
     private final VendorFilter vendorFilter;
 
     /**
-     * Create an instance of a
-     * <code>DevelopmentConfigurationDotFileGenerator</code> using the given
-     * development configuration.
+     * Create an instance of a <code>DevelopmentConfigurationDotFileGenerator</code> using the given development configuration.
      * 
      * @param configuration
      *            development configuration to visualize
@@ -43,8 +41,7 @@ public final class DevelopmentConfigurationDotFileGenerator extends AbstractDotF
     }
 
     /**
-     * Create a graphviz visualization of compartments in a development
-     * configuration.
+     * Create a graphviz visualization of compartments in a development configuration.
      */
     @Override
     protected void generateInternal() {
@@ -72,8 +69,7 @@ public final class DevelopmentConfigurationDotFileGenerator extends AbstractDotF
     }
 
     /**
-     * Get or create a node for a compartment. Nodes are not generated more than
-     * once for a given compartment.
+     * Get or create a node for a compartment. Nodes are not generated more than once for a given compartment.
      * 
      * @param compartment
      *            the compartment to get or create a node for.
@@ -87,6 +83,7 @@ public final class DevelopmentConfigurationDotFileGenerator extends AbstractDotF
             node = this.addNode(nodeName, "");
             final Attributes attributes = node.getAttributes();
             attributes.setAttribute("label", compartment.getName());
+            attributes.setAttribute("fontsize", Integer.toString(this.getGlobalConfig().getFontSize()));
         }
 
         return node;
