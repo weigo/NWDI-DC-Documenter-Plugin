@@ -26,7 +26,7 @@ public enum License {
     /**
      * Apache License.
      */
-    Apache(".*Apache License.*", "Apache License"),
+    Apache(".*Apache (\\s*Software\\s+)?License.*", "Apache License"),
     /**
      * Unknown license.
      */
@@ -47,8 +47,7 @@ public enum License {
     private final Pattern regex;
 
     /**
-     * Create license instance using the given regular expression (for license
-     * detection) and license name.
+     * Create license instance using the given regular expression (for license detection) and license name.
      * 
      * @param regex
      *            regular expression for license detection.
@@ -68,13 +67,11 @@ public enum License {
     }
 
     /**
-     * Determines whether the given license text matches the regular expression
-     * of this license.
+     * Determines whether the given license text matches the regular expression of this license.
      * 
      * @param licenseText
      *            test of license.
-     * @return <code>true</code> when <code>licenseText</code> matches the
-     *         regular expression.
+     * @return <code>true</code> when <code>licenseText</code> matches the regular expression.
      */
     public boolean is(final String licenseText) {
         return regex.matcher(licenseText).matches();

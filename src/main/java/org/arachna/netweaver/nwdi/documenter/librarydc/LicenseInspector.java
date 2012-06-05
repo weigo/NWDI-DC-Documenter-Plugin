@@ -38,8 +38,7 @@ public final class LicenseInspector implements DocumentationFacetProvider<Develo
      * Create a new instance of a license inspector.
      * 
      * @param antHelper
-     *            helper class for determining properties of development
-     *            components.
+     *            helper class for determining properties of development components.
      */
     public LicenseInspector(final AntHelper antHelper) {
         this.antHelper = antHelper;
@@ -50,6 +49,7 @@ public final class LicenseInspector implements DocumentationFacetProvider<Develo
      * @param component
      * @return
      */
+    @Override
     public DocumentationFacet execute(final DevelopmentComponent component) {
         final FileFinder finder =
             new FileFinder(new File(String.format("%s/libraries", antHelper.getBaseLocation(component))), ".*\\.jar");
@@ -82,13 +82,14 @@ public final class LicenseInspector implements DocumentationFacetProvider<Develo
         final Enumeration<? extends ZipEntry> entries = archive.entries();
         ZipEntry entry = null;
         LicenseDescriptor descriptor = null;
+        File archivePath = new File(archive.getName());
 
         try {
             while (entries.hasMoreElements()) {
                 entry = entries.nextElement();
 
                 if (licenseFile.matcher(entry.getName()).matches()) {
-                    descriptor = extractLicense(archive.getName(), archive.getInputStream(entry));
+                    descriptor = extractLicense(archivePath.getName(), archive.getInputStream(entry));
                     break;
                 }
             }
@@ -98,7 +99,7 @@ public final class LicenseInspector implements DocumentationFacetProvider<Develo
             e.printStackTrace();
         }
 
-        return descriptor == null ? new LicenseDescriptor(License.None, archive.getName(), "") : descriptor;
+        return descriptor == null ? new LicenseDescriptor(License.None, archivePath.getName(), "") : descriptor;
     }
 
     /**
@@ -108,7 +109,6 @@ public final class LicenseInspector implements DocumentationFacetProvider<Develo
      */
     private LicenseDescriptor extractLicense(final String archive, final InputStream content) throws IOException {
         final String licenseText = getLicenseText(content);
-
         final LicenseDescriptor descriptor = new LicenseDescriptor(License.Other, archive, licenseText);
 
         for (final License license : License.values()) {
