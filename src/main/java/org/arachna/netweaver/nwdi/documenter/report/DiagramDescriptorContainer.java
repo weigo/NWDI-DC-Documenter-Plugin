@@ -17,12 +17,12 @@ import org.arachna.netweaver.dc.types.DevelopmentConfiguration;
  * 
  * @author Dirk Weigenand
  */
-public final class DotFileDescriptorContainer {
+public final class DiagramDescriptorContainer {
     /**
      * Mapping of component/compartment/development configuration to generated
      * dependency diagrams.
      */
-    private final Map<String, DotFileDescriptor> descriptors = new HashMap<String, DotFileDescriptor>();
+    private final Map<String, DiagramDescriptor> descriptors = new HashMap<String, DiagramDescriptor>();
 
     /**
      * Collection of all generated dependency diagrams.
@@ -37,7 +37,7 @@ public final class DotFileDescriptorContainer {
      * @param descriptor
      *            diagram descriptor.
      */
-    private void add(final String key, final DotFileDescriptor descriptor) {
+    private void add(final String key, final DiagramDescriptor descriptor) {
         descriptors.put(key, descriptor);
         dotFiles.add(descriptor.getUsedDCsDiagram());
         dotFiles.add(descriptor.getUsingDCsDiagram());
@@ -51,7 +51,7 @@ public final class DotFileDescriptorContainer {
      * @param descriptor
      *            descriptor with paths to dependency diagrams
      */
-    void add(final DevelopmentComponent component, final DotFileDescriptor descriptor) {
+    void add(final DevelopmentComponent component, final DiagramDescriptor descriptor) {
         this.add(component.getNormalizedName("_"), descriptor);
     }
 
@@ -64,7 +64,7 @@ public final class DotFileDescriptorContainer {
      * @param descriptor
      *            descriptor with paths to dependency diagrams
      */
-    void add(final Compartment compartment, final DotFileDescriptor descriptor) {
+    void add(final Compartment compartment, final DiagramDescriptor descriptor) {
         this.add(compartment.getName(), descriptor);
     }
 
@@ -77,7 +77,7 @@ public final class DotFileDescriptorContainer {
      * @param descriptor
      *            descriptor with paths to dependency diagrams
      */
-    void add(final DevelopmentConfiguration configuration, final DotFileDescriptor descriptor) {
+    void add(final DevelopmentConfiguration configuration, final DiagramDescriptor descriptor) {
         this.add(configuration.getName(), descriptor);
     }
 
@@ -96,7 +96,7 @@ public final class DotFileDescriptorContainer {
      * @param component
      * @return
      */
-    public DotFileDescriptor getDescriptor(final DevelopmentComponent component) {
+    public DiagramDescriptor getDescriptor(final DevelopmentComponent component) {
         return descriptors.get(component.getNormalizedName("_"));
     }
 }

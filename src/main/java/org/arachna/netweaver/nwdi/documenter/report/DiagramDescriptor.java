@@ -5,7 +5,7 @@ package org.arachna.netweaver.nwdi.documenter.report;
  * 
  * @author Dirk Weigenand
  */
-public final class DotFileDescriptor {
+public final class DiagramDescriptor {
     /**
      * @param usedDCsDiagram
      *            diagram for DCs used by the entity
@@ -19,15 +19,14 @@ public final class DotFileDescriptor {
     private final String usingDCsDiagram;
 
     /**
-     * Create descriptor with absolute paths to the diagrams of used and using
-     * DCs.
+     * Create descriptor with absolute paths to the diagrams of used and using DCs.
      * 
      * @param usedDCsDiagram
      *            diagram for DCs used by the entity
      * @param usingDCsDiagram
      *            diagram for DCs using the entity
      */
-    DotFileDescriptor(final String usedDCsDiagram, final String usingDCsDiagram) {
+    DiagramDescriptor(final String usedDCsDiagram, final String usingDCsDiagram) {
         this.usedDCsDiagram = usedDCsDiagram;
         this.usingDCsDiagram = usingDCsDiagram;
 

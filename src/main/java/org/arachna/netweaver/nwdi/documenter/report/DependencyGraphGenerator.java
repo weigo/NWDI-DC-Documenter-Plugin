@@ -25,8 +25,7 @@ import org.arachna.netweaver.nwdi.dot4j.DotFileWriter;
 import org.arachna.netweaver.nwdi.dot4j.UsingDevelopmentComponentsDotFileGenerator;
 
 /**
- * Generator for dependency graphs of software and development components of a
- * development configuration.
+ * Generator for dependency graphs of software and development components of a development configuration.
  * 
  * @author Dirk Weigenand
  */
@@ -49,18 +48,16 @@ public final class DependencyGraphGenerator implements DevelopmentConfigurationV
     /**
      * Mapping for generated <code>.dot</code> files.
      */
-    private final DotFileDescriptorContainer descriptorContainer = new DotFileDescriptorContainer();
+    private final DiagramDescriptorContainer descriptorContainer = new DiagramDescriptorContainer();
 
     /**
-     * Create a new instance of the dependency graph generator for the given
-     * development configuration. Use the given baseDirectory as base for
-     * output. Filter compartments using the given filter.
+     * Create a new instance of the dependency graph generator for the given development configuration. Use the given baseDirectory as base
+     * for output. Filter compartments using the given filter.
      * 
      * @param dcFactory
      *            registry for development components.
      * @param vendorFilter
-     *            filter development components or compartments by vendors using
-     *            this filter.
+     *            filter development components or compartments by vendors using this filter.
      * @param baseDirectory
      *            use base directory for graph generation.
      */
@@ -72,8 +69,8 @@ public final class DependencyGraphGenerator implements DevelopmentConfigurationV
     }
 
     /**
-     * Create a directory for the given file iff it does not exist. Throws a
-     * <code>RuntimeException</code> if the directory could not be created.
+     * Create a directory for the given file iff it does not exist. Throws a <code>RuntimeException</code> if the directory could not be
+     * created.
      * 
      * @param baseFolder
      *            base folder where to generate images to
@@ -95,8 +92,7 @@ public final class DependencyGraphGenerator implements DevelopmentConfigurationV
      * Create dependency graph for the given development configuration.
      * 
      * @param configuration
-     *            the development configuration to generate the dependency graph
-     *            for.
+     *            the development configuration to generate the dependency graph for.
      */
     @Override
     public void visit(final DevelopmentConfiguration configuration) {
@@ -106,7 +102,7 @@ public final class DependencyGraphGenerator implements DevelopmentConfigurationV
 
             descriptorContainer.add(
                 configuration,
-                new DotFileDescriptor(dotFileWriter.write(new DevelopmentConfigurationDotFileGenerator(configuration,
+                new DiagramDescriptor(dotFileWriter.write(new DevelopmentConfigurationDotFileGenerator(configuration,
                     vendorFilter), configuration.getName()), ""));
         }
         catch (final IOException e) {
@@ -129,7 +125,8 @@ public final class DependencyGraphGenerator implements DevelopmentConfigurationV
                 dotFileWriter.write(
                     new DevelopmentComponentDotFileGenerator(dcFactory, compartment.getDevelopmentComponents(),
                         vendorFilter), compartment.getName() + "-usedDCs");
-            descriptorContainer.add(compartment, new DotFileDescriptor(usedDCs, usingDCs));
+
+            descriptorContainer.add(compartment, new DiagramDescriptor(usedDCs, usingDCs));
         }
         catch (final IOException e) {
             throw new RuntimeException(e);
@@ -152,7 +149,7 @@ public final class DependencyGraphGenerator implements DevelopmentConfigurationV
                 final String usingDCs =
                     dotFileWriter.write(new UsingDevelopmentComponentsDotFileGenerator(component, vendorFilter),
                         String.format("%s-usingDCs", componentName));
-                descriptorContainer.add(component, new DotFileDescriptor(usedDCs, usingDCs));
+                descriptorContainer.add(component, new DiagramDescriptor(usedDCs, usingDCs));
             }
             catch (final IOException e) {
                 throw new RuntimeException(e);
@@ -161,8 +158,7 @@ public final class DependencyGraphGenerator implements DevelopmentConfigurationV
     }
 
     /**
-     * Create an Ant build file for translating GraphViz <code>.dot</code> files
-     * into SVG graphics.
+     * Create an Ant build file for translating GraphViz <code>.dot</code> files into SVG graphics.
      * 
      * @param engine
      *            Velocity engine to use to create build file
@@ -170,8 +166,7 @@ public final class DependencyGraphGenerator implements DevelopmentConfigurationV
      *            the absolute path to the <code>dot</code> executable.
      * @param timeout
      *            the time span to let dot run uninterrupted
-     * @return <code>true</code> when the build file was successfully created,
-     *         <code>false</code> otherwise.
+     * @return <code>true</code> when the build file was successfully created, <code>false</code> otherwise.
      */
     public String materializeDot2SvgBuildXml(final VelocityEngine engine, final String dotExecutable, final int timeout) {
         final String buildFileName = "Dot2Svg-build.xml";
@@ -211,7 +206,7 @@ public final class DependencyGraphGenerator implements DevelopmentConfigurationV
     /**
      * @return the descriptorContainer
      */
-    public DotFileDescriptorContainer getDescriptorContainer() {
+    public DiagramDescriptorContainer getDescriptorContainer() {
         return descriptorContainer;
     }
 }

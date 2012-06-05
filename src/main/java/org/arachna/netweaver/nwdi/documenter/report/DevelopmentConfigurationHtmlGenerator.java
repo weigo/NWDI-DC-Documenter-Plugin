@@ -30,8 +30,7 @@ import org.arachna.netweaver.nwdi.documenter.VendorFilter;
  */
 public final class DevelopmentConfigurationHtmlGenerator extends AbstractDevelopmentConfigurationVisitor {
     /**
-     * constant for index.html in development configuration and compartment
-     * folders.
+     * constant for index.html in development configuration and compartment folders.
      */
     private static final String INDEX_HTML = "index.html";
 
@@ -51,8 +50,7 @@ public final class DevelopmentConfigurationHtmlGenerator extends AbstractDevelop
     private final VendorFilter vendorFilter;
 
     /**
-     * Generator for a report on a development component. The target format is
-     * determined via the Velocity template given at build time.
+     * Generator for a report on a development component. The target format is determined via the Velocity template given at build time.
      */
     private final DevelopmentComponentReportGenerator generator;
 
@@ -70,8 +68,7 @@ public final class DevelopmentConfigurationHtmlGenerator extends AbstractDevelop
      * Create a new generator for HTML documentation.
      * 
      * @param writerConfiguration
-     *            configuration to use for generation (contains locations for
-     *            CSS & JS files).
+     *            configuration to use for generation (contains locations for CSS & JS files).
      * @param dcFactory
      *            registry for development components
      * @param vendorFilter
@@ -105,11 +102,9 @@ public final class DevelopmentConfigurationHtmlGenerator extends AbstractDevelop
     }
 
     /**
-     * Create a <code>ReportWriterConfiguration</code> for suitable for a
-     * compartment (i.e. in a subdirectory).
+     * Create a <code>ReportWriterConfiguration</code> for suitable for a compartment (i.e. in a subdirectory).
      * 
-     * @return a <code>ReportWriterConfiguration</code> for suitable for a
-     *         compartment
+     * @return a <code>ReportWriterConfiguration</code> for suitable for a compartment
      */
     protected ReportWriterConfiguration getCurrentWriterConfiguration() {
         final String template = "../";
@@ -142,8 +137,7 @@ public final class DevelopmentConfigurationHtmlGenerator extends AbstractDevelop
     }
 
     /**
-     * Create a writer for a file "index.html" in the given base directory. Use
-     * the global charsetName as encoding.
+     * Create a writer for a file "index.html" in the given base directory. Use the global charsetName as encoding.
      * 
      * @param baseDir
      *            base folder where to create the "index.html".
@@ -210,12 +204,10 @@ public final class DevelopmentConfigurationHtmlGenerator extends AbstractDevelop
     }
 
     /**
-     * Copies the resources (JavaScript and CSS) to the respective target
-     * folders.
+     * Copies the resources (JavaScript and CSS) to the respective target folders.
      * 
      * @throws IOException
-     *             when a resource could not be copied into its respective
-     *             target folder
+     *             when a resource could not be copied into its respective target folder
      */
     private void copyResources() throws IOException {
         final File cssFolder =
@@ -230,8 +222,7 @@ public final class DevelopmentConfigurationHtmlGenerator extends AbstractDevelop
     }
 
     /**
-     * Copy the given resource into its target folder using the given target
-     * file name.
+     * Copy the given resource into its target folder using the given target file name.
      * 
      * @param targetFolder
      *            folder to copy resource into.
@@ -249,8 +240,8 @@ public final class DevelopmentConfigurationHtmlGenerator extends AbstractDevelop
     }
 
     /**
-     * Create a directory for the given file iff it does not exist. Throws a
-     * <code>RuntimeException</code> if the directory could not be created.
+     * Create a directory for the given file iff it does not exist. Throws a <code>RuntimeException</code> if the directory could not be
+     * created.
      * 
      * @param folderName
      *            absolute path to folder that should be created.

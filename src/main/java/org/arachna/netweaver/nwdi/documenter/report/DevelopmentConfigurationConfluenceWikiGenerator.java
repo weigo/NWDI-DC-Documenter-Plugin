@@ -4,6 +4,8 @@
 package org.arachna.netweaver.nwdi.documenter.report;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.StringWriter;
@@ -19,6 +21,9 @@ import org.arachna.netweaver.dc.types.Compartment;
 import org.arachna.netweaver.dc.types.DevelopmentComponent;
 import org.arachna.netweaver.dc.types.DevelopmentConfiguration;
 import org.arachna.netweaver.nwdi.documenter.VendorFilter;
+import org.arachna.netweaver.nwdi.documenter.report.svg.SVGParser;
+import org.arachna.netweaver.nwdi.documenter.report.svg.SVGProperties;
+import org.arachna.netweaver.nwdi.documenter.report.svg.SVGPropertyName;
 
 import com.myyearbook.hudson.plugins.confluence.ConfluenceSession;
 
@@ -39,14 +44,12 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator extends Abstr
     private final VendorFilter vendorFilter;
 
     /**
-     * Generator for a report on a development component. The target format is
-     * determined via the Velocity template given at build time.
+     * Generator for a report on a development component. The target format is determined via the Velocity template given at build time.
      */
     private final DevelopmentComponentReportGenerator generator;
 
     /**
-     * the key of the confluence space used to store the generated
-     * documentation.
+     * the key of the confluence space used to store the generated documentation.
      */
     private final String spaceKey;
 
@@ -56,21 +59,19 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator extends Abstr
     private final PrintStream logger;
 
     /**
-     * keep track of track overview page (to append compartment pages as
-     * children).
+     * keep track of track overview page (to append compartment pages as children).
      */
     private RemotePage trackOverviewPage;
 
     /**
-     * keep track of the current compartment overview page (to add development
-     * component reports as child pages).
+     * keep track of the current compartment overview page (to add development component reports as child pages).
      */
     private RemotePage currentCompartmentOverviewPage;
 
     /**
      * container for descriptors of generated dependency diagrams.
      */
-    private final DotFileDescriptorContainer dotFileDescriptorContainer;
+    private final DiagramDescriptorContainer dotFileDescriptorContainer;
 
     /**
      * additional context to supply to velocity.
@@ -78,8 +79,17 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator extends Abstr
     private final Map<String, Object> additionalContext = new HashMap<String, Object>();
 
     /**
-     * Create an instance of the confluence wiki content generator for
-     * development components.
+     * parser for SVG diagrams.
+     */
+    private final SVGParser svgParser = new SVGParser();
+
+    /**
+     * NWDI track name documentation is generated for.
+     */
+    private String trackName;
+
+    /**
+     * Create an instance of the confluence wiki content generator for development components.
      * 
      * @param generator
      *            the DC documentation generator.
@@ -88,8 +98,7 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator extends Abstr
      * @param session
      *            the confluence session
      * @param spaceKey
-     *            the key of the confluence space used to store the generated
-     *            documentation.
+     *            the key of the confluence space used to store the generated documentation.
      * @param logger
      *            the logger to use
      * @param dotFileDescriptorContainer
@@ -97,7 +106,7 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator extends Abstr
      */
     public DevelopmentConfigurationConfluenceWikiGenerator(final DevelopmentComponentReportGenerator generator,
         final VendorFilter vendorFilter, final ConfluenceSession session, final String spaceKey,
-        final PrintStream logger, final DotFileDescriptorContainer dotFileDescriptorContainer) {
+        final PrintStream logger, final DiagramDescriptorContainer dotFileDescriptorContainer) {
         this.vendorFilter = vendorFilter;
         this.session = session;
         this.spaceKey = spaceKey;
@@ -114,6 +123,7 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator extends Abstr
     @Override
     public void visit(final DevelopmentConfiguration configuration) {
         try {
+            this.trackName = configuration.getName();
             createOverviewPage(configuration);
         }
         catch (final IOException e) {
@@ -137,14 +147,35 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator extends Abstr
     public void visit(final DevelopmentComponent component) {
         if (!vendorFilter.accept(component) && component.isNeedsRebuild()) {
             final String pageName = component.getNormalizedName("_");
-            final DotFileDescriptor descriptor = dotFileDescriptorContainer.getDescriptor(component);
-            // FIXME: determine width of diagrams and supply it to page
-            // generator!
+            final DiagramDescriptor descriptor = dotFileDescriptorContainer.getDescriptor(component);
+
+            if (descriptor != null) {
+                addDiagramWidthToAdditionalContext("UsedDCsDiagramWidth", "UsedDCsDiagramHeight", descriptor.getUsedDCsDiagram());
+                addDiagramWidthToAdditionalContext("UsingDCsDiagramWidth", "UsingDCsDiagramHeight", descriptor.getUsingDCsDiagram());
+            }
+
             final String pageContent = generateWikiPageContent(component);
             final RemotePage page = createOrUpdatePage(pageName, pageContent, currentCompartmentOverviewPage);
 
-            addDependencyDiagram(page.getId(), descriptor.getUsedDCsDiagram());
-            addDependencyDiagram(page.getId(), descriptor.getUsingDCsDiagram());
+            if (descriptor != null) {
+                addDependencyDiagram(page.getId(), descriptor.getUsedDCsDiagram());
+                addDependencyDiagram(page.getId(), descriptor.getUsingDCsDiagram());
+            }
+        }
+    }
+
+    /**
+     * @param descriptor
+     */
+    private void addDiagramWidthToAdditionalContext(String widthProperty, String heightProperty, final String diagramName) {
+        try {
+            SVGProperties properties =
+                this.svgParser.parse(new FileReader(diagramName.replaceFirst("\\.dot", "\\.svg")));
+            this.additionalContext.put(widthProperty, properties.getProperty(SVGPropertyName.WIDTH));
+            this.additionalContext.put(heightProperty, properties.getProperty(SVGPropertyName.HEIGHT));
+        }
+        catch (FileNotFoundException e) {
+            logger.append(e.getLocalizedMessage());
         }
     }
 
@@ -166,8 +197,7 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator extends Abstr
     }
 
     /**
-     * Create or update a wiki page with the given content. Associate it with
-     * the given parent page.
+     * Create or update a wiki page with the given content. Associate it with the given parent page.
      * 
      * @param pageName
      *            name of wiki page to create or update.
@@ -179,12 +209,13 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator extends Abstr
      */
     protected RemotePage createOrUpdatePage(final String pageName, final String pageContent, final RemotePage parent) {
         try {
-            final RemotePage page = getRemotePage(pageName, parent);
+            String realPageName = this.trackName.equals(pageName) ? pageName : this.trackName + '_' + pageName;
+            final RemotePage page = getRemotePage(realPageName, parent);
             page.setContent(pageContent);
             session.storePage(page);
 
             if (page.getId() == 0) {
-                return getRemotePage(pageName, parent);
+                return getRemotePage(realPageName, parent);
             }
 
             return page;
@@ -195,9 +226,8 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator extends Abstr
     }
 
     /**
-     * Returns the remote page with the given name. If it does not exist yet a
-     * new page object will be created and associated with the given parent
-     * page.
+     * Returns the remote page with the given name. If it does not exist yet a new page object will be created and associated with the given
+     * parent page.
      * 
      * @param pageName
      *            name of remote page to be retrieved.
@@ -205,8 +235,7 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator extends Abstr
      *            parent page a newly created page should be associated with.
      * @return the remote page iff it exists or a newly created page object.
      * @throws java.rmi.RemoteException
-     *             when the user associated with the current confluence session
-     *             has no permission to access the page.
+     *             when the user associated with the current confluence session has no permission to access the page.
      */
     protected RemotePage getRemotePage(final String pageName, final RemotePage parent) throws java.rmi.RemoteException {
         RemotePageSummary pageSummary = null;
