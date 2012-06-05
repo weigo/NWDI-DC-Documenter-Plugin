@@ -19,7 +19,6 @@ import org.arachna.netweaver.nwdi.documenter.webservices.VirtualInterfaceDefinit
  * Factory for {@link DocumentationFacetProvider}s.
  * 
  * @author Dirk Weigenand
- * 
  */
 public final class DocumentationFacetProviderFactory {
     /**
