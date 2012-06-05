@@ -2,8 +2,9 @@
        "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-<title>$component.getName()</title>
-<link rel="stylesheet" type="text/css" href="../css/report.css">
+  <title>$component.getName()</title>
+  <link rel="stylesheet" type="text/css" href="../css/report.css">
+  <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
 </head>
 <body>
 <h1>$bundle.getString("developmentComponent") $component.getName()</h1>
@@ -14,12 +15,14 @@
 <h2>$bundle.getString("description")</h2>
 <p>$component.getDescription()</p>
 #end
-#if (!$component.getUsedDevelopmentComponents().isEmpty())
+#if ($component.getUsedDevelopmentComponents())
 <h2>$bundle.getString("usedComponents")</h2>
 
 #set ($imageSuffix = '.svg')
 
 <img src="images/$component.getVendor()~$component.getName().replace('/', '~')$imageSuffix">
+
+#if ($component.getUsedDevelopmentComponents())
 <table>
   <caption>$bundleHelper.render("usedComponents.table.caption", $component.getName())</caption>
   <thead>
@@ -47,8 +50,9 @@
   </tbody>
 </table>
 #end
+#end
 
-#if (!$component.getUsingDevelopmentComponents().isEmpty())
+#if ($component.getUsingDevelopmentComponents())
 <h2>$bundleHelper.render("usingComponents", $component.getName())</h2>
 
 #set ($suffix = ".html")
@@ -61,7 +65,7 @@
 <img src="images/$component.getVendor()~$component.getName().replace('/', '~')-usingDCs.svg">
 #end
 
-#if (!$component.getPublicParts().isEmpty())
+#if ($component.getPublicParts())
 <h2>$bundle.getString("publicParts.section.caption")</h2>
 <table>
   <caption>$bundleHelper.render("publicParts.table.caption",$component.getName())</caption>
@@ -84,7 +88,7 @@
 </table>
 #end
 
-#if (!$webServices.isEmpty())
+#if ($webServices && !$webServices.isEmpty())
 <h2>$bundle.getString("WebServices")</h2>
 #foreach($service in $webServices)
   <h3>$service.getName()</h3>
@@ -138,7 +142,7 @@
 #end
 #end
 
-#if (!$externalLibraries.isEmpty())
+#if ($externalLibraries)
 <h3>$bundle.getString("external.libraries.title")</h3>
 <table>
   <caption>$bundleHelper.render("external.libraries.caption",$component.getName())</caption>
