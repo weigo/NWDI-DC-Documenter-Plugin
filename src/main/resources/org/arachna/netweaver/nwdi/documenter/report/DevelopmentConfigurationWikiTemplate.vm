@@ -1,0 +1,10 @@
+h1. $bundle.getString("description")
+
+$configuration.getDescription()
+
+h2. $bundle.getString("softwareComponents")
+
+||$bundle.getString("softwareComponent")||$bundle.getString("description")||
+#foreach ($sc in $compartments)
+|[$sc.getName()|$wikiSpace:$trackName_$sc.getName()]| $sc.getDescription() |
+#end

@@ -7,7 +7,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.io.Reader;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,11 +17,13 @@ import java.util.Map;
 import jenkins.plugins.confluence.soap.v1.RemoteException;
 import jenkins.plugins.confluence.soap.v1.RemotePage;
 import jenkins.plugins.confluence.soap.v1.RemotePageSummary;
+import jenkins.plugins.confluence.soap.v1.RemotePageUpdateOptions;
 
 import org.arachna.netweaver.dc.types.AbstractDevelopmentConfigurationVisitor;
 import org.arachna.netweaver.dc.types.Compartment;
 import org.arachna.netweaver.dc.types.DevelopmentComponent;
 import org.arachna.netweaver.dc.types.DevelopmentConfiguration;
+import org.arachna.netweaver.nwdi.documenter.ReportGeneratorFactory;
 import org.arachna.netweaver.nwdi.documenter.VendorFilter;
 import org.arachna.netweaver.nwdi.documenter.report.svg.SVGParser;
 import org.arachna.netweaver.nwdi.documenter.report.svg.SVGProperties;
@@ -34,6 +38,15 @@ import com.myyearbook.hudson.plugins.confluence.ConfluenceSession;
  */
 public final class DevelopmentConfigurationConfluenceWikiGenerator extends AbstractDevelopmentConfigurationVisitor {
     /**
+     * velocity template for DC report generation.
+     */
+    private static final String DC_WIKI_TEMPLATE =
+        "/org/arachna/netweaver/nwdi/documenter/report/DevelopmentComponentWikiTemplate.vm";
+
+    private static final String DEV_CONF_WIKI_TEMPLATE =
+        "/org/arachna/netweaver/nwdi/documenter/report/DevelopmentConfigurationWikiTemplate.vm";
+
+    /**
      * Confluence session used to publish to confluence site.
      */
     private final ConfluenceSession session;
@@ -46,7 +59,7 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator extends Abstr
     /**
      * Generator for a report on a development component. The target format is determined via the Velocity template given at build time.
      */
-    private final DevelopmentComponentReportGenerator generator;
+    private final ReportGeneratorFactory reportGeneratorFactory;
 
     /**
      * the key of the confluence space used to store the generated documentation.
@@ -91,8 +104,8 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator extends Abstr
     /**
      * Create an instance of the confluence wiki content generator for development components.
      * 
-     * @param generator
-     *            the DC documentation generator.
+     * @param reportGeneratorFactory
+     *            the report generator factory.
      * @param vendorFilter
      *            filter for development components by vendor.
      * @param session
@@ -104,7 +117,7 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator extends Abstr
      * @param dotFileDescriptorContainer
      *            container for descriptors of generated dependency diagrams.
      */
-    public DevelopmentConfigurationConfluenceWikiGenerator(final DevelopmentComponentReportGenerator generator,
+    public DevelopmentConfigurationConfluenceWikiGenerator(final ReportGeneratorFactory reportGeneratorFactory,
         final VendorFilter vendorFilter, final ConfluenceSession session, final String spaceKey,
         final PrintStream logger, final DiagramDescriptorContainer dotFileDescriptorContainer) {
         this.vendorFilter = vendorFilter;
@@ -114,7 +127,7 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator extends Abstr
         this.dotFileDescriptorContainer = dotFileDescriptorContainer;
         additionalContext.put("wikiSpace", this.spaceKey);
 
-        this.generator = generator;
+        this.reportGeneratorFactory = reportGeneratorFactory;
     }
 
     /**
@@ -210,12 +223,18 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator extends Abstr
     protected RemotePage createOrUpdatePage(final String pageName, final String pageContent, final RemotePage parent) {
         try {
             String realPageName = this.trackName.equals(pageName) ? pageName : this.trackName + '_' + pageName;
-            final RemotePage page = getRemotePage(realPageName, parent);
-            page.setContent(pageContent);
-            session.storePage(page);
+            RemotePage page = getRemotePage(realPageName, parent);
 
-            if (page.getId() == 0) {
-                return getRemotePage(realPageName, parent);
+            if (!pageContent.equals(page.getContent())) {
+                page.setContent(pageContent);
+
+                if (page.getId() == 0) {
+                    session.storePage(page);
+                    page = getRemotePage(realPageName, parent);
+                }
+                else {
+                    session.updatePage(page, new RemotePageUpdateOptions(true, ""));
+                }
             }
 
             return page;
@@ -272,9 +291,19 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator extends Abstr
     protected String generateWikiPageContent(final DevelopmentComponent component) {
         final StringWriter writer = new StringWriter();
 
-        generator.execute(writer, component, additionalContext);
+        this.reportGeneratorFactory.createDevelopmentComponentReportGenerator().execute(writer, component, additionalContext,
+            getTemplateReader(DC_WIKI_TEMPLATE));
 
         return writer.toString();
+    }
+
+    /**
+     * Return a reader for the template to use for generation of documentation.
+     * 
+     * @return {@link Reader} for velocity template used to generate documentation.
+     */
+    protected Reader getTemplateReader(String template) {
+        return new InputStreamReader(this.getClass().getResourceAsStream(template));
     }
 
     /**
@@ -288,6 +317,20 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator extends Abstr
     protected void createOverviewPage(final DevelopmentConfiguration configuration) throws java.rmi.RemoteException {
         final Long homePageId = session.getSpace(spaceKey).getHomePage();
         final RemotePage homePage = session.getPageV1(homePageId.longValue());
-        trackOverviewPage = createOrUpdatePage(configuration.getName(), configuration.getCaption(), homePage);
+
+        trackOverviewPage = createOrUpdatePage(configuration.getName(), generateWikiPageContent(configuration), homePage);
+    }
+
+    /**
+     * @param configuration
+     * @return
+     */
+    private String generateWikiPageContent(DevelopmentConfiguration configuration) {
+        final StringWriter writer = new StringWriter();
+
+        this.reportGeneratorFactory.createDevelopmentConfigurationReportGenerator().execute(writer, configuration, additionalContext,
+            getTemplateReader(DEV_CONF_WIKI_TEMPLATE));
+
+        return writer.toString();
     }
 }

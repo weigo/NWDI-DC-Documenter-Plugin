@@ -20,9 +20,6 @@ import java.util.regex.Pattern;
 import net.sf.json.JSONObject;
 
 import org.apache.velocity.app.VelocityEngine;
-import org.arachna.netweaver.dc.types.Compartment;
-import org.arachna.netweaver.dc.types.CompartmentState;
-import org.arachna.netweaver.dc.types.DevelopmentComponent;
 import org.arachna.netweaver.dc.types.DevelopmentComponentFactory;
 import org.arachna.netweaver.dc.types.DevelopmentConfiguration;
 import org.arachna.netweaver.hudson.nwdi.AntTaskBuilder;
@@ -46,21 +43,10 @@ import com.myyearbook.hudson.plugins.confluence.ConfluenceSite;
  */
 public class DocumentationBuilder extends AntTaskBuilder {
     /**
-     * 
-     */
-    private static final String DC_HTML_TEMPLATE = "/org/arachna/netweaver/nwdi/documenter/report/DevelopmentComponentHtmlTemplate.vm";
-
-    /**
      * bundle to use for report internationalization.
      */
     private static final String DC_REPORT_BUNDLE =
         "org/arachna/netweaver/nwdi/documenter/report/DevelopmentComponentReport";
-
-    /**
-     * velocity template for DC report generation.
-     */
-    private static final String DC_WIKI_TEMPLATE =
-        "/org/arachna/netweaver/nwdi/documenter/report/DevelopmentComponentWikiTemplate.vm";
 
     /**
      * descriptor for DocumentationBuilder.
@@ -241,11 +227,11 @@ public class DocumentationBuilder extends AntTaskBuilder {
         final File workspace = new File(String.format("%s/documentation", getAntHelper().getPathToWorkspace()));
 
         // FIXME: remove from production code
-        for (final Compartment compartment : developmentConfiguration.getCompartments(CompartmentState.Source)) {
-            for (final DevelopmentComponent component : compartment.getDevelopmentComponents()) {
-                component.setNeedsRebuild(true);
-            }
-        }
+        // for (final Compartment compartment : developmentConfiguration.getCompartments(CompartmentState.Source)) {
+        // for (final DevelopmentComponent component : compartment.getDevelopmentComponents()) {
+        // component.setNeedsRebuild(true);
+        // }
+        // }
 
         final VendorFilter vendorFilter = new VendorFilter(ignoreVendorRegexp);
         final DependencyGraphGenerator dependenciesGenerator =
@@ -260,8 +246,8 @@ public class DocumentationBuilder extends AntTaskBuilder {
                 getAntProperties());
 
         if (result) {
-            DevelopmentComponentReportGeneratorFactory generatorFactory =
-                new DevelopmentComponentReportGeneratorFactory(new DocumentationFacetProviderFactory(getAntHelper()), dcFactory,
+            ReportGeneratorFactory generatorFactory =
+                new ReportGeneratorFactory(new DocumentationFacetProviderFactory(getAntHelper()), dcFactory,
                     engine, ResourceBundle.getBundle(
                         DC_REPORT_BUNDLE, Locale.GERMAN));
 
@@ -271,8 +257,7 @@ public class DocumentationBuilder extends AntTaskBuilder {
 
                     if (site != null) {
                         final ConfluenceSession confluenceSession = site.createSession();
-                        developmentConfiguration.accept(new DevelopmentConfigurationConfluenceWikiGenerator(generatorFactory
-                            .create(DC_WIKI_TEMPLATE),
+                        developmentConfiguration.accept(new DevelopmentConfigurationConfluenceWikiGenerator(generatorFactory,
                             vendorFilter, confluenceSession, confluenceSpace, listener.getLogger(),
                             dependenciesGenerator.getDescriptorContainer()));
                     }
@@ -288,7 +273,7 @@ public class DocumentationBuilder extends AntTaskBuilder {
 
                 developmentConfiguration.accept(new DevelopmentConfigurationHtmlGenerator(
                     writerConfiguration, dcFactory, vendorFilter, engine, generatorFactory
-                        .create(DC_HTML_TEMPLATE)));
+                        .createDevelopmentComponentReportGenerator()));
             }
         }
 

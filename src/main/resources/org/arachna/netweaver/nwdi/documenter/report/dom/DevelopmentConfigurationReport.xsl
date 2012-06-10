@@ -55,17 +55,17 @@
   <xsl:template match="compartment[count(development-components/development-component) &gt; 0]">
     <div class="compartentContainer">
       <div class="compartment">
-        <!-- xsl:choose -->
-        <!-- xsl:when test="@archive-state='no'" -->
-        <xsl:element name="a">
-          <xsl:attribute name="href"><xsl:value-of select="concat(@sc-name, '/index.html')" /></xsl:attribute>
-          <xsl:value-of select="@sc-name" />
-        </xsl:element>
-        <!-- /xsl:when -->
-        <!-- xsl:otherwise -->
-        <!-- xsl:value-of select="@sc-name" / -->
-        <!-- /xsl:otherwise -->
-        <!-- /xsl:choose -->
+        <xsl:choose>
+          <xsl:when test="@archive-state='no'">
+            <xsl:element name="a">
+              <xsl:attribute name="href"><xsl:value-of select="concat(@sc-name, '/index.html')" /></xsl:attribute>
+              <xsl:value-of select="@sc-name" />
+            </xsl:element>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:value-of select="@sc-name" />
+          </xsl:otherwise>
+        </xsl:choose>
         <hr />
         <xsl:value-of select="@vendor" />
       </div>
@@ -86,8 +86,12 @@
         <xsl:value-of select="$dcName" />
       </xsl:element>
       <hr />
-      <p><xsl:value-of select="caption/text()" /></p>
-      <p><xsl:value-of select="description/text()" /></p>
+      <p>
+        <xsl:value-of select="caption/text()" />
+      </p>
+      <p>
+        <xsl:value-of select="description/text()" />
+      </p>
       <xsl:if test="count(sourceFolders/package-folder) &gt; 0 and ../../@archive-state='no'">
         <hr />
         <xsl:variable name="componentName">

@@ -8,6 +8,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
@@ -29,6 +30,11 @@ import org.arachna.netweaver.nwdi.documenter.VendorFilter;
  * @author Dirk Weigenand
  */
 public final class DevelopmentConfigurationHtmlGenerator extends AbstractDevelopmentConfigurationVisitor {
+    /**
+     * 
+     */
+    private static final String DC_HTML_TEMPLATE = "/org/arachna/netweaver/nwdi/documenter/report/DevelopmentComponentHtmlTemplate.vm";
+
     /**
      * constant for index.html in development configuration and compartment folders.
      */
@@ -168,7 +174,8 @@ public final class DevelopmentConfigurationHtmlGenerator extends AbstractDevelop
 
             try {
                 writer = new FileWriter(new File(baseDir, String.format("%s.html", component.getNormalizedName("~"))));
-                generator.execute(writer, component, additionalContext);
+                generator.execute(writer, component, additionalContext,
+                    new InputStreamReader(this.getClass().getResourceAsStream(DC_HTML_TEMPLATE)));
             }
             catch (final IOException e) {
                 throw new RuntimeException(e);

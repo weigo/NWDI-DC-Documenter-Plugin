@@ -26,7 +26,7 @@ h2. $bundle.getString("usedComponents")
 h2. $bundleHelper.render("usingComponents", $component.getName())
 
 #foreach($usingDC in $component.getUsingDevelopmentComponents())
-[$usingDC.getName()|$wikiSpace:$trackName_$usingDC.getNormalizedName("_")]
+[$usingDC.getName()|$wikiSpace:$usingDC.getNormalizedName("_")]
 #end
 
 {svgweb4a:file=$component.getNormalizedName("~")-usingDCs.svg|width=$UsingDCsDiagramWidth|height=$UsingDCsDiagramHeight}

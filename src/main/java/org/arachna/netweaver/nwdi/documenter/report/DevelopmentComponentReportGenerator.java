@@ -4,7 +4,6 @@
 package org.arachna.netweaver.nwdi.documenter.report;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.Writer;
 import java.util.Map;
@@ -28,12 +27,6 @@ public final class DevelopmentComponentReportGenerator {
     private final VelocityEngine velocityEngine;
 
     /**
-     * template name for rendering a development components properties into a
-     * legible report.
-     */
-    private final String template;
-
-    /**
      * {@link ResourceBundle} for internationalization of reports.
      */
     private final ResourceBundle bundle;
@@ -49,38 +42,32 @@ public final class DevelopmentComponentReportGenerator {
     private final DocumentationFacetProviderFactory documentationFacetProviderFactory;
 
     /**
-     * Create a <code>DevelopmentComponentReportGenerator</code> using the given
-     * {@link DevelopmentComponentFactory}, {@link VelocityEngine}, velocity
-     * template and resource bundle.
+     * Create a <code>DevelopmentComponentReportGenerator</code> using the given {@link DevelopmentComponentFactory}, {@link VelocityEngine}
+     * , velocity template and resource bundle.
      * 
      * The given {@link ResourceBundle} is used for internationalization.
      * 
      * @param documentationFacetProviderFactory
      *            factory for provider of documentation facets
      * @param dcFactory
-     *            used in template to resolve public part references into
-     *            development components.
+     *            used in template to resolve public part references into development components.
      * @param velocityEngine
      *            VelocityEngine used to transform template.
-     * @param template
-     *            name of template to use for generating the documentation.
      * @param bundle
      *            the ResourceBundle used for I18N.
      */
     public DevelopmentComponentReportGenerator(
         final DocumentationFacetProviderFactory documentationFacetProviderFactory,
-        final DevelopmentComponentFactory dcFactory, final VelocityEngine velocityEngine, final String template,
+        final DevelopmentComponentFactory dcFactory, final VelocityEngine velocityEngine,
         final ResourceBundle bundle) {
         this.documentationFacetProviderFactory = documentationFacetProviderFactory;
         this.dcFactory = dcFactory;
         this.velocityEngine = velocityEngine;
-        this.template = template;
         this.bundle = bundle;
     }
 
     /**
-     * Generate documentation for the given development component into the given
-     * writer object.
+     * Generate documentation for the given development component into the given writer object.
      * 
      * @param writer
      *            writer to generate documentation into.
@@ -90,7 +77,7 @@ public final class DevelopmentComponentReportGenerator {
      *            additional context attributes supplied externally
      */
     public void execute(final Writer writer, final DevelopmentComponent component,
-        final Map<String, Object> additionalContext) {
+        final Map<String, Object> additionalContext, Reader template) {
         final Context context = new VelocityContext();
         context.put("component", component);
         context.put("bundle", bundle);
@@ -107,7 +94,7 @@ public final class DevelopmentComponentReportGenerator {
             context.put(entry.getKey(), entry.getValue());
         }
 
-        velocityEngine.evaluate(context, writer, "", getTemplateReader());
+        velocityEngine.evaluate(context, writer, "", template);
 
         try {
             writer.close();
@@ -115,15 +102,5 @@ public final class DevelopmentComponentReportGenerator {
         catch (final IOException ioe) {
             throw new RuntimeException(ioe);
         }
-    }
-
-    /**
-     * Return a reader for the template to use for generation of documentation.
-     * 
-     * @return {@link Reader} for velocity template used to generate
-     *         documentation.
-     */
-    protected Reader getTemplateReader() {
-        return new InputStreamReader(this.getClass().getResourceAsStream(template));
     }
 }

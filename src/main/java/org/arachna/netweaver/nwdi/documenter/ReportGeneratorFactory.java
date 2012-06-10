@@ -8,6 +8,7 @@ import java.util.ResourceBundle;
 import org.apache.velocity.app.VelocityEngine;
 import org.arachna.netweaver.dc.types.DevelopmentComponentFactory;
 import org.arachna.netweaver.nwdi.documenter.report.DevelopmentComponentReportGenerator;
+import org.arachna.netweaver.nwdi.documenter.report.DevelopmentConfigurationReportGenerator;
 import org.arachna.netweaver.nwdi.documenter.report.DocumentationFacetProviderFactory;
 
 /**
@@ -15,7 +16,7 @@ import org.arachna.netweaver.nwdi.documenter.report.DocumentationFacetProviderFa
  * 
  * @author Dirk Weigenand
  */
-public final class DevelopmentComponentReportGeneratorFactory {
+public final class ReportGeneratorFactory {
     /**
      * Factory for the various documentable facets of a development component.
      */
@@ -48,7 +49,7 @@ public final class DevelopmentComponentReportGeneratorFactory {
      * @param resourceBundle
      *            Resource bundle for texts/I18N.
      */
-    public DevelopmentComponentReportGeneratorFactory(final DocumentationFacetProviderFactory facetProviderFactory,
+    public ReportGeneratorFactory(final DocumentationFacetProviderFactory facetProviderFactory,
         final DevelopmentComponentFactory dcFactory, final VelocityEngine velocity, final ResourceBundle resourceBundle) {
         this.facetProviderFactory = facetProviderFactory;
         this.dcFactory = dcFactory;
@@ -62,9 +63,15 @@ public final class DevelopmentComponentReportGeneratorFactory {
      * @param template
      * @return
      */
-    public DevelopmentComponentReportGenerator create(String template) {
+    public DevelopmentComponentReportGenerator createDevelopmentComponentReportGenerator() {
         return new DevelopmentComponentReportGenerator(facetProviderFactory, dcFactory, velocity,
-            template,
             this.resourceBundle);
+    }
+
+    /**
+     * @return
+     */
+    public DevelopmentConfigurationReportGenerator createDevelopmentConfigurationReportGenerator() {
+        return new DevelopmentConfigurationReportGenerator(velocity, resourceBundle);
     }
 }
