@@ -40,11 +40,14 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator extends Abstr
     /**
      * velocity template for DC report generation.
      */
-    private static final String DC_WIKI_TEMPLATE =
+    public static final String DC_WIKI_TEMPLATE =
         "/org/arachna/netweaver/nwdi/documenter/report/DevelopmentComponentWikiTemplate.vm";
 
-    private static final String DEV_CONF_WIKI_TEMPLATE =
+    public static final String DEV_CONF_WIKI_TEMPLATE =
         "/org/arachna/netweaver/nwdi/documenter/report/DevelopmentConfigurationWikiTemplate.vm";
+
+    public static final String COMPARTMENT_WIKI_TEMPLATE =
+        "/org/arachna/netweaver/nwdi/documenter/report/CompartmentWikiTemplate.vm";
 
     /**
      * Confluence session used to publish to confluence site.
@@ -136,7 +139,8 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator extends Abstr
     @Override
     public void visit(final DevelopmentConfiguration configuration) {
         try {
-            this.trackName = configuration.getName();
+            trackName = configuration.getName();
+            additionalContext.put("trackName", trackName);
             createOverviewPage(configuration);
         }
         catch (final IOException e) {
@@ -150,7 +154,23 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator extends Abstr
     @Override
     public void visit(final Compartment compartment) {
         currentCompartmentOverviewPage =
-            createOrUpdatePage(compartment.getName(), compartment.getCaption(), trackOverviewPage);
+            createOrUpdatePage(compartment.getName(), generateWikiPageContent(compartment), trackOverviewPage);
+    }
+
+    /**
+     * Create wiki content for the given development component.
+     * 
+     * @param component
+     *            DC to generate wiki documentation from.
+     * @return generated documentation
+     */
+    protected String generateWikiPageContent(final Compartment compartment) {
+        final StringWriter writer = new StringWriter();
+
+        this.reportGeneratorFactory.createCompartmentReportGenerator().execute(writer, compartment, additionalContext,
+            getTemplateReader(COMPARTMENT_WIKI_TEMPLATE));
+
+        return writer.toString();
     }
 
     /**

@@ -45,7 +45,7 @@ public class DocumentationBuilder extends AntTaskBuilder {
     /**
      * bundle to use for report internationalization.
      */
-    private static final String DC_REPORT_BUNDLE =
+    public static final String DC_REPORT_BUNDLE =
         "org/arachna/netweaver/nwdi/documenter/report/DevelopmentComponentReport";
 
     /**

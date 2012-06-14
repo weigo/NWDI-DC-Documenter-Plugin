@@ -7,6 +7,7 @@ import java.util.ResourceBundle;
 
 import org.apache.velocity.app.VelocityEngine;
 import org.arachna.netweaver.dc.types.DevelopmentComponentFactory;
+import org.arachna.netweaver.nwdi.documenter.report.CompartmentReportGenerator;
 import org.arachna.netweaver.nwdi.documenter.report.DevelopmentComponentReportGenerator;
 import org.arachna.netweaver.nwdi.documenter.report.DevelopmentConfigurationReportGenerator;
 import org.arachna.netweaver.nwdi.documenter.report.DocumentationFacetProviderFactory;
@@ -60,7 +61,6 @@ public final class ReportGeneratorFactory {
     /**
      * Create a new generator for documentation of development components
      * 
-     * @param template
      * @return
      */
     public DevelopmentComponentReportGenerator createDevelopmentComponentReportGenerator() {
@@ -73,5 +73,12 @@ public final class ReportGeneratorFactory {
      */
     public DevelopmentConfigurationReportGenerator createDevelopmentConfigurationReportGenerator() {
         return new DevelopmentConfigurationReportGenerator(velocity, resourceBundle);
+    }
+
+    /**
+     * @return
+     */
+    public CompartmentReportGenerator createCompartmentReportGenerator() {
+        return new CompartmentReportGenerator(velocity, resourceBundle);
     }
 }

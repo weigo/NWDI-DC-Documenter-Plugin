@@ -1,77 +1,12 @@
-h1. $bundle.getString("developmentComponent") $component.getName()
-h2. $bundle.getString("caption")
-$component.getCaption()
+h1. $bundle.getString("softwareComponent") $compartment.vendor $compartment.softwareComponent
+$compartment.getDescription()
 
-#if ($component.getDescription())
-h2. $bundle.getString("description")
-$component.getDescription()
-#end
+#if ($compartment.getDevelopmentComponents())
+h2. $bundle.getString("developmentComponents")
 
-#if ($component.getUsedDevelopmentComponents() && !$component.getUsedDevelopmentComponents().isEmpty())
-h2. $bundle.getString("usedComponents")
-
-#set ($imageSuffix = '.svg')
-
-{svgweb4a:file=$component.getNormalizedName("~")$imageSuffix|width=$UsedDCsDiagramWidth|height=$UsedDCsDiagramHeight}
-
-||$bundle.getString("developmentComponent")||$bundle.getString("dcType")||$bundle.getString("vendor")||$bundle.getString("PublicPartName")||$bundle.getString("buildTime")||$bundle.getString("runTime")||$bundle.getString("softwareComponent")||
-#foreach($pp in $component.getUsedDevelopmentComponents())
-#set($usedDC = $dcFactory.get($pp))
-|$pp.getComponentName()|$usedDC.getType().toString()|$pp.getVendor()| $pp.getName() |#if($pp.isAtBuildTime())x#else #end|#if($pp.isAtRunTime())x#else #end|#if (!$bundleHelper.isNull($usedDC.getCompartment()))$usedDC.getCompartment().getSoftwareComponent()#end|
+||$bundle.getString("vendor")||$bundle.getString("developmentComponent")||$bundle.getString("dcType")||$bundle.getString("description")||
+#foreach($dc in $compartment.getDevelopmentComponents())
+|$dc.getVendor()|[$dc.getName()|$wikiSpace:${trackName}_$dc.getNormalizedName("_")]|$dc.getType().toString()|$dc.getCaption()|
 #end  
-*$bundleHelper.render("usedComponents.table.caption", $component.getName())*
-#end
-
-#if ($component.getUsingDevelopmentComponents())
-h2. $bundleHelper.render("usingComponents", $component.getName())
-
-#foreach($usingDC in $component.getUsingDevelopmentComponents())
-[$usingDC.getName()|$wikiSpace:$usingDC.getNormalizedName("_")]
-#end
-
-{svgweb4a:file=$component.getNormalizedName("~")-usingDCs.svg|width=$UsingDCsDiagramWidth|height=$UsingDCsDiagramHeight}
-
-#end
-
-#if ($component.getPublicParts())
-h2. $bundle.getString("publicParts.section.caption")
-||$bundle.getString("PublicPartName")||$bundle.getString("ppType")||$bundle.getString("caption")||$bundle.getString("description")||
-#foreach($pp in $component.getPublicParts())
-|$pp.getPublicPart()|$pp.getType().toString()| $pp.getCaption() | $pp.getDescription() |
-#end  
-*$bundleHelper.render("publicParts.table.caption",$component.getName())*
-#end
-
-#if ($webServices && !$webServices.isEmpty())
-h2. $bundle.getString("WebServices")
-#foreach($service in $webServices)
-h3. $service.getName()
-$bundle.getString("Endpoint"): *$service.getEndPointClass()*
-||$bundle.getString("signature")||$bundle.getString("originalName")||$bundle.getString("mappedName")||$bundle.getString("caption")||$bundle.getString("description")||
-#foreach($method in $service.getMethods())
-|$method.getOriginalName()|$method.getMappedName()|$method.getDescription()|Langbeschreibung...|
-#end  
-*$bundleHelper.render("methods.table.caption",$component.getName())*
-
-h3. $bundle.getString("WebServiceMethods")
-#foreach($m in $service.getMethods())
-h4. $m.getMappedName()
-$m.getDescription()
-
-||$bundle.getString("parameter")||$bundle.getString("originalName")||$bundle.getString("type")||$bundle.getString("description")||
-#foreach($parameter in $m.getParameters())
-|$parameter.getName()|$parameter.getMappedName()|$parameter.getType().getName()|$parameter.getDescription()|
-#end
-*$bundleHelper.render("parameters.table.caption",$m.getMappedName())*
-#end
-#end
-#end
-
-#if ($externalLibraries)
-h2. $bundle.getString("external.libraries.title")
-||$bundle.getString("library")||$bundle.getString("license")||
-#foreach($descriptor in $externalLibraries)
-|$descriptor.getArchive()|$descriptor.getLicense().getName()|
-#end
-*$bundleHelper.render("external.libraries.caption",$component.getName())*
+*$bundleHelper.render("dcsInCompartment.table.caption", $compartment.getName())*
 #end

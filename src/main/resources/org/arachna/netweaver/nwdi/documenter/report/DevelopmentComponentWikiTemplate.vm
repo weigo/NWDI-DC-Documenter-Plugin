@@ -2,12 +2,12 @@ h1. $bundle.getString("developmentComponent") $component.getName()
 h2. $bundle.getString("caption")
 $component.getCaption()
 
-#if ($component.getDescription())
+#if ($component.description)
 h2. $bundle.getString("description")
-$component.getDescription()
+$component.description
 #end
 
-#if ($component.getUsedDevelopmentComponents() && !$component.getUsedDevelopmentComponents().isEmpty())
+#if ($component.usedDevelopmentComponents)
 h2. $bundle.getString("usedComponents")
 
 #set ($imageSuffix = '.svg')
@@ -22,18 +22,18 @@ h2. $bundle.getString("usedComponents")
 *$bundleHelper.render("usedComponents.table.caption", $component.getName())*
 #end
 
-#if ($component.getUsingDevelopmentComponents())
+#if ($component.usingDevelopmentComponents)
 h2. $bundleHelper.render("usingComponents", $component.getName())
 
 #foreach($usingDC in $component.getUsingDevelopmentComponents())
-[$usingDC.getName()|$wikiSpace:$trackName_$usingDC.getNormalizedName("_")]
+[$usingDC.getName()|$wikiSpace:${trackName}_$usingDC.getNormalizedName("_")]
 #end
 
 {svgweb4a:file=$component.getNormalizedName("~")-usingDCs.svg|width=$UsingDCsDiagramWidth|height=$UsingDCsDiagramHeight}
 
 #end
 
-#if ($component.getPublicParts())
+#if ($component.publicParts)
 h2. $bundle.getString("publicParts.section.caption")
 ||$bundle.getString("PublicPartName")||$bundle.getString("ppType")||$bundle.getString("caption")||$bundle.getString("description")||
 #foreach($pp in $component.getPublicParts())

@@ -6,5 +6,5 @@ h2. $bundle.getString("softwareComponents")
 
 ||$bundle.getString("softwareComponent")||$bundle.getString("description")||
 #foreach ($sc in $compartments)
-|[$sc.getName()|$wikiSpace:$trackName_$sc.getName()]| $sc.getDescription() |
+|[$sc.getName()|$wikiSpace:${trackName}_$sc.getName()]| $sc.getDescription() |
 #end
