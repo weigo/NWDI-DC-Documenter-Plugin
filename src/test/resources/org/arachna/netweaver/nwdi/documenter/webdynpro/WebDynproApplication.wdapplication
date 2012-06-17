@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- MetaDataAPI generated on: Monday, April 2, 2012 6:34:00 PM CEST -->
+<Application xmlns="http://xml.sap.com/2002/10/metamodel/webdynpro" xmlns:IDX="urn:sap.com:WebDynpro.Application:3.0" mmRelease="7.00" mmVersion="3.0" mmTimestamp="1333384440766" name="ExampleApplication" package="org.example.app" masterLanguage="de">
+    <Application.ApplicationProperties>
+        <ApplicationProperty name="property1" value="value1">
+        </ApplicationProperty>
+        <ApplicationProperty name="property2" value="value2">
+        </ApplicationProperty>
+    </Application.ApplicationProperties>
+    <Application.Component>
+        <Core.Reference package="org.example.comp" name="ExampleComp" type="Component"/>
+    </Application.Component>
+    <Application.PropertyDefinitionSets>
+        <Core.Reference package="com.sap.ide.webdynpro.applicationpropertydefs" name="Standard" type="ApplicationPropertyDefinitionSet"/>
+    </Application.PropertyDefinitionSets>
+    <Application.StartupPlug>
+        <Core.Reference package="org.example.comp" name="ExampleWindowInterfaceView" type="InterfaceView" path="InboundPlug:Default"/>
+    </Application.StartupPlug>
+</Application>

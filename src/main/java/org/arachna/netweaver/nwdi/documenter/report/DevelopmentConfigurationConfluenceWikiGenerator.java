@@ -43,9 +43,16 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator extends Abstr
     public static final String DC_WIKI_TEMPLATE =
         "/org/arachna/netweaver/nwdi/documenter/report/DevelopmentComponentWikiTemplate.vm";
 
+    /**
+     * velocity template for formatting wiki content for development
+     * configurations.
+     */
     public static final String DEV_CONF_WIKI_TEMPLATE =
         "/org/arachna/netweaver/nwdi/documenter/report/DevelopmentConfigurationWikiTemplate.vm";
 
+    /**
+     * velocity template for formatting wiki content for compartments.
+     */
     public static final String COMPARTMENT_WIKI_TEMPLATE =
         "/org/arachna/netweaver/nwdi/documenter/report/CompartmentWikiTemplate.vm";
 
@@ -60,12 +67,14 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator extends Abstr
     private final VendorFilter vendorFilter;
 
     /**
-     * Generator for a report on a development component. The target format is determined via the Velocity template given at build time.
+     * Generator for a report on a development component. The target format is
+     * determined via the Velocity template given at build time.
      */
     private final ReportGeneratorFactory reportGeneratorFactory;
 
     /**
-     * the key of the confluence space used to store the generated documentation.
+     * the key of the confluence space used to store the generated
+     * documentation.
      */
     private final String spaceKey;
 
@@ -75,12 +84,14 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator extends Abstr
     private final PrintStream logger;
 
     /**
-     * keep track of track overview page (to append compartment pages as children).
+     * keep track of track overview page (to append compartment pages as
+     * children).
      */
     private RemotePage trackOverviewPage;
 
     /**
-     * keep track of the current compartment overview page (to add development component reports as child pages).
+     * keep track of the current compartment overview page (to add development
+     * component reports as child pages).
      */
     private RemotePage currentCompartmentOverviewPage;
 
@@ -105,7 +116,8 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator extends Abstr
     private String trackName;
 
     /**
-     * Create an instance of the confluence wiki content generator for development components.
+     * Create an instance of the confluence wiki content generator for
+     * development components.
      * 
      * @param reportGeneratorFactory
      *            the report generator factory.
@@ -114,7 +126,8 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator extends Abstr
      * @param session
      *            the confluence session
      * @param spaceKey
-     *            the key of the confluence space used to store the generated documentation.
+     *            the key of the confluence space used to store the generated
+     *            documentation.
      * @param logger
      *            the logger to use
      * @param dotFileDescriptorContainer
@@ -167,7 +180,7 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator extends Abstr
     protected String generateWikiPageContent(final Compartment compartment) {
         final StringWriter writer = new StringWriter();
 
-        this.reportGeneratorFactory.createCompartmentReportGenerator().execute(writer, compartment, additionalContext,
+        reportGeneratorFactory.createCompartmentReportGenerator().execute(writer, compartment, additionalContext,
             getTemplateReader(COMPARTMENT_WIKI_TEMPLATE));
 
         return writer.toString();
@@ -183,8 +196,10 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator extends Abstr
             final DiagramDescriptor descriptor = dotFileDescriptorContainer.getDescriptor(component);
 
             if (descriptor != null) {
-                addDiagramWidthToAdditionalContext("UsedDCsDiagramWidth", "UsedDCsDiagramHeight", descriptor.getUsedDCsDiagram());
-                addDiagramWidthToAdditionalContext("UsingDCsDiagramWidth", "UsingDCsDiagramHeight", descriptor.getUsingDCsDiagram());
+                addDiagramWidthToAdditionalContext("UsedDCsDiagramWidth", "UsedDCsDiagramHeight",
+                    descriptor.getUsedDCsDiagram());
+                addDiagramWidthToAdditionalContext("UsingDCsDiagramWidth", "UsingDCsDiagramHeight",
+                    descriptor.getUsingDCsDiagram());
             }
 
             final String pageContent = generateWikiPageContent(component);
@@ -200,14 +215,15 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator extends Abstr
     /**
      * @param descriptor
      */
-    private void addDiagramWidthToAdditionalContext(String widthProperty, String heightProperty, final String diagramName) {
+    private void addDiagramWidthToAdditionalContext(final String widthProperty, final String heightProperty,
+        final String diagramName) {
         try {
-            SVGProperties properties =
-                this.svgParser.parse(new FileReader(diagramName.replaceFirst("\\.dot", "\\.svg")));
-            this.additionalContext.put(widthProperty, properties.getProperty(SVGPropertyName.WIDTH));
-            this.additionalContext.put(heightProperty, properties.getProperty(SVGPropertyName.HEIGHT));
+            final SVGProperties properties =
+                svgParser.parse(new FileReader(diagramName.replaceFirst("\\.dot", "\\.svg")));
+            additionalContext.put(widthProperty, properties.getProperty(SVGPropertyName.WIDTH));
+            additionalContext.put(heightProperty, properties.getProperty(SVGPropertyName.HEIGHT));
         }
-        catch (FileNotFoundException e) {
+        catch (final FileNotFoundException e) {
             logger.append(e.getLocalizedMessage());
         }
     }
@@ -230,7 +246,8 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator extends Abstr
     }
 
     /**
-     * Create or update a wiki page with the given content. Associate it with the given parent page.
+     * Create or update a wiki page with the given content. Associate it with
+     * the given parent page.
      * 
      * @param pageName
      *            name of wiki page to create or update.
@@ -242,7 +259,7 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator extends Abstr
      */
     protected RemotePage createOrUpdatePage(final String pageName, final String pageContent, final RemotePage parent) {
         try {
-            String realPageName = this.trackName.equals(pageName) ? pageName : this.trackName + '_' + pageName;
+            final String realPageName = trackName.equals(pageName) ? pageName : trackName + '_' + pageName;
             RemotePage page = getRemotePage(realPageName, parent);
 
             if (!pageContent.equals(page.getContent())) {
@@ -265,8 +282,9 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator extends Abstr
     }
 
     /**
-     * Returns the remote page with the given name. If it does not exist yet a new page object will be created and associated with the given
-     * parent page.
+     * Returns the remote page with the given name. If it does not exist yet a
+     * new page object will be created and associated with the given parent
+     * page.
      * 
      * @param pageName
      *            name of remote page to be retrieved.
@@ -274,7 +292,8 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator extends Abstr
      *            parent page a newly created page should be associated with.
      * @return the remote page iff it exists or a newly created page object.
      * @throws java.rmi.RemoteException
-     *             when the user associated with the current confluence session has no permission to access the page.
+     *             when the user associated with the current confluence session
+     *             has no permission to access the page.
      */
     protected RemotePage getRemotePage(final String pageName, final RemotePage parent) throws java.rmi.RemoteException {
         RemotePageSummary pageSummary = null;
@@ -311,8 +330,8 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator extends Abstr
     protected String generateWikiPageContent(final DevelopmentComponent component) {
         final StringWriter writer = new StringWriter();
 
-        this.reportGeneratorFactory.createDevelopmentComponentReportGenerator().execute(writer, component, additionalContext,
-            getTemplateReader(DC_WIKI_TEMPLATE));
+        reportGeneratorFactory.createDevelopmentComponentReportGenerator().execute(writer, component,
+            additionalContext, getTemplateReader(DC_WIKI_TEMPLATE));
 
         return writer.toString();
     }
@@ -320,9 +339,10 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator extends Abstr
     /**
      * Return a reader for the template to use for generation of documentation.
      * 
-     * @return {@link Reader} for velocity template used to generate documentation.
+     * @return {@link Reader} for velocity template used to generate
+     *         documentation.
      */
-    protected Reader getTemplateReader(String template) {
+    protected Reader getTemplateReader(final String template) {
         return new InputStreamReader(this.getClass().getResourceAsStream(template));
     }
 
@@ -338,18 +358,19 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator extends Abstr
         final Long homePageId = session.getSpace(spaceKey).getHomePage();
         final RemotePage homePage = session.getPageV1(homePageId.longValue());
 
-        trackOverviewPage = createOrUpdatePage(configuration.getName(), generateWikiPageContent(configuration), homePage);
+        trackOverviewPage =
+            createOrUpdatePage(configuration.getName(), generateWikiPageContent(configuration), homePage);
     }
 
     /**
      * @param configuration
      * @return
      */
-    private String generateWikiPageContent(DevelopmentConfiguration configuration) {
+    private String generateWikiPageContent(final DevelopmentConfiguration configuration) {
         final StringWriter writer = new StringWriter();
 
-        this.reportGeneratorFactory.createDevelopmentConfigurationReportGenerator().execute(writer, configuration, additionalContext,
-            getTemplateReader(DEV_CONF_WIKI_TEMPLATE));
+        reportGeneratorFactory.createDevelopmentConfigurationReportGenerator().execute(writer, configuration,
+            additionalContext, getTemplateReader(DEV_CONF_WIKI_TEMPLATE));
 
         return writer.toString();
     }
