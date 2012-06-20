@@ -56,7 +56,7 @@ public final class CompartmentReportGenerator {
      * @param writer
      *            writer to generate documentation into.
      * @param compartment
-     *            compartment/software componentto document.
+     *            compartment/software component to document.
      * @param additionalContext
      *            additional context attributes supplied externally
      * @param template

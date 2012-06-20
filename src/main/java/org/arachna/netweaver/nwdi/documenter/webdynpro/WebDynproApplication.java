@@ -18,11 +18,6 @@ public final class WebDynproApplication {
     private String name;
 
     /**
-     * 
-     */
-    private Plug startUpPlug;
-
-    /**
      * Get the application properties of this Web Dynpro application.
      * 
      * @return Web Dynpro application properties of this application
@@ -58,20 +53,5 @@ public final class WebDynproApplication {
      */
     public void setName(final String name) {
         this.name = name;
-    }
-
-    /**
-     * @return the startUpPlug
-     */
-    public Plug getStartUpPlug() {
-        return startUpPlug;
-    }
-
-    /**
-     * @param startUpPlug
-     *            the startUpPlug to set
-     */
-    public void setStartUpPlug(final Plug startUpPlug) {
-        this.startUpPlug = startUpPlug;
     }
 }
