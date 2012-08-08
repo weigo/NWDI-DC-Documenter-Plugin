@@ -65,11 +65,6 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator extends Abstr
     private final ReportGeneratorFactory reportGeneratorFactory;
 
     /**
-     * the key of the confluence space used to store the generated documentation.
-     */
-    private final String spaceKey;
-
-    /**
      * Log exceptional messages.
      */
     private final PrintStream logger;
@@ -113,23 +108,18 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator extends Abstr
      *            filter for development components by vendor.
      * @param session
      *            the confluence session
-     * @param spaceKey
-     *            the key of the confluence space used to store the generated documentation.
      * @param logger
      *            the logger to use
      * @param dotFileDescriptorContainer
      *            container for descriptors of generated dependency diagrams.
      */
     public DevelopmentConfigurationConfluenceWikiGenerator(final ReportGeneratorFactory reportGeneratorFactory,
-        final VendorFilter vendorFilter, final ConfluenceSession session, final String spaceKey,
-        final PrintStream logger, final DiagramDescriptorContainer dotFileDescriptorContainer) {
+        final VendorFilter vendorFilter, final ConfluenceSession session, final PrintStream logger,
+        final DiagramDescriptorContainer dotFileDescriptorContainer) {
         this.vendorFilter = vendorFilter;
         this.session = session;
-        this.spaceKey = spaceKey;
         this.logger = logger;
         this.dotFileDescriptorContainer = dotFileDescriptorContainer;
-        additionalContext.put("wikiSpace", this.spaceKey);
-
         this.reportGeneratorFactory = reportGeneratorFactory;
     }
 
@@ -280,7 +270,7 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator extends Abstr
         RemotePageSummary pageSummary = null;
 
         try {
-            pageSummary = session.getPageSummary(spaceKey, pageName);
+            pageSummary = session.getPageSummary(getSpaceKey(), pageName);
         }
         catch (final RemoteException e) {
             logger.append(String.format("Page %s does not exist yet.\n", pageName));
@@ -290,7 +280,7 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator extends Abstr
 
         if (pageSummary == null) {
             page = new RemotePage();
-            page.setSpace(spaceKey);
+            page.setSpace(getSpaceKey());
             page.setTitle(pageName);
             page.setParentId(parent.getId());
         }
@@ -335,7 +325,7 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator extends Abstr
      *             when the home page could not be found.
      */
     protected void createOverviewPage(final DevelopmentConfiguration configuration) throws java.rmi.RemoteException {
-        final Long homePageId = session.getSpace(spaceKey).getHomePage();
+        final Long homePageId = session.getSpace(getSpaceKey()).getHomePage();
         final RemotePage homePage = session.getPageV1(homePageId.longValue());
 
         trackOverviewPage = createOrUpdatePage(configuration.getName(), generateWikiPageContent(configuration), homePage);
@@ -352,5 +342,19 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator extends Abstr
             getTemplateReader(DEV_CONF_WIKI_TEMPLATE));
 
         return writer.toString();
+    }
+
+    /**
+     * Add a property to the global context.
+     * 
+     * @param key
+     * @param value
+     */
+    public void addToGlobalContext(ContextPropertyName key, String value) {
+        this.additionalContext.put(key.getName(), value);
+    }
+
+    private String getSpaceKey() {
+        return (String)this.additionalContext.get(ContextPropertyName.WikiSpace.getName());
     }
 }
