@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xliff version="1.1">
+  <file original="self" source-language="de"
+    product-name="@@d7e7e47462cc4baa0c86c1d4747aa0d2View:ExampleView[com.example.comp] of Component:ExampleComp[com.example.comp]"
+    datatype="s2x">
+    <header>
+      <skl>
+      </skl>
+      <phase-group>
+      </phase-group>
+      <s2x xmlns="http://www.sap.com">
+        <dtr>
+          <sc></sc>
+        </dtr>
+        <giltDirectives>
+          <develContact>d. veloper</develContact>
+          <domain></domain>
+          <originalLocale xml:lang="de" />
+          <maxLength>255</maxLength>
+        </giltDirectives>
+        <state phase-name="" process-name="">started</state>
+      </s2x>
+    </header>
+    <body>
+      <group restype="quickInfo">
+        <trans-unit id="765261c1e9754d96297c9ea74bc38cc9" resname="DocumentationObject@quickInfo" maxwidth="255" translate="yes">
+          <source>quickInfoText</source>
+          <s2x xmlns="http://www.sap.com">
+            <textState>new</textState>
+            <recommendedLength chars="-1" />
+          </s2x>
+        </trans-unit>
+      </group>
+      <group restype="formattedtext">
+        <trans-unit id="4d53c318e074490827c7a98423680e27" resname="DocumentationObject@technicalDocumentation" maxwidth="0"
+          translate="yes">
+          <source><![CDATA[technicalDocumentation]]></source>
+          <s2x xmlns="http://www.sap.com">
+            <textState>new</textState>
+            <recommendedLength chars="-1" />
+          </s2x>
+        </trans-unit>
+      </group>
+      <group restype="button">
+        <trans-unit id="91ea3e2885684c52057af8cf870b5bfc" resname="RootUIElementContainer/Child:ButtonRow/OutgoingAggregation:Buttons/AggregatedObject:Change_Button@text"
+          maxwidth="255" translate="yes">
+          <source>choose</source>
+          <s2x xmlns="http://www.sap.com">
+            <textState>released</textState>
+            <recommendedLength chars="-1" />
+          </s2x>
+        </trans-unit>
+        <trans-unit id="b2935d5a5b5f48ef39ded1f09a14ce4d" resname="RootUIElementContainer/Child:ButtonRow/OutgoingAggregation:Buttons/AggregatedObject:Close_Button@text"
+          maxwidth="255" translate="yes">
+          <source>cancel</source>
+          <s2x xmlns="http://www.sap.com">
+            <textState>released</textState>
+            <recommendedLength chars="-1" />
+          </s2x>
+        </trans-unit>
+      </group>
+      <group restype="caption">
+        <trans-unit id="c448952a45734e33151dcde0a490d5ed"
+          resname="RootUIElementContainer/Child:Table/OutgoingAggregation:GroupedColumns/AggregatedObject:contactPersonId/Header@text"
+          maxwidth="255" translate="yes">
+          <source>user name</source>
+          <s2x xmlns="http://www.sap.com">
+            <textState>released</textState>
+            <recommendedLength chars="-1" />
+          </s2x>
+        </trans-unit>
+        <trans-unit id="4dd0eb3c6b634b9812159c039c55d876"
+          resname="RootUIElementContainer/Child:Table/OutgoingAggregation:GroupedColumns/AggregatedObject:contactPersonName/Header@text"
+          maxwidth="255" translate="yes">
+          <source>employee</source>
+          <s2x xmlns="http://www.sap.com">
+            <textState>released</textState>
+            <recommendedLength chars="-1" />
+          </s2x>
+        </trans-unit>
+        <trans-unit id="3e7fc49221ae47422f09b4911b5e6dc7"
+          resname="RootUIElementContainer/Child:Table/OutgoingAggregation:GroupedColumns/AggregatedObject:organisation/Header@text"
+          maxwidth="255" translate="yes">
+          <source>organizational unit</source>
+          <s2x xmlns="http://www.sap.com">
+            <textState>released</textState>
+            <recommendedLength chars="-1" />
+          </s2x>
+        </trans-unit>
+      </group>
+    </body>
+  </file>
+</xliff>

@@ -105,18 +105,18 @@ public final class DevelopmentConfigurationDomBuilder {
 
             // @Override
             public int compare(final Compartment o1, final Compartment o2) {
-                final int retval = o1.getVendor().compareTo(o2.getVendor());
+                int retval = o1.getVendor().compareTo(o2.getVendor());
 
                 if (retval == 0) {
-                    return o1.getName().compareTo(o2.getName());
+                    retval = o1.getName().compareTo(o2.getName());
                 }
 
                 if ("sap.com".equals(o1.getVendor())) {
-                    return 1;
+                    retval = 1;
                 }
 
                 if ("sap.com".equals(o2.getVendor())) {
-                    return -1;
+                    retval = -1;
                 }
 
                 return retval;
