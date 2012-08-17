@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.arachna.netweaver.dc.types.DevelopmentComponent;
 import org.arachna.netweaver.nwdi.documenter.java.MethodDocumentationProvider;
 import org.arachna.netweaver.nwdi.documenter.report.DocumentationFacetProvider;
@@ -22,6 +23,11 @@ import org.xml.sax.SAXException;
  * @author Dirk Weigenand
  */
 public class VirtualInterfaceDefinitionProvider implements DocumentationFacetProvider<DevelopmentComponent> {
+    /**
+     * Logger.
+     */
+    private static final Logger LOGGER = Logger.getLogger(VirtualInterfaceDefinitionProvider.class);
+
     /**
      * Reader for <code>.videf</code> files (virtual interface definitions).
      */
@@ -57,12 +63,10 @@ public class VirtualInterfaceDefinitionProvider implements DocumentationFacetPro
                     interfaces.add(virtualInterface);
                 }
                 catch (final IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+                    LOGGER.error(e.getMessage(), e);
                 }
                 catch (final SAXException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+                    LOGGER.error(e.getMessage(), e);
                 }
             }
         }
