@@ -3,11 +3,11 @@
  */
 package org.arachna.netweaver.nwdi.documenter.librarydc;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.LineNumberReader;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.LinkedList;
@@ -16,6 +16,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
+import org.apache.log4j.Logger;
 import org.arachna.ant.AntHelper;
 import org.arachna.netweaver.dc.types.DevelopmentComponent;
 import org.arachna.netweaver.nwdi.documenter.report.DocumentationFacet;
@@ -23,31 +24,47 @@ import org.arachna.netweaver.nwdi.documenter.report.DocumentationFacetProvider;
 import org.arachna.util.io.FileFinder;
 
 /**
- * @author Dirk Weigenand
+ * Inspector for external library development components. Reads the contained
+ * jar archives in order to determine the license under which these are
+ * distributed.
  * 
+ * @author Dirk Weigenand
  */
 public final class LicenseInspector implements DocumentationFacetProvider<DevelopmentComponent> {
     /**
-     * development component base folder
+     * Logger.
+     */
+    private static final Logger LOGGER = Logger.getLogger(LicenseInspector.class);
+
+    /**
+     * development component base folder.
      */
     private final AntHelper antHelper;
 
+    /**
+     * Regular expression to match Jar-Entries against. Matches jar entries that
+     * contain license conditions.
+     */
     private final Pattern licenseFile = Pattern.compile("^((Legal|META-INF)/)?(LICENSE|COPYING)(\\.txt)?");
 
     /**
      * Create a new instance of a license inspector.
      * 
      * @param antHelper
-     *            helper class for determining properties of development components.
+     *            helper class for determining properties of development
+     *            components.
      */
     public LicenseInspector(final AntHelper antHelper) {
         this.antHelper = antHelper;
     }
 
     /**
+     * Inspect the given external library development components jar archives
+     * for license conditions.
      * 
      * @param component
-     * @return
+     *            development component to inspect.
+     * @return a documentation facet containing the found license conditions.
      */
     @Override
     public DocumentationFacet execute(final DevelopmentComponent component) {
@@ -56,18 +73,27 @@ public final class LicenseInspector implements DocumentationFacetProvider<Develo
         final Collection<LicenseDescriptor> licenses = new LinkedList<LicenseDescriptor>();
 
         for (final File jar : finder.find()) {
+            ZipFile archive = null;
+
             try {
-                final ZipFile archive = new ZipFile(jar);
+                archive = new ZipFile(jar);
                 licenses.add(findLicense(archive));
-                archive.close();
             }
             catch (final ZipException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                LOGGER.fatal(e.getMessage(), e);
             }
             catch (final IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                LOGGER.fatal(e.getMessage(), e);
+            }
+            finally {
+                if (archive != null) {
+                    try {
+                        archive.close();
+                    }
+                    catch (final IOException e) {
+                        LOGGER.fatal(e.getMessage(), e);
+                    }
+                }
             }
         }
 
@@ -75,14 +101,17 @@ public final class LicenseInspector implements DocumentationFacetProvider<Develo
     }
 
     /**
+     * Find license (if any) in the given jar archive.
+     * 
      * @param archive
-     * @return
+     *            jar archive to inspect for known licenses.
+     * @return a descriptor detailing the license found (if any).
      */
     private LicenseDescriptor findLicense(final ZipFile archive) {
         final Enumeration<? extends ZipEntry> entries = archive.entries();
         ZipEntry entry = null;
         LicenseDescriptor descriptor = null;
-        File archivePath = new File(archive.getName());
+        final File archivePath = new File(archive.getName());
 
         try {
             while (entries.hasMoreElements()) {
@@ -95,17 +124,24 @@ public final class LicenseInspector implements DocumentationFacetProvider<Develo
             }
         }
         catch (final IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            LOGGER.fatal(e.getMessage(), e);
         }
 
         return descriptor == null ? new LicenseDescriptor(License.None, archivePath.getName(), "") : descriptor;
     }
 
     /**
+     * Extract license from the given content.
+     * 
+     * @param archive
+     *            the name of the archive (used in the returned descriptor).
      * @param content
-     * @return
+     *            text of license conditions
+     * @return a descriptor naming the license found. If the license could not
+     *         be determined a type of {@see License#Other} will be returned.
      * @throws IOException
+     *             when reading the license text from <code>content</code>
+     *             fails.
      */
     private LicenseDescriptor extractLicense(final String archive, final InputStream content) throws IOException {
         final String licenseText = getLicenseText(content);
@@ -122,12 +158,16 @@ public final class LicenseInspector implements DocumentationFacetProvider<Develo
     }
 
     /**
+     * Read the license text contained in the given input stream.
+     * 
      * @param content
-     * @return
+     *            input stream containing license text.
+     * @return license text as string.
      * @throws IOException
+     *             when reading the content of the input stream fails.
      */
     private String getLicenseText(final InputStream content) throws IOException {
-        final LineNumberReader reader = new LineNumberReader(new InputStreamReader(content));
+        final BufferedReader reader = new BufferedReader(new InputStreamReader(content));
         final StringBuilder licenseText = new StringBuilder();
         String line = null;
 
@@ -140,18 +180,44 @@ public final class LicenseInspector implements DocumentationFacetProvider<Develo
         return licenseText.toString().trim();
     }
 
+    /**
+     * Descriptor of detected licenses. Contains the license type ({@see
+     * License}), the jar archive covered by the respective license and the text
+     * of the license.
+     * 
+     * @author Dirk Weigenand
+     */
     public class LicenseDescriptor {
+        /**
+         * kind of license.
+         */
         private License license;
-        private String archive;
-        private String licenseText;
 
+        /**
+         * jar archive covered by this licence.
+         */
+        private final String archive;
+
+        /**
+         * text of license conditions.
+         */
+        private final String licenseText;
+
+        /**
+         * Create a new instance of a license descriptor using the given kind of
+         * license, teh covered archive and the license text.
+         * 
+         * @param license
+         *            kind of license.
+         * @param archive
+         *            jar archive covered by license.
+         * @param licenseText
+         *            text of license.
+         */
         LicenseDescriptor(final License license, final String archive, final String licenseText) {
             this.license = license;
             this.archive = archive;
             this.licenseText = licenseText;
-        }
-
-        LicenseDescriptor() {
         }
 
         /**
