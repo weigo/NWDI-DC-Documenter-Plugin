@@ -14,6 +14,9 @@ import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.context.Context;
 import org.arachna.netweaver.dc.types.DevelopmentComponent;
 import org.arachna.netweaver.dc.types.DevelopmentComponentFactory;
+import org.arachna.netweaver.nwdi.documenter.facets.DocumentationFacet;
+import org.arachna.netweaver.nwdi.documenter.facets.DocumentationFacetProvider;
+import org.arachna.netweaver.nwdi.documenter.facets.DocumentationFacetProviderFactory;
 
 /**
  * Generator for a report of the properties of a {@link DevelopmentComponent}.

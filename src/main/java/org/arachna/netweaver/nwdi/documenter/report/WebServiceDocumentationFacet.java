@@ -5,7 +5,8 @@ package org.arachna.netweaver.nwdi.documenter.report;
 
 import java.util.List;
 
-import org.arachna.netweaver.nwdi.documenter.webservices.VirtualInterfaceDefinition;
+import org.arachna.netweaver.nwdi.documenter.facets.DocumentationFacet;
+import org.arachna.netweaver.nwdi.documenter.facets.webservices.VirtualInterfaceDefinition;
 
 /**
  * A facet providing details of a web service.

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.arachna.netweaver.nwdi.documenter.report;
+package org.arachna.netweaver.nwdi.documenter.facets;
 
 import org.arachna.netweaver.dc.types.DevelopmentComponent;
 
@@ -40,7 +40,7 @@ public class DocumentationFacet {
      * 
      * @return the name to be used when referencing the contents of this facet.
      */
-    String getName() {
+    public String getName() {
         return name;
     }
 
@@ -49,7 +49,7 @@ public class DocumentationFacet {
      * 
      * @return the content which is to be transformed into documentation.
      */
-    Object getContent() {
+    public Object getContent() {
         return content;
     }
 }

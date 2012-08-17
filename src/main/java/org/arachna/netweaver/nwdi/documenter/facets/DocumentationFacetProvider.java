@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.arachna.netweaver.nwdi.documenter.report;
+package org.arachna.netweaver.nwdi.documenter.facets;
 
 /**
  * Interface for providers of {@link DocumentationFacet}s.

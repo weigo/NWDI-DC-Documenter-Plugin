@@ -16,8 +16,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.arachna.netweaver.nwdi.documenter.webservices.Function;
-import org.arachna.netweaver.nwdi.documenter.webservices.Parameter;
+import org.arachna.netweaver.nwdi.documenter.facets.webservices.Function;
+import org.arachna.netweaver.nwdi.documenter.facets.webservices.Parameter;
 
 /**
  * Implementation of {@link VoidVisitorAdapter} that extracts JavaDoc comments
@@ -149,7 +149,7 @@ public class JavaDocMethodCommentExtractingVisitor extends VoidVisitorAdapter {
                 parameter = params.next();
 
                 final String className = classNameResolver.resolveClassName(parameter);
-                final org.arachna.netweaver.nwdi.documenter.webservices.Type type = param.getType();
+                final org.arachna.netweaver.nwdi.documenter.facets.webservices.Type type = param.getType();
 
                 if (!type.getName().equals(className)) {
                     matches = false;

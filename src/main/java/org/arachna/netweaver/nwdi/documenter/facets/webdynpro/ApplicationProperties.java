@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.arachna.netweaver.nwdi.documenter.webdynpro;
+package org.arachna.netweaver.nwdi.documenter.facets.webdynpro;
 
 import java.util.HashMap;
 import java.util.Iterator;

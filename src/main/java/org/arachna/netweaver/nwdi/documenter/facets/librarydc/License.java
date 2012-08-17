@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.arachna.netweaver.nwdi.documenter.librarydc;
+package org.arachna.netweaver.nwdi.documenter.facets.librarydc;
 
 import java.util.regex.Pattern;
 

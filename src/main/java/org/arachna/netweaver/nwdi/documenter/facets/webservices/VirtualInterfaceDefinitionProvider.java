@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.arachna.netweaver.nwdi.documenter.webservices;
+package org.arachna.netweaver.nwdi.documenter.facets.webservices;
 
 import java.io.File;
 import java.io.FileReader;
@@ -11,8 +11,8 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.arachna.netweaver.dc.types.DevelopmentComponent;
+import org.arachna.netweaver.nwdi.documenter.facets.DocumentationFacetProvider;
 import org.arachna.netweaver.nwdi.documenter.java.MethodDocumentationProvider;
-import org.arachna.netweaver.nwdi.documenter.report.DocumentationFacetProvider;
 import org.arachna.netweaver.nwdi.documenter.report.WebServiceDocumentationFacet;
 import org.arachna.util.io.FileFinder;
 import org.xml.sax.SAXException;
@@ -50,8 +50,7 @@ public class VirtualInterfaceDefinitionProvider implements DocumentationFacetPro
      */
     public WebServiceDocumentationFacet execute(final DevelopmentComponent component) {
         final List<VirtualInterfaceDefinition> interfaces = new ArrayList<VirtualInterfaceDefinition>();
-        final List<String> sourceFolders = new ArrayList<String>();
-        sourceFolders.addAll(component.getSourceFolders());
+        final List<String> sourceFolders = new ArrayList<String>(component.getSourceFolders());
 
         for (final String sourceFolder : component.getSourceFolders()) {
             final FileFinder finder = new FileFinder(new File(sourceFolder), ".*\\.videf");

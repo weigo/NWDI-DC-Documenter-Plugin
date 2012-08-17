@@ -10,6 +10,10 @@ import static org.hamcrest.core.IsNull.notNullValue;
 import java.io.InputStreamReader;
 import java.io.Reader;
 
+import org.arachna.netweaver.nwdi.documenter.facets.webdynpro.TranslationUnit;
+import org.arachna.netweaver.nwdi.documenter.facets.webdynpro.XLIFFReader;
+import org.arachna.netweaver.nwdi.documenter.facets.webdynpro.Xliff;
+import org.arachna.netweaver.nwdi.documenter.facets.webdynpro.XliffGroup;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -42,7 +46,7 @@ public class XLIFFReaderTest {
 
     /**
      * Test method for
-     * {@link org.arachna.netweaver.nwdi.documenter.webdynpro.XLIFFReader#execute(java.io.Reader)}
+     * {@link org.arachna.netweaver.nwdi.documenter.facets.webdynpro.XLIFFReader#execute(java.io.Reader)}
      * .
      */
     @Test
@@ -54,7 +58,7 @@ public class XLIFFReaderTest {
 
     /**
      * Test method for
-     * {@link org.arachna.netweaver.nwdi.documenter.webdynpro.XLIFFReader#execute(java.io.Reader)}
+     * {@link org.arachna.netweaver.nwdi.documenter.facets.webdynpro.XLIFFReader#execute(java.io.Reader)}
      * .
      */
     @Test
@@ -66,7 +70,7 @@ public class XLIFFReaderTest {
 
     /**
      * Test method for
-     * {@link org.arachna.netweaver.nwdi.documenter.webdynpro.XLIFFReader#execute(java.io.Reader)}
+     * {@link org.arachna.netweaver.nwdi.documenter.facets.webdynpro.XLIFFReader#execute(java.io.Reader)}
      * .
      */
     @Test
@@ -81,7 +85,7 @@ public class XLIFFReaderTest {
 
     /**
      * Test method for
-     * {@link org.arachna.netweaver.nwdi.documenter.webdynpro.XLIFFReader#execute(java.io.Reader)}
+     * {@link org.arachna.netweaver.nwdi.documenter.facets.webdynpro.XLIFFReader#execute(java.io.Reader)}
      * .
      */
     @Test

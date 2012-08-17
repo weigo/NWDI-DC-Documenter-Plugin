@@ -10,6 +10,9 @@ import static org.hamcrest.core.IsNull.notNullValue;
 import java.io.InputStreamReader;
 import java.io.Reader;
 
+import org.arachna.netweaver.nwdi.documenter.facets.webdynpro.ApplicationProperties;
+import org.arachna.netweaver.nwdi.documenter.facets.webdynpro.WebDynproApplication;
+import org.arachna.netweaver.nwdi.documenter.facets.webdynpro.WebDynproApplicationParser;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -43,7 +46,7 @@ public class WebDynproApplicationParserTest {
 
     /**
      * Test method for
-     * {@link org.arachna.netweaver.nwdi.documenter.webdynpro.WebDynproApplicationParser#parse(java.io.Reader)}
+     * {@link org.arachna.netweaver.nwdi.documenter.facets.webdynpro.WebDynproApplicationParser#parse(java.io.Reader)}
      * .
      */
     @Test
@@ -55,7 +58,7 @@ public class WebDynproApplicationParserTest {
 
     /**
      * Test method for
-     * {@link org.arachna.netweaver.nwdi.documenter.webdynpro.WebDynproApplicationParser#parse(java.io.Reader)}
+     * {@link org.arachna.netweaver.nwdi.documenter.facets.webdynpro.WebDynproApplicationParser#parse(java.io.Reader)}
      * .
      */
     @Test

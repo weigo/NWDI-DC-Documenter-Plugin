@@ -21,6 +21,7 @@ import org.arachna.netweaver.dc.types.DevelopmentComponent;
 import org.arachna.netweaver.dc.types.DevelopmentComponentFactory;
 import org.arachna.netweaver.nwdi.documenter.DocumentationBuilder;
 import org.arachna.netweaver.nwdi.documenter.ReportGeneratorFactory;
+import org.arachna.netweaver.nwdi.documenter.facets.DocumentationFacetProviderFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

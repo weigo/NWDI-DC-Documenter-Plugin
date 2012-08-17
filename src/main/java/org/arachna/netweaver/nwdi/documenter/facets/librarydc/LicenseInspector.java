@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.arachna.netweaver.nwdi.documenter.librarydc;
+package org.arachna.netweaver.nwdi.documenter.facets.librarydc;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -19,8 +19,8 @@ import java.util.zip.ZipFile;
 import org.apache.log4j.Logger;
 import org.arachna.ant.AntHelper;
 import org.arachna.netweaver.dc.types.DevelopmentComponent;
-import org.arachna.netweaver.nwdi.documenter.report.DocumentationFacet;
-import org.arachna.netweaver.nwdi.documenter.report.DocumentationFacetProvider;
+import org.arachna.netweaver.nwdi.documenter.facets.DocumentationFacet;
+import org.arachna.netweaver.nwdi.documenter.facets.DocumentationFacetProvider;
 import org.arachna.util.io.FileFinder;
 
 /**

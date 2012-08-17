@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.arachna.netweaver.nwdi.documenter.webdynpro;
+package org.arachna.netweaver.nwdi.documenter.facets.webdynpro;
 
 /**
  * A Web Dynpro Component.

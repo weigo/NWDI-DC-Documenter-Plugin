@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.arachna.netweaver.nwdi.documenter.webservices;
+package org.arachna.netweaver.nwdi.documenter.facets.webservices;
 
 import java.util.ArrayList;
 import java.util.Collection;

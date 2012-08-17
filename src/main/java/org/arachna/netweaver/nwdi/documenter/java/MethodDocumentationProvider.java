@@ -19,8 +19,8 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.arachna.netweaver.nwdi.documenter.webservices.Function;
-import org.arachna.netweaver.nwdi.documenter.webservices.VirtualInterfaceDefinition;
+import org.arachna.netweaver.nwdi.documenter.facets.webservices.Function;
+import org.arachna.netweaver.nwdi.documenter.facets.webservices.VirtualInterfaceDefinition;
 
 /**
  * Provider for JavaDoc-Documentation for methods.

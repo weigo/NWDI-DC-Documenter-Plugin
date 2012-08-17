@@ -14,6 +14,12 @@ import java.io.Reader;
 import java.util.Collection;
 import java.util.Iterator;
 
+import org.arachna.netweaver.nwdi.documenter.facets.webservices.Function;
+import org.arachna.netweaver.nwdi.documenter.facets.webservices.Parameter;
+import org.arachna.netweaver.nwdi.documenter.facets.webservices.Response;
+import org.arachna.netweaver.nwdi.documenter.facets.webservices.Type;
+import org.arachna.netweaver.nwdi.documenter.facets.webservices.VirtualInterfaceDefinition;
+import org.arachna.netweaver.nwdi.documenter.facets.webservices.VirtualInterfaceDefinitionReader;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

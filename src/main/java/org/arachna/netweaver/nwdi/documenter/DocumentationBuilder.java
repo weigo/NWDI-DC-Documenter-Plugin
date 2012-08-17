@@ -24,10 +24,10 @@ import org.arachna.netweaver.dc.types.DevelopmentComponentFactory;
 import org.arachna.netweaver.dc.types.DevelopmentConfiguration;
 import org.arachna.netweaver.hudson.nwdi.AntTaskBuilder;
 import org.arachna.netweaver.hudson.nwdi.NWDIBuild;
+import org.arachna.netweaver.nwdi.documenter.facets.DocumentationFacetProviderFactory;
 import org.arachna.netweaver.nwdi.documenter.report.DependencyGraphGenerator;
 import org.arachna.netweaver.nwdi.documenter.report.DevelopmentConfigurationConfluenceWikiGenerator;
 import org.arachna.netweaver.nwdi.documenter.report.DevelopmentConfigurationHtmlGenerator;
-import org.arachna.netweaver.nwdi.documenter.report.DocumentationFacetProviderFactory;
 import org.arachna.netweaver.nwdi.documenter.report.ReportWriterConfiguration;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
@@ -60,12 +60,14 @@ public class DocumentationBuilder extends AntTaskBuilder {
     private static final int TIMEOUT = 60 * 1000;
 
     /**
-     * regular expression for ignoring development components of certain vendors.
+     * regular expression for ignoring development components of certain
+     * vendors.
      */
     private Pattern ignoreVendorRegexp;
 
     /**
-     * regular expression for ignoring development components of certain software components.
+     * regular expression for ignoring development components of certain
+     * software components.
      * 
      * @deprecated Not used anymore!
      */
@@ -93,13 +95,16 @@ public class DocumentationBuilder extends AntTaskBuilder {
     private String confluenceSpace;
 
     /**
-     * Create a new instance of a <code>DocumentationBuilder</code> using the given regular expression for vendors to ignore when building
+     * Create a new instance of a <code>DocumentationBuilder</code> using the
+     * given regular expression for vendors to ignore when building
      * documentation.
      * 
      * @param ignoreVendorRegexp
-     *            regular expression for vendors to ignore during generation of documentation. E.g. <code>sap\.com</code> to ignore the
-     *            usual suspects like sap.com_SAP_BUILDT, sap.com_SAP_JEE, sap.com_SAP_JTECHS, etc. Those would only pollute the dependency
-     *            diagrams.
+     *            regular expression for vendors to ignore during generation of
+     *            documentation. E.g. <code>sap\.com</code> to ignore the usual
+     *            suspects like sap.com_SAP_BUILDT, sap.com_SAP_JEE,
+     *            sap.com_SAP_JTECHS, etc. Those would only pollute the
+     *            dependency diagrams.
      * @param createHtmlDocumentation
      *            indicate that documentation in HTML format should be created.
      * @param publishToConfluence
@@ -136,16 +141,19 @@ public class DocumentationBuilder extends AntTaskBuilder {
     }
 
     /**
-     * Return the regular expression to be used for vendors to ignore when documenting development components.
+     * Return the regular expression to be used for vendors to ignore when
+     * documenting development components.
      * 
-     * @return the regular expression to be used for vendors to ignore when documenting development components.
+     * @return the regular expression to be used for vendors to ignore when
+     *         documenting development components.
      */
     public String getIgnoreVendorRegexp() {
         return ignoreVendorRegexp.pattern();
     }
 
     /**
-     * Return the regular expression to be used for software components to ignore when documenting development components.
+     * Return the regular expression to be used for software components to
+     * ignore when documenting development components.
      */
     public String getIgnoreSoftwareComponentRegex() {
         return ignoreSoftwareComponentRegex.pattern();
@@ -221,14 +229,16 @@ public class DocumentationBuilder extends AntTaskBuilder {
             return true;
         }
 
-        NWDIBuild nwdiBuild = (NWDIBuild)build;
+        final NWDIBuild nwdiBuild = (NWDIBuild)build;
         final DevelopmentComponentFactory dcFactory = nwdiBuild.getDevelopmentComponentFactory();
         final DevelopmentConfiguration developmentConfiguration = nwdiBuild.getDevelopmentConfiguration();
         final File workspace = new File(String.format("%s/documentation", getAntHelper().getPathToWorkspace()));
 
         // FIXME: remove from production code
-        // for (final Compartment compartment : developmentConfiguration.getCompartments(CompartmentState.Source)) {
-        // for (final DevelopmentComponent component : compartment.getDevelopmentComponents()) {
+        // for (final Compartment compartment :
+        // developmentConfiguration.getCompartments(CompartmentState.Source)) {
+        // for (final DevelopmentComponent component :
+        // compartment.getDevelopmentComponents()) {
         // component.setNeedsRebuild(true);
         // }
         // }
@@ -240,7 +250,7 @@ public class DocumentationBuilder extends AntTaskBuilder {
         developmentConfiguration.accept(dependenciesGenerator);
         final VelocityEngine engine = getVelocityEngine(listener.getLogger());
 
-        boolean result =
+        final boolean result =
             super.execute(build, launcher, listener, "",
                 dependenciesGenerator.materializeDot2SvgBuildXml(engine, DESCRIPTOR.getDotExecutable(), TIMEOUT),
                 getAntProperties());
@@ -257,8 +267,8 @@ public class DocumentationBuilder extends AntTaskBuilder {
 
                     if (site != null) {
                         final ConfluenceSession confluenceSession = site.createSession();
-                        developmentConfiguration.accept(new DevelopmentConfigurationConfluenceWikiGenerator(generatorFactory,
-                            vendorFilter, confluenceSession, confluenceSpace, listener.getLogger(),
+                        developmentConfiguration.accept(new DevelopmentConfigurationConfluenceWikiGenerator(
+                            generatorFactory, vendorFilter, confluenceSession, confluenceSpace, listener.getLogger(),
                             dependenciesGenerator.getDescriptorContainer()));
                     }
                 }
@@ -268,12 +278,11 @@ public class DocumentationBuilder extends AntTaskBuilder {
             }
 
             if (createHtmlDocumentation) {
-                ReportWriterConfiguration writerConfiguration = new ReportWriterConfiguration();
+                final ReportWriterConfiguration writerConfiguration = new ReportWriterConfiguration();
                 writerConfiguration.setOutputLocation(workspace.getAbsolutePath());
 
-                developmentConfiguration.accept(new DevelopmentConfigurationHtmlGenerator(
-                    writerConfiguration, dcFactory, vendorFilter, engine, generatorFactory
-                        .createDevelopmentComponentReportGenerator()));
+                developmentConfiguration.accept(new DevelopmentConfigurationHtmlGenerator(writerConfiguration,
+                    dcFactory, vendorFilter, engine, generatorFactory.createDevelopmentComponentReportGenerator()));
             }
         }
 
@@ -283,7 +292,8 @@ public class DocumentationBuilder extends AntTaskBuilder {
     /**
      * Get the selected Confluence site.
      * 
-     * @return the selected confluence site or <code>null</code> if none was selected.
+     * @return the selected confluence site or <code>null</code> if none was
+     *         selected.
      */
     protected ConfluenceSite getSelectedConfluenceSite() {
         final ConfluencePublisher.DescriptorImpl descriptor = getConfluencePublisherDescriptor();
@@ -293,7 +303,8 @@ public class DocumentationBuilder extends AntTaskBuilder {
     /**
      * Look up the descriptor of the <code>ConfluencePublisher</code>.
      * 
-     * @return the descriptor of the <code>ConfluencePublisher</code> or <code>null</code> if the plugin is not installed.
+     * @return the descriptor of the <code>ConfluencePublisher</code> or
+     *         <code>null</code> if the plugin is not installed.
      */
     protected com.myyearbook.hudson.plugins.confluence.ConfluencePublisher.DescriptorImpl getConfluencePublisherDescriptor() {
         return Hudson.getInstance().getDescriptorByType(ConfluencePublisher.DescriptorImpl.class);
@@ -308,19 +319,21 @@ public class DocumentationBuilder extends AntTaskBuilder {
     }
 
     /**
-     * Descriptor for {@link DocumentationBuilder}. Used as a singleton. The class is marked as public so that it can be accessed from
-     * views.
+     * Descriptor for {@link DocumentationBuilder}. Used as a singleton. The
+     * class is marked as public so that it can be accessed from views.
      * 
      * <p>
-     * See <tt>src/main/resources/hudson/plugins/hello_world/HelloWorldBuilder/*.jelly</tt> for the actual HTML fragment for the
-     * configuration screen.
+     * See
+     * <tt>src/main/resources/hudson/plugins/hello_world/HelloWorldBuilder/*.jelly</tt>
+     * for the actual HTML fragment for the configuration screen.
      */
 
     // This indicates to Jenkins that this is an implementation of an extension
     // point.
     public static final class DescriptorImpl extends BuildStepDescriptor<Builder> {
         /**
-         * regular expression for ignoring development components of certain vendors.
+         * regular expression for ignoring development components of certain
+         * vendors.
          * 
          * @deprecated Not used anymore
          */
@@ -328,7 +341,8 @@ public class DocumentationBuilder extends AntTaskBuilder {
         private transient Pattern ignoreVendorRegexp;
 
         /**
-         * regular expression for ignoring development components of certain software components.
+         * regular expression for ignoring development components of certain
+         * software components.
          * 
          * @deprecated Not used anymore.
          */
@@ -406,7 +420,8 @@ public class DocumentationBuilder extends AntTaskBuilder {
         }
 
         /**
-         * Sets the regular expression to be used when ignoring development components via their compartments vendor.
+         * Sets the regular expression to be used when ignoring development
+         * components via their compartments vendor.
          * 
          * @param ignoreVendorRegexp
          *            the ignoreVendorRegexp to set
@@ -416,7 +431,8 @@ public class DocumentationBuilder extends AntTaskBuilder {
         }
 
         /**
-         * Returns the pattern for ignoring development components via their software components name.
+         * Returns the pattern for ignoring development components via their
+         * software components name.
          * 
          * @return the ignoreSoftwareComponentRegex
          */
@@ -425,10 +441,12 @@ public class DocumentationBuilder extends AntTaskBuilder {
         }
 
         /**
-         * Set the regular expression to be used ignoring software components during the documentation process.
+         * Set the regular expression to be used ignoring software components
+         * during the documentation process.
          * 
          * @param ignoreSoftwareComponentRegex
-         *            the regular expression to be used ignoring software components during the documentation process to set
+         *            the regular expression to be used ignoring software
+         *            components during the documentation process to set
          */
         public void setIgnoreSoftwareComponentRegex(final String ignoreSoftwareComponentRegex) {
             this.ignoreSoftwareComponentRegex = Pattern.compile(ignoreSoftwareComponentRegex);
@@ -465,8 +483,9 @@ public class DocumentationBuilder extends AntTaskBuilder {
     /**
      * Return the configured confluence sites.
      * 
-     * @return the list of configured confluence sites. The list is empty if no sites are configured or the confluence publisher plugin is
-     *         not installed.
+     * @return the list of configured confluence sites. The list is empty if no
+     *         sites are configured or the confluence publisher plugin is not
+     *         installed.
      */
     public List<ConfluenceSite> getConfluenceSites() {
         final ConfluencePublisher.DescriptorImpl descriptor = getConfluencePublisherDescriptor();

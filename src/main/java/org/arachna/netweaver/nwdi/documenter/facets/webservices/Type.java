@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.arachna.netweaver.nwdi.documenter.webservices;
+package org.arachna.netweaver.nwdi.documenter.facets.webservices;
 
 /**
  * A web service method parameters type.

@@ -7,13 +7,14 @@ import java.util.ResourceBundle;
 
 import org.apache.velocity.app.VelocityEngine;
 import org.arachna.netweaver.dc.types.DevelopmentComponentFactory;
+import org.arachna.netweaver.nwdi.documenter.facets.DocumentationFacetProviderFactory;
 import org.arachna.netweaver.nwdi.documenter.report.CompartmentReportGenerator;
 import org.arachna.netweaver.nwdi.documenter.report.DevelopmentComponentReportGenerator;
 import org.arachna.netweaver.nwdi.documenter.report.DevelopmentConfigurationReportGenerator;
-import org.arachna.netweaver.nwdi.documenter.report.DocumentationFacetProviderFactory;
 
 /**
- * Factory for development component report generators. Bundles knowledge to create those generators based on the given velocity template.
+ * Factory for development component report generators. Bundles knowledge to
+ * create those generators based on the given velocity template.
  * 
  * @author Dirk Weigenand
  */
@@ -39,10 +40,12 @@ public final class ReportGeneratorFactory {
     private final ResourceBundle resourceBundle;
 
     /**
-     * Create an instance of the factory using the given factory for documentation facets, DC registry, template engine and resource bundle.
+     * Create an instance of the factory using the given factory for
+     * documentation facets, DC registry, template engine and resource bundle.
      * 
      * @param facetProviderFactory
-     *            Factory for the various documentable facets of a development component.
+     *            Factory for the various documentable facets of a development
+     *            component.
      * @param dcFactory
      *            Registry for development components.
      * @param velocity
@@ -59,13 +62,12 @@ public final class ReportGeneratorFactory {
     }
 
     /**
-     * Create a new generator for documentation of development components
+     * Create a new generator for documentation of development components.
      * 
      * @return
      */
     public DevelopmentComponentReportGenerator createDevelopmentComponentReportGenerator() {
-        return new DevelopmentComponentReportGenerator(facetProviderFactory, dcFactory, velocity,
-            this.resourceBundle);
+        return new DevelopmentComponentReportGenerator(facetProviderFactory, dcFactory, velocity, resourceBundle);
     }
 
     /**
