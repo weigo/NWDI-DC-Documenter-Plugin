@@ -12,6 +12,7 @@ import java.util.ResourceBundle;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.context.Context;
+import org.apache.velocity.exception.ParseErrorException;
 import org.arachna.netweaver.dc.types.DevelopmentComponent;
 import org.arachna.netweaver.dc.types.DevelopmentComponentFactory;
 import org.arachna.netweaver.nwdi.documenter.facets.DocumentationFacet;
@@ -92,6 +93,11 @@ public final class DevelopmentComponentReportGenerator {
         context.put("bundleHelper", new BundleHelper(bundle));
         context.put("dcFactory", dcFactory);
 
+        if (component.getType().canContainJavaSources()) {
+            context.put("javaDocUrl", String.format("%sws/javadoc/%s/index.html",
+                additionalContext.get(ContextPropertyName.ProjectUrl.getName()), component.getNormalizedName("~")));
+        }
+
         for (final DocumentationFacetProvider<DevelopmentComponent> provider : documentationFacetProviderFactory
             .getInstance(component.getType())) {
             final DocumentationFacet facet = provider.execute(component);
@@ -102,13 +108,16 @@ public final class DevelopmentComponentReportGenerator {
             context.put(entry.getKey(), entry.getValue());
         }
 
-        velocityEngine.evaluate(context, writer, "", template);
-
         try {
+            velocityEngine.evaluate(context, writer, "", template);
             writer.close();
         }
         catch (final IOException ioe) {
             throw new RuntimeException(ioe);
+        }
+        catch (final ParseErrorException pee) {
+            throw new RuntimeException(String.format("Failed to evaluate template for %s:%s!", component.getVendor(), component.getName()),
+                pee);
         }
     }
 }

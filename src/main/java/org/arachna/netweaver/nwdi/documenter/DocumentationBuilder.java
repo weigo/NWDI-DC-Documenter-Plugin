@@ -17,6 +17,7 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.regex.Pattern;
 
+import jenkins.model.Jenkins;
 import net.sf.json.JSONObject;
 
 import org.apache.velocity.app.VelocityEngine;
@@ -25,6 +26,7 @@ import org.arachna.netweaver.dc.types.DevelopmentConfiguration;
 import org.arachna.netweaver.hudson.nwdi.AntTaskBuilder;
 import org.arachna.netweaver.hudson.nwdi.NWDIBuild;
 import org.arachna.netweaver.nwdi.documenter.facets.DocumentationFacetProviderFactory;
+import org.arachna.netweaver.nwdi.documenter.report.ContextPropertyName;
 import org.arachna.netweaver.nwdi.documenter.report.DependencyGraphGenerator;
 import org.arachna.netweaver.nwdi.documenter.report.DevelopmentConfigurationConfluenceWikiGenerator;
 import org.arachna.netweaver.nwdi.documenter.report.DevelopmentConfigurationHtmlGenerator;
@@ -256,10 +258,9 @@ public class DocumentationBuilder extends AntTaskBuilder {
                 getAntProperties());
 
         if (result) {
-            ReportGeneratorFactory generatorFactory =
-                new ReportGeneratorFactory(new DocumentationFacetProviderFactory(getAntHelper()), dcFactory,
-                    engine, ResourceBundle.getBundle(
-                        DC_REPORT_BUNDLE, Locale.GERMAN));
+            final ReportGeneratorFactory generatorFactory =
+                new ReportGeneratorFactory(new DocumentationFacetProviderFactory(getAntHelper()), dcFactory, engine,
+                    ResourceBundle.getBundle(DC_REPORT_BUNDLE, Locale.GERMAN));
 
             if (publishToConfluence) {
                 try {
@@ -267,9 +268,13 @@ public class DocumentationBuilder extends AntTaskBuilder {
 
                     if (site != null) {
                         final ConfluenceSession confluenceSession = site.createSession();
-                        developmentConfiguration.accept(new DevelopmentConfigurationConfluenceWikiGenerator(
-                            generatorFactory, vendorFilter, confluenceSession, confluenceSpace, listener.getLogger(),
-                            dependenciesGenerator.getDescriptorContainer()));
+                        final DevelopmentConfigurationConfluenceWikiGenerator visitor =
+                            new DevelopmentConfigurationConfluenceWikiGenerator(generatorFactory, vendorFilter,
+                                confluenceSession, listener.getLogger(), dependenciesGenerator.getDescriptorContainer());
+                        visitor.addToGlobalContext(ContextPropertyName.WikiSpace, confluenceSpace);
+                        visitor.addToGlobalContext(ContextPropertyName.ProjectUrl, Jenkins.getInstance().getRootUrl()
+                            + build.getProject().getUrl());
+                        developmentConfiguration.accept(visitor);
                     }
                 }
                 catch (final RemoteException e) {

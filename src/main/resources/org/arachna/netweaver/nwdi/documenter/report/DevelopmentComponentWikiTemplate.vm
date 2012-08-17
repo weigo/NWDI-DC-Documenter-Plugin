@@ -7,6 +7,13 @@ h2. $bundle.getString("description")
 $component.description
 #end
 
+#if ($javaDocUrl)
+$bundleHelper.render("javaDocLinkText",$javaDocUrl)
+
+#set( $usageDocLink = "$wikiSpace:$component.getNormalizedName('_')_usageDocumentation" )
+$bundleHelper.render("usageDocLink",$usageDocLink)
+#end
+
 #if ($component.usedDevelopmentComponents)
 h2. $bundle.getString("usedComponents")
 
