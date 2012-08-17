@@ -42,15 +42,17 @@ public final class DevelopmentComponentReportGenerator {
     private final DocumentationFacetProviderFactory documentationFacetProviderFactory;
 
     /**
-     * Create a <code>DevelopmentComponentReportGenerator</code> using the given {@link DevelopmentComponentFactory}, {@link VelocityEngine}
-     * , velocity template and resource bundle.
+     * Create a <code>DevelopmentComponentReportGenerator</code> using the given
+     * {@link DevelopmentComponentFactory}, {@link VelocityEngine} , velocity
+     * template and resource bundle.
      * 
      * The given {@link ResourceBundle} is used for internationalization.
      * 
      * @param documentationFacetProviderFactory
      *            factory for provider of documentation facets
      * @param dcFactory
-     *            used in template to resolve public part references into development components.
+     *            used in template to resolve public part references into
+     *            development components.
      * @param velocityEngine
      *            VelocityEngine used to transform template.
      * @param bundle
@@ -58,8 +60,7 @@ public final class DevelopmentComponentReportGenerator {
      */
     public DevelopmentComponentReportGenerator(
         final DocumentationFacetProviderFactory documentationFacetProviderFactory,
-        final DevelopmentComponentFactory dcFactory, final VelocityEngine velocityEngine,
-        final ResourceBundle bundle) {
+        final DevelopmentComponentFactory dcFactory, final VelocityEngine velocityEngine, final ResourceBundle bundle) {
         this.documentationFacetProviderFactory = documentationFacetProviderFactory;
         this.dcFactory = dcFactory;
         this.velocityEngine = velocityEngine;
@@ -67,7 +68,8 @@ public final class DevelopmentComponentReportGenerator {
     }
 
     /**
-     * Generate documentation for the given development component into the given writer object.
+     * Generate documentation for the given development component into the given
+     * writer object.
      * 
      * @param writer
      *            writer to generate documentation into.
@@ -75,9 +77,12 @@ public final class DevelopmentComponentReportGenerator {
      *            development component to document.
      * @param additionalContext
      *            additional context attributes supplied externally
+     * @param template
+     *            a Reader for supplying the velocity template used for
+     *            generation of documentation.
      */
     public void execute(final Writer writer, final DevelopmentComponent component,
-        final Map<String, Object> additionalContext, Reader template) {
+        final Map<String, Object> additionalContext, final Reader template) {
         final Context context = new VelocityContext();
         context.put("component", component);
         context.put("bundle", bundle);
