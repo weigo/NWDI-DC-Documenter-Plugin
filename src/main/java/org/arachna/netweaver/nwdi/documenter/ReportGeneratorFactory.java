@@ -11,6 +11,7 @@ import org.arachna.netweaver.nwdi.documenter.facets.DocumentationFacetProviderFa
 import org.arachna.netweaver.nwdi.documenter.report.CompartmentReportGenerator;
 import org.arachna.netweaver.nwdi.documenter.report.DevelopmentComponentReportGenerator;
 import org.arachna.netweaver.nwdi.documenter.report.DevelopmentConfigurationReportGenerator;
+import org.arachna.netweaver.nwdi.documenter.report.GlobalLicenseOverviewReportGenerator;
 
 /**
  * Factory for development component report generators. Bundles knowledge to
@@ -64,23 +65,40 @@ public final class ReportGeneratorFactory {
     /**
      * Create a new generator for documentation of development components.
      * 
-     * @return
+     * @return a new instance of a generator for documentation of development
+     *         components.
      */
     public DevelopmentComponentReportGenerator createDevelopmentComponentReportGenerator() {
         return new DevelopmentComponentReportGenerator(facetProviderFactory, dcFactory, velocity, resourceBundle);
     }
 
     /**
-     * @return
+     * Create a new generator for documentation of a development configuration.
+     * 
+     * @return a new instance of a generator for documentation of a development
+     *         configuration.
      */
     public DevelopmentConfigurationReportGenerator createDevelopmentConfigurationReportGenerator() {
         return new DevelopmentConfigurationReportGenerator(velocity, resourceBundle);
     }
 
     /**
-     * @return
+     * Create a new generator for documentation of compartment.
+     * 
+     * @return a new instance of a generator for documentation of a compartment.
      */
     public CompartmentReportGenerator createCompartmentReportGenerator() {
         return new CompartmentReportGenerator(velocity, resourceBundle);
+    }
+
+    /**
+     * Create a new generator for documentation of external libraries contained
+     * in a track.
+     * 
+     * @return a new instance of a generator for documentation of external
+     *         libraries contained in a track.
+     */
+    public GlobalLicenseOverviewReportGenerator createGlobalLicenseOverviewReportGenerator() {
+        return new GlobalLicenseOverviewReportGenerator(facetProviderFactory, velocity, resourceBundle);
     }
 }

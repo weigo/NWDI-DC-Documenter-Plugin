@@ -44,7 +44,8 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator extends Abstr
         "/org/arachna/netweaver/nwdi/documenter/report/DevelopmentComponentWikiTemplate.vm";
 
     /**
-     * velocity template for formatting wiki content for development configurations.
+     * velocity template for formatting wiki content for development
+     * configurations.
      */
     public static final String DEV_CONF_WIKI_TEMPLATE =
         "/org/arachna/netweaver/nwdi/documenter/report/DevelopmentConfigurationWikiTemplate.vm";
@@ -54,6 +55,13 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator extends Abstr
      */
     public static final String COMPARTMENT_WIKI_TEMPLATE =
         "/org/arachna/netweaver/nwdi/documenter/report/CompartmentWikiTemplate.vm";
+
+    /**
+     * velocity template for formatting wiki content for global overview over
+     * licenses of external libraries used in a track.
+     */
+    public static final String GLOBAL_LICENSE_OVERVIEW_WIKI_TEMPLATE =
+        "/org/arachna/netweaver/nwdi/documenter/report/GlobalLicenseOverviewWikiTemplate.vm";
 
     /**
      * Confluence session used to publish to confluence site.
@@ -66,7 +74,8 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator extends Abstr
     private final VendorFilter vendorFilter;
 
     /**
-     * Generator for a report on a development component. The target format is determined via the Velocity template given at build time.
+     * Generator for a report on a development component. The target format is
+     * determined via the Velocity template given at build time.
      */
     private final ReportGeneratorFactory reportGeneratorFactory;
 
@@ -76,12 +85,14 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator extends Abstr
     private final PrintStream logger;
 
     /**
-     * keep track of track overview page (to append compartment pages as children).
+     * keep track of track overview page (to append compartment pages as
+     * children).
      */
     private RemotePage trackOverviewPage;
 
     /**
-     * keep track of the current compartment overview page (to add development component reports as child pages).
+     * keep track of the current compartment overview page (to add development
+     * component reports as child pages).
      */
     private RemotePage currentCompartmentOverviewPage;
 
@@ -106,17 +117,15 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator extends Abstr
     private String trackName;
 
     /**
-     * Create an instance of the confluence wiki content generator for development components.
+     * Create an instance of the confluence wiki content generator for
+     * development components.
      * 
      * @param reportGeneratorFactory
      *            the report generator factory.
      * @param vendorFilter
      *            filter for development components by vendor.
      * @param session
-     *            the confluence session <<<<<<< HEAD =======
-     * @param spaceKey
-     *            the key of the confluence space used to store the generated documentation. >>>>>>> branch 'master' of
-     *            https://weigo@github.com/weigo/NWDI-DC-Documenter-Plugin.git
+     *            the confluence session
      * @param logger
      *            the logger to use
      * @param dotFileDescriptorContainer
@@ -141,10 +150,24 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator extends Abstr
             trackName = configuration.getName();
             additionalContext.put("trackName", trackName);
             createOverviewPage(configuration);
+            createGlobalLicenseOverviewPage(configuration);
         }
         catch (final IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * @param configuration
+     */
+    private void createGlobalLicenseOverviewPage(final DevelopmentConfiguration configuration) {
+        final StringWriter writer = new StringWriter();
+
+        reportGeneratorFactory.createGlobalLicenseOverviewReportGenerator().execute(writer, configuration,
+            additionalContext, getTemplateReader(GLOBAL_LICENSE_OVERVIEW_WIKI_TEMPLATE));
+
+        createOrUpdatePage(String.format("%s_LicenseOverviewExternalLibraries", configuration.getName()),
+            writer.toString(), trackOverviewPage);
     }
 
     /**
@@ -232,7 +255,8 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator extends Abstr
     }
 
     /**
-     * Create or update a wiki page with the given content. Associate it with the given parent page.
+     * Create or update a wiki page with the given content. Associate it with
+     * the given parent page.
      * 
      * @param pageName
      *            name of wiki page to create or update.
@@ -267,8 +291,9 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator extends Abstr
     }
 
     /**
-     * Returns the remote page with the given name. If it does not exist yet a new page object will be created and associated with the given
-     * parent page.
+     * Returns the remote page with the given name. If it does not exist yet a
+     * new page object will be created and associated with the given parent
+     * page.
      * 
      * @param pageName
      *            name of remote page to be retrieved.
@@ -276,7 +301,8 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator extends Abstr
      *            parent page a newly created page should be associated with.
      * @return the remote page iff it exists or a newly created page object.
      * @throws java.rmi.RemoteException
-     *             when the user associated with the current confluence session has no permission to access the page.
+     *             when the user associated with the current confluence session
+     *             has no permission to access the page.
      */
     protected RemotePage getRemotePage(final String pageName, final RemotePage parent) throws java.rmi.RemoteException {
         RemotePageSummary pageSummary = null;
@@ -322,7 +348,10 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator extends Abstr
     /**
      * Return a reader for the template to use for generation of documentation.
      * 
-     * @return {@link Reader} for velocity template used to generate documentation.
+     * @param template
+     *            name of classpath resource containing the Velocity template.
+     * @return {@link Reader} for velocity template used to generate
+     *         documentation.
      */
     protected Reader getTemplateReader(final String template) {
         return new InputStreamReader(this.getClass().getResourceAsStream(template));
@@ -363,11 +392,11 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator extends Abstr
      * @param key
      * @param value
      */
-    public void addToGlobalContext(ContextPropertyName key, String value) {
-        this.additionalContext.put(key.getName(), value);
+    public void addToGlobalContext(final ContextPropertyName key, final String value) {
+        additionalContext.put(key.getName(), value);
     }
 
     private String getSpaceKey() {
-        return (String)this.additionalContext.get(ContextPropertyName.WikiSpace.getName());
+        return (String)additionalContext.get(ContextPropertyName.WikiSpace.getName());
     }
 }

@@ -1,0 +1,9 @@
+h1. $bundle.getString("external.library.overview.title", $configuration.getName())
+
+||$bundle.getString("developmentComponent")||$bundle.getString("library")||$bundle.getString("license")||
+#foreach ($descriptor in $descriptors)
+#set($component = $descriptor.getComponent())
+#foreach($licenseDescriptor in $descriptor.getLicenseDescriptors()) 
+|$component.getVendor() $component.getName()|$licenseDescriptor.getArchive()|[$licenseDescriptor.getLicense().getName()|getLicenseURL()]|
+#end
+#end

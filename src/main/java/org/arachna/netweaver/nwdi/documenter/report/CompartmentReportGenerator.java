@@ -13,17 +13,15 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.context.Context;
 import org.arachna.netweaver.dc.types.Compartment;
-import org.arachna.netweaver.dc.types.DevelopmentComponent;
-import org.arachna.netweaver.dc.types.DevelopmentComponentFactory;
 
 /**
- * Generator for a report of the properties of a {@link DevelopmentComponent}.
+ * Generator for a report of the properties of a {@link Compartment}.
  * 
  * @author Dirk Weigenand
  */
 public final class CompartmentReportGenerator {
     /**
-     * velocity engine to generate a report for a {@link DevelopmentComponent}.
+     * velocity engine to generate a report for a {@link Compartment}.
      */
     private final VelocityEngine velocityEngine;
 
@@ -33,9 +31,8 @@ public final class CompartmentReportGenerator {
     private final ResourceBundle bundle;
 
     /**
-     * Create a <code>DevelopmentComponentReportGenerator</code> using the given
-     * {@link DevelopmentComponentFactory}, {@link VelocityEngine} , velocity
-     * template and resource bundle.
+     * Create a <code>CompartmentReportGenerator</code> using the given
+     * {@link VelocityEngine}, and resource bundle.
      * 
      * The given {@link ResourceBundle} is used for internationalization.
      * 

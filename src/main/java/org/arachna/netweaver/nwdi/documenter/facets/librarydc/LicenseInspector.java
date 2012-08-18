@@ -10,7 +10,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Collection;
 import java.util.Enumeration;
-import java.util.LinkedList;
+import java.util.HashSet;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
@@ -18,7 +18,9 @@ import java.util.zip.ZipFile;
 
 import org.apache.log4j.Logger;
 import org.arachna.ant.AntHelper;
+import org.arachna.netweaver.dc.types.CompartmentState;
 import org.arachna.netweaver.dc.types.DevelopmentComponent;
+import org.arachna.netweaver.dc.types.PublicPart;
 import org.arachna.netweaver.nwdi.documenter.facets.DocumentationFacet;
 import org.arachna.netweaver.nwdi.documenter.facets.DocumentationFacetProvider;
 import org.arachna.util.io.FileFinder;
@@ -68,30 +70,44 @@ public final class LicenseInspector implements DocumentationFacetProvider<Develo
      */
     @Override
     public DocumentationFacet execute(final DevelopmentComponent component) {
-        final FileFinder finder =
-            new FileFinder(new File(String.format("%s/libraries", antHelper.getBaseLocation(component))), ".*\\.jar");
-        final Collection<LicenseDescriptor> licenses = new LinkedList<LicenseDescriptor>();
+        final Collection<String> folders = new HashSet<String>();
 
-        for (final File jar : finder.find()) {
-            ZipFile archive = null;
+        if (CompartmentState.Source.equals(component.getCompartment().getState())) {
+            folders.add(String.format("%s/libraries", antHelper.getBaseLocation(component)));
+        }
+        else {
+            for (final PublicPart part : component.getPublicParts()) {
+                folders.add(String.format("%s/gen/default/public/%s/lib/java/", antHelper.getBaseLocation(component),
+                    part.getPublicPart()));
+            }
+        }
 
-            try {
-                archive = new ZipFile(jar);
-                licenses.add(findLicense(archive));
-            }
-            catch (final ZipException e) {
-                LOGGER.fatal(e.getMessage(), e);
-            }
-            catch (final IOException e) {
-                LOGGER.fatal(e.getMessage(), e);
-            }
-            finally {
-                if (archive != null) {
-                    try {
-                        archive.close();
-                    }
-                    catch (final IOException e) {
-                        LOGGER.fatal(e.getMessage(), e);
+        final Collection<LicenseDescriptor> licenses = new HashSet<LicenseDescriptor>();
+
+        for (final String folder : folders) {
+            final FileFinder finder = new FileFinder(new File(folder), ".*\\.jar");
+
+            for (final File jar : finder.find()) {
+                ZipFile archive = null;
+
+                try {
+                    archive = new ZipFile(jar);
+                    licenses.add(findLicense(archive));
+                }
+                catch (final ZipException e) {
+                    LOGGER.fatal(e.getMessage(), e);
+                }
+                catch (final IOException e) {
+                    LOGGER.fatal(e.getMessage(), e);
+                }
+                finally {
+                    if (archive != null) {
+                        try {
+                            archive.close();
+                        }
+                        catch (final IOException e) {
+                            LOGGER.fatal(e.getMessage(), e);
+                        }
                     }
                 }
             }
@@ -247,6 +263,28 @@ public final class LicenseInspector implements DocumentationFacetProvider<Develo
          */
         public String getLicenseText() {
             return licenseText;
+        }
+
+        /**
+         * Return URL to the used license or a URL to a google search.
+         * 
+         * @return URL to the used license or a URL to a google search.
+         */
+        public String getLicenseURL() {
+            String url = "";
+
+            switch (license) {
+            case Other:
+            case None:
+                url = license.getUrl() + getArchive();
+                break;
+
+            default:
+                url = license.getUrl();
+                break;
+            }
+
+            return url;
         }
 
         @Override
