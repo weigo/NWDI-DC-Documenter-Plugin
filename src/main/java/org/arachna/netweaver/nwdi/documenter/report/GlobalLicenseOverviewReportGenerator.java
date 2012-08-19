@@ -6,7 +6,10 @@ package org.arachna.netweaver.nwdi.documenter.report;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -17,10 +20,13 @@ import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.context.Context;
 import org.arachna.netweaver.dc.types.Compartment;
 import org.arachna.netweaver.dc.types.DevelopmentComponent;
+import org.arachna.netweaver.dc.types.DevelopmentComponentByNameComparator;
 import org.arachna.netweaver.dc.types.DevelopmentComponentType;
 import org.arachna.netweaver.dc.types.DevelopmentConfiguration;
 import org.arachna.netweaver.nwdi.documenter.facets.DocumentationFacetProvider;
 import org.arachna.netweaver.nwdi.documenter.facets.DocumentationFacetProviderFactory;
+import org.arachna.netweaver.nwdi.documenter.facets.librarydc.License;
+import org.arachna.netweaver.nwdi.documenter.facets.librarydc.LicenseComparator;
 import org.arachna.netweaver.nwdi.documenter.facets.librarydc.LicenseInspector.LicenseDescriptor;
 
 /**
@@ -90,7 +96,7 @@ public final class GlobalLicenseOverviewReportGenerator {
             context.put(entry.getKey(), entry.getValue());
         }
 
-        context.put("descriptors", getLicenseDescriptors(configuration));
+        context.put("licenseContainer", getLicenseContainer(configuration));
 
         velocityEngine.evaluate(context, writer, "", template);
 
@@ -113,67 +119,167 @@ public final class GlobalLicenseOverviewReportGenerator {
      *         component).
      */
     @SuppressWarnings("unchecked")
-    protected List<ExternalLibraryComponentDescriptor> getLicenseDescriptors(
+    protected ExternalLibraryComponentDescriptorContainer getLicenseContainer(
         final DevelopmentConfiguration configuration) {
         final DocumentationFacetProvider<DevelopmentComponent> facetProvider =
             documentationFacetProviderFactory.getInstance(DevelopmentComponentType.ExternalLibrary).iterator().next();
-        final List<ExternalLibraryComponentDescriptor> descriptors =
-            new LinkedList<ExternalLibraryComponentDescriptor>();
+
+        final ExternalLibraryComponentDescriptorContainer container = new ExternalLibraryComponentDescriptorContainer();
 
         for (final Compartment compartment : configuration.getCompartments()) {
             for (final DevelopmentComponent component : compartment
                 .getDevelopmentComponents(DevelopmentComponentType.ExternalLibrary)) {
-                descriptors.add(new ExternalLibraryComponentDescriptor(component,
-                    (Collection<LicenseDescriptor>)facetProvider.execute(component).getContent()));
+                container.add(component, (Collection<LicenseDescriptor>)facetProvider.execute(component).getContent());
             }
         }
 
-        return descriptors;
+        return container;
     }
 
-    /**
-     * Descriptor for external libraries used in a component of this type.
-     * 
-     * @author Dirk Weigenand
-     */
-    class ExternalLibraryComponentDescriptor {
+    public class ExternalLibraryComponentDescriptorContainer {
         /**
-         * Component.
+         * Mapping of licenses to development components and their external
+         * libraries.
          */
-        private final DevelopmentComponent component;
+        private final Map<License, Map<DevelopmentComponent, ExternalLibraryComponentDescriptor>> licenseMap =
+            new HashMap<License, Map<DevelopmentComponent, ExternalLibraryComponentDescriptor>>();
 
         /**
-         * License descriptors.
+         * Return URL to the used license or a URL to a google search.
+         * 
+         * @return URL to the used license or a URL to a google search.
          */
-        private final Collection<LicenseDescriptor> licenseDescriptors = new LinkedList<LicenseDescriptor>();
+        public String getLicenseURL(final LicenseDescriptor descriptor) {
+            String url = "";
+
+            final License license = descriptor.getLicense();
+            switch (license) {
+            case Other:
+            case None:
+                url = license.getUrl() + descriptor.getArchive();
+                break;
+
+            default:
+                url = license.getUrl();
+                break;
+            }
+
+            return url;
+        }
 
         /**
-         * Create a new descriptor instance with the given component and license
-         * descriptors.
+         * Add all given license descriptors to the license library mapping.
          * 
          * @param component
-         *            component containing external libraries.
-         * @param licenseDescriptors
-         *            descriptors for licenses of external libraries.
+         *            component associated with libraries
+         * @param descriptors
          */
-        ExternalLibraryComponentDescriptor(final DevelopmentComponent component,
-            final Collection<LicenseDescriptor> licenseDescriptors) {
-            this.component = component;
-            getLicenseDescriptors().addAll(licenseDescriptors);
+        public void add(final DevelopmentComponent component, final Collection<LicenseDescriptor> descriptors) {
+            for (final LicenseDescriptor descriptor : descriptors) {
+                Map<DevelopmentComponent, ExternalLibraryComponentDescriptor> componentDescriptors =
+                    licenseMap.get(descriptor.getLicense());
+
+                if (componentDescriptors == null) {
+                    componentDescriptors = new HashMap<DevelopmentComponent, ExternalLibraryComponentDescriptor>();
+                    licenseMap.put(descriptor.getLicense(), componentDescriptors);
+                }
+
+                ExternalLibraryComponentDescriptor componentDescriptor = componentDescriptors.get(component);
+
+                if (componentDescriptor == null) {
+                    componentDescriptor = new ExternalLibraryComponentDescriptor(component);
+                    componentDescriptors.put(component, componentDescriptor);
+                }
+
+                componentDescriptor.getLicenseDescriptors().add(descriptor);
+            }
+        }
+
+        public List<DevelopmentComponent> getComponents(final License license) {
+            final Map<DevelopmentComponent, ExternalLibraryComponentDescriptor> componentDescriptors =
+                licenseMap.get(license);
+            final List<DevelopmentComponent> components =
+                new ArrayList<DevelopmentComponent>(componentDescriptors.keySet());
+
+            Collections.sort(components, new DevelopmentComponentByNameComparator());
+
+            return components;
+        }
+
+        public ExternalLibraryComponentDescriptor getExternalLibraryComponentDescriptor(final License license,
+            final DevelopmentComponent component) {
+            final Map<DevelopmentComponent, ExternalLibraryComponentDescriptor> componentDescriptors =
+                licenseMap.get(license);
+
+            ExternalLibraryComponentDescriptor componentDescriptor = null;
+
+            if (componentDescriptors != null) {
+                componentDescriptor = componentDescriptors.get(component);
+            }
+
+            if (componentDescriptor == null) {
+                componentDescriptor = new ExternalLibraryComponentDescriptor(component);
+            }
+
+            return componentDescriptor;
+        }
+
+        public List<License> getLicenses() {
+            final List<License> licenses = new ArrayList<License>(licenseMap.keySet());
+
+            Collections.sort(licenses, new LicenseComparator());
+
+            return licenses;
         }
 
         /**
-         * @return the component
+         * Descriptor for external libraries used in a component of this type.
+         * 
+         * @author Dirk Weigenand
          */
-        public DevelopmentComponent getComponent() {
-            return component;
-        }
+        public class ExternalLibraryComponentDescriptor {
+            /**
+             * Component.
+             */
+            private final DevelopmentComponent component;
 
-        /**
-         * @return the licenseDescriptors
-         */
-        public Collection<LicenseDescriptor> getLicenseDescriptors() {
-            return licenseDescriptors;
+            /**
+             * License descriptors.
+             */
+            private final Collection<LicenseDescriptor> licenseDescriptors = new LinkedList<LicenseDescriptor>();
+
+            /**
+             * Create a new descriptor instance with the given component and
+             * license descriptors.
+             * 
+             * @param component
+             *            component containing external libraries.
+             * @param licenseDescriptors
+             *            descriptors for licenses of external libraries.
+             */
+            ExternalLibraryComponentDescriptor(final DevelopmentComponent component,
+                final Collection<LicenseDescriptor> licenseDescriptors) {
+                this.component = component;
+                getLicenseDescriptors().addAll(licenseDescriptors);
+            }
+
+            ExternalLibraryComponentDescriptor(final DevelopmentComponent component) {
+                this.component = component;
+            }
+
+            /**
+             * @return the component
+             */
+            public DevelopmentComponent getComponent() {
+                return component;
+            }
+
+            /**
+             * @return the licenseDescriptors
+             */
+            public Collection<LicenseDescriptor> getLicenseDescriptors() {
+                return licenseDescriptors;
+            }
         }
     }
 }

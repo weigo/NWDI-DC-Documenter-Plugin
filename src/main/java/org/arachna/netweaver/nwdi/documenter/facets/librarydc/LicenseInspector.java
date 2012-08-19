@@ -265,28 +265,6 @@ public final class LicenseInspector implements DocumentationFacetProvider<Develo
             return licenseText;
         }
 
-        /**
-         * Return URL to the used license or a URL to a google search.
-         * 
-         * @return URL to the used license or a URL to a google search.
-         */
-        public String getLicenseURL() {
-            String url = "";
-
-            switch (license) {
-            case Other:
-            case None:
-                url = license.getUrl() + getArchive();
-                break;
-
-            default:
-                url = license.getUrl();
-                break;
-            }
-
-            return url;
-        }
-
         @Override
         public String toString() {
             final String text = licenseText.length() > 20 ? licenseText.substring(0, 20) + "..." : licenseText;
