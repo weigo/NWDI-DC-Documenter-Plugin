@@ -1,4 +1,4 @@
-h1. $bundle.getString("external.library.overview.title", $configuration.getName())
+h1. $bundleHelper.render("external.library.overview.title", $configuration.getName())
 
 #foreach($license in $licenseContainer.getLicenses())
 h2. $license.getName()
@@ -8,7 +8,7 @@ h2. $license.getName()
 #set($componentDescriptor = $licenseContainer.getExternalLibraryComponentDescriptor($license, $component))
 #set($component = $descriptor.getComponent())
 #foreach($licenseDescriptor in $componentDescriptor.getLicenseDescriptors()) 
-|$component.getVendor() $component.getName()|$licenseDescriptor.getArchive()|[$licenseDescriptor.getLicense().getName()|$licenseContainer.getLicenseURL($licenseDescriptor)]|
+|[$component.getVendor() $component.getName()|$wikiSpace:${trackName}_$component.getNormalizedName("_")]|$licenseDescriptor.getArchive()|[$licenseDescriptor.getLicense().getName()|$licenseContainer.getLicenseURL($licenseDescriptor)]|
 #end
 #end
 #end

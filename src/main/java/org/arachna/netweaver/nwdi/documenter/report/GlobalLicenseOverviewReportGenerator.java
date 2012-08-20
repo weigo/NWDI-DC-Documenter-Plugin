@@ -27,7 +27,7 @@ import org.arachna.netweaver.nwdi.documenter.facets.DocumentationFacetProvider;
 import org.arachna.netweaver.nwdi.documenter.facets.DocumentationFacetProviderFactory;
 import org.arachna.netweaver.nwdi.documenter.facets.librarydc.License;
 import org.arachna.netweaver.nwdi.documenter.facets.librarydc.LicenseComparator;
-import org.arachna.netweaver.nwdi.documenter.facets.librarydc.LicenseInspector.LicenseDescriptor;
+import org.arachna.netweaver.nwdi.documenter.facets.librarydc.LicenseDescriptor;
 
 /**
  * @author Dirk Weigenand
@@ -35,8 +35,7 @@ import org.arachna.netweaver.nwdi.documenter.facets.librarydc.LicenseInspector.L
  */
 public final class GlobalLicenseOverviewReportGenerator {
     /**
-     * velocity engine to generate a report for licenses of external libraries
-     * used in a development configuration.
+     * velocity engine to generate a report for licenses of external libraries used in a development configuration.
      */
     private final VelocityEngine velocityEngine;
 
@@ -51,8 +50,7 @@ public final class GlobalLicenseOverviewReportGenerator {
     private final DocumentationFacetProviderFactory documentationFacetProviderFactory;
 
     /**
-     * Create a <code>CompartmentReportGenerator</code> using the given
-     * {@link VelocityEngine}, and resource bundle.
+     * Create a <code>CompartmentReportGenerator</code> using the given {@link VelocityEngine}, and resource bundle.
      * 
      * The given {@link ResourceBundle} is used for internationalization.
      * 
@@ -72,14 +70,12 @@ public final class GlobalLicenseOverviewReportGenerator {
     }
 
     /**
-     * Generate documentation for the given development component into the given
-     * writer object.
+     * Generate documentation for the given development component into the given writer object.
      * 
      * @param writer
      *            writer to generate documentation into.
      * @param configuration
-     *            development configuration whose external libraries are to
-     *            document.
+     *            development configuration whose external libraries are to document.
      * @param additionalContext
      *            additional context attributes supplied externally
      * @param template
@@ -109,14 +105,11 @@ public final class GlobalLicenseOverviewReportGenerator {
     }
 
     /**
-     * Get {@link LicenseDescriptor} objects for each development component of
-     * type {@see DevelopmentComponentType#ExternalLibrary}.
+     * Get {@link LicenseDescriptor} objects for each development component of type {@see DevelopmentComponentType#ExternalLibrary}.
      * 
      * @param configuration
-     *            development configuration whose external library components
-     *            shall be inspected.
-     * @return a list of all license descriptors found (grouped by development
-     *         component).
+     *            development configuration whose external library components shall be inspected.
+     * @return a list of all license descriptors found (grouped by development component).
      */
     @SuppressWarnings("unchecked")
     protected ExternalLibraryComponentDescriptorContainer getLicenseContainer(
@@ -138,8 +131,7 @@ public final class GlobalLicenseOverviewReportGenerator {
 
     public class ExternalLibraryComponentDescriptorContainer {
         /**
-         * Mapping of licenses to development components and their external
-         * libraries.
+         * Mapping of licenses to development components and their external libraries.
          */
         private final Map<License, Map<DevelopmentComponent, ExternalLibraryComponentDescriptor>> licenseMap =
             new HashMap<License, Map<DevelopmentComponent, ExternalLibraryComponentDescriptor>>();
@@ -249,8 +241,7 @@ public final class GlobalLicenseOverviewReportGenerator {
             private final Collection<LicenseDescriptor> licenseDescriptors = new LinkedList<LicenseDescriptor>();
 
             /**
-             * Create a new descriptor instance with the given component and
-             * license descriptors.
+             * Create a new descriptor instance with the given component and license descriptors.
              * 
              * @param component
              *            component containing external libraries.

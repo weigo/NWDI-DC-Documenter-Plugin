@@ -26,9 +26,8 @@ import org.arachna.netweaver.nwdi.documenter.facets.DocumentationFacetProvider;
 import org.arachna.util.io.FileFinder;
 
 /**
- * Inspector for external library development components. Reads the contained
- * jar archives in order to determine the license under which these are
- * distributed.
+ * Inspector for external library development components. Reads the contained jar archives in order to determine the license under which
+ * these are distributed.
  * 
  * @author Dirk Weigenand
  */
@@ -44,8 +43,7 @@ public final class LicenseInspector implements DocumentationFacetProvider<Develo
     private final AntHelper antHelper;
 
     /**
-     * Regular expression to match Jar-Entries against. Matches jar entries that
-     * contain license conditions.
+     * Regular expression to match Jar-Entries against. Matches jar entries that contain license conditions.
      */
     private final Pattern licenseFile = Pattern.compile("^((Legal|META-INF)/)?(LICENSE|COPYING)(\\.txt)?");
 
@@ -53,16 +51,14 @@ public final class LicenseInspector implements DocumentationFacetProvider<Develo
      * Create a new instance of a license inspector.
      * 
      * @param antHelper
-     *            helper class for determining properties of development
-     *            components.
+     *            helper class for determining properties of development components.
      */
     public LicenseInspector(final AntHelper antHelper) {
         this.antHelper = antHelper;
     }
 
     /**
-     * Inspect the given external library development components jar archives
-     * for license conditions.
+     * Inspect the given external library development components jar archives for license conditions.
      * 
      * @param component
      *            development component to inspect.
@@ -153,11 +149,10 @@ public final class LicenseInspector implements DocumentationFacetProvider<Develo
      *            the name of the archive (used in the returned descriptor).
      * @param content
      *            text of license conditions
-     * @return a descriptor naming the license found. If the license could not
-     *         be determined a type of {@see License#Other} will be returned.
+     * @return a descriptor naming the license found. If the license could not be determined a type of {@see License#Other} will be
+     *         returned.
      * @throws IOException
-     *             when reading the license text from <code>content</code>
-     *             fails.
+     *             when reading the license text from <code>content</code> fails.
      */
     private LicenseDescriptor extractLicense(final String archive, final InputStream content) throws IOException {
         final String licenseText = getLicenseText(content);
@@ -194,82 +189,5 @@ public final class LicenseInspector implements DocumentationFacetProvider<Develo
         content.close();
 
         return licenseText.toString().trim();
-    }
-
-    /**
-     * Descriptor of detected licenses. Contains the license type ({@see
-     * License}), the jar archive covered by the respective license and the text
-     * of the license.
-     * 
-     * @author Dirk Weigenand
-     */
-    public class LicenseDescriptor {
-        /**
-         * kind of license.
-         */
-        private License license;
-
-        /**
-         * jar archive covered by this licence.
-         */
-        private final String archive;
-
-        /**
-         * text of license conditions.
-         */
-        private final String licenseText;
-
-        /**
-         * Create a new instance of a license descriptor using the given kind of
-         * license, teh covered archive and the license text.
-         * 
-         * @param license
-         *            kind of license.
-         * @param archive
-         *            jar archive covered by license.
-         * @param licenseText
-         *            text of license.
-         */
-        LicenseDescriptor(final License license, final String archive, final String licenseText) {
-            this.license = license;
-            this.archive = archive;
-            this.licenseText = licenseText;
-        }
-
-        /**
-         * @param license
-         *            the license to set
-         */
-        private void setLicense(final License license) {
-            this.license = license;
-        }
-
-        /**
-         * @return the license
-         */
-        public License getLicense() {
-            return license;
-        }
-
-        /**
-         * @return the archive
-         */
-        public String getArchive() {
-            return archive;
-        }
-
-        /**
-         * @return the licenseText
-         */
-        public String getLicenseText() {
-            return licenseText;
-        }
-
-        @Override
-        public String toString() {
-            final String text = licenseText.length() > 20 ? licenseText.substring(0, 20) + "..." : licenseText;
-            return "LicenseDescriptor[license = '" + license.getName() + "', archive = '" + archive + "', text = '"
-                + text + "']";
-        }
     }
 }

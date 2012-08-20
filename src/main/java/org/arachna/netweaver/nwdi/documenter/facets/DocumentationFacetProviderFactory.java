@@ -20,7 +20,7 @@ import org.arachna.netweaver.nwdi.documenter.facets.webservices.VirtualInterface
  * 
  * @author Dirk Weigenand
  */
-public final class DocumentationFacetProviderFactory {
+public class DocumentationFacetProviderFactory {
     /**
      * 
      */
@@ -33,11 +33,9 @@ public final class DocumentationFacetProviderFactory {
         new HashMap<DevelopmentComponentType, Collection<DocumentationFacetProvider<DevelopmentComponent>>>();
 
     /**
-     * Create a new instance of a <code>DocumentationFacetProviderFactory</code>
-     * .
+     * Create a new instance of a <code>DocumentationFacetProviderFactory</code> .
      * 
-     * Use the given {@link AntHelper} to determine the location of DCs in the
-     * workspace.
+     * Use the given {@link AntHelper} to determine the location of DCs in the workspace.
      * 
      * @param antHelper
      *            determine the location of DCs in the workspace.
@@ -75,14 +73,11 @@ public final class DocumentationFacetProviderFactory {
     }
 
     /**
-     * Get a collection of documentation facet providers for the given type of
-     * development component.
+     * Get a collection of documentation facet providers for the given type of development component.
      * 
      * @param type
-     *            development component type documentation facet providers are
-     *            requested for.
-     * @return registerd providers for the given development component type or
-     *         an empty list if there were none registered.
+     *            development component type documentation facet providers are requested for.
+     * @return registerd providers for the given development component type or an empty list if there were none registered.
      */
     public Collection<DocumentationFacetProvider<DevelopmentComponent>> getInstance(final DevelopmentComponentType type) {
         final Collection<DocumentationFacetProvider<DevelopmentComponent>> facetProviders = providers.get(type);
