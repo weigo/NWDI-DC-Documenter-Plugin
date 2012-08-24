@@ -30,6 +30,49 @@ public enum License {
     Apache(".*Apache (\\s*Software\\s+)?License.*", "Apache License", "http://opensource.org/licenses/Apache-2.0"),
 
     /**
+     * Mozilla Public License.
+     */
+    MPL(".*MOZILLA PUBLIC LICENSE.*", "Mozilla Public License", "http://opensource.org/licenses/MPL-2.0"),
+
+    /**
+     * License by 'The Werken Company'.
+     */
+    Werken("Copyright\\s+.*?\\s+The Werken Company\\..*?", "The Werken Company", "http://jaxen.codehaus.org/license.html"),
+
+    /**
+     * License by 'MetaStuff Limited'.
+     */
+    MetaStuffLtd("Copyright\\s+.*?\\s+MetaStuff, Ltd\\..*?", "MetaStuff, Ltd. (BSD style license)",
+        "http://dom4j.sourceforge.net/dom4j-1.6.1/license.html"),
+
+    /**
+     * Copyrighted material by the late Sun Microsystems Inc. and possibly others.
+     */
+    Sun(".*?Copyright\\s+.*?\\s+Sun Microsystems, Inc\\..*?", "Copyright by Sun Microsystems and now probably Oracle Inc.",
+        "https://www.google.com/search?ie=utf-8&oe=utf-8&q=software+license+"),
+
+    /**
+     * The Eclipse Public License.
+     */
+    Eclipse(".*Eclipse Public License.*", "Eclipse Public License", "http://opensource.org/licenses/EPL-1.0"),
+
+    /**
+     * HSQL (BSD like license).
+     */
+    Hypersonic(".*?Copyright.*?The HSQL Development Group.*?", "HyperSQL (based on BSD License)", "http://hsqldb.org/web/hsqlLicense.html"),
+
+    /**
+     * The BSD license.
+     */
+    BSD(".*?BSD License.*?", "BSD License", "http://opensource.org/licenses/BSD-2-Clause"),
+
+    /**
+     * JDOM license.
+     */
+    JDOM(".*?Copyright (C).*?Jason Hunter & Brett McLaughlin\\..*?", "JDOM License (Apache without acknowledgment clause)",
+        "http://www.jdom.org/docs/faq.html#a0030"),
+
+    /**
      * Unknown license.
      */
     Other(".*", "unbekannte Lizenz", "https://www.google.com/search?ie=utf-8&oe=utf-8&q=software+license+"),
@@ -54,8 +97,7 @@ public enum License {
     private final Pattern regex;
 
     /**
-     * Create license instance using the given regular expression (for license
-     * detection) and license name.
+     * Create license instance using the given regular expression (for license detection) and license name.
      * 
      * @param regex
      *            regular expression for license detection.
@@ -78,13 +120,11 @@ public enum License {
     }
 
     /**
-     * Determines whether the given license text matches the regular expression
-     * of this license.
+     * Determines whether the given license text matches the regular expression of this license.
      * 
      * @param licenseText
      *            test of license.
-     * @return <code>true</code> when <code>licenseText</code> matches the
-     *         regular expression.
+     * @return <code>true</code> when <code>licenseText</code> matches the regular expression.
      */
     public boolean is(final String licenseText) {
         return regex.matcher(licenseText).matches();

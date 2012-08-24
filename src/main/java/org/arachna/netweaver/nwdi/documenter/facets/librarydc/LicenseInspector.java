@@ -11,6 +11,7 @@ import java.io.InputStreamReader;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
@@ -18,8 +19,11 @@ import java.util.zip.ZipFile;
 
 import org.apache.log4j.Logger;
 import org.arachna.ant.AntHelper;
+import org.arachna.netweaver.dc.types.Compartment;
 import org.arachna.netweaver.dc.types.CompartmentState;
 import org.arachna.netweaver.dc.types.DevelopmentComponent;
+import org.arachna.netweaver.dc.types.DevelopmentComponentFactory;
+import org.arachna.netweaver.dc.types.DevelopmentComponentType;
 import org.arachna.netweaver.dc.types.PublicPart;
 import org.arachna.netweaver.nwdi.documenter.facets.DocumentationFacet;
 import org.arachna.netweaver.nwdi.documenter.facets.DocumentationFacetProvider;
@@ -45,7 +49,8 @@ public final class LicenseInspector implements DocumentationFacetProvider<Develo
     /**
      * Regular expression to match Jar-Entries against. Matches jar entries that contain license conditions.
      */
-    private final Pattern licenseFile = Pattern.compile("^((Legal|META-INF)/)?(LICENSE|COPYING)(\\.txt)?");
+    private final Pattern licenseFile = Pattern
+        .compile(".*?/?(LICENSE|COPYING|MPL-\\d+\\.\\d+|lgpl|(apache_)?license|about|.*_lic)(\\.(txt|html))?");
 
     /**
      * Create a new instance of a license inspector.
@@ -88,7 +93,7 @@ public final class LicenseInspector implements DocumentationFacetProvider<Develo
 
                 try {
                     archive = new ZipFile(jar);
-                    licenses.add(findLicense(archive));
+                    licenses.addAll(findLicense(archive));
                 }
                 catch (final ZipException e) {
                     LOGGER.fatal(e.getMessage(), e);
@@ -119,19 +124,18 @@ public final class LicenseInspector implements DocumentationFacetProvider<Develo
      *            jar archive to inspect for known licenses.
      * @return a descriptor detailing the license found (if any).
      */
-    private LicenseDescriptor findLicense(final ZipFile archive) {
+    private Collection<LicenseDescriptor> findLicense(final ZipFile archive) {
         final Enumeration<? extends ZipEntry> entries = archive.entries();
         ZipEntry entry = null;
-        LicenseDescriptor descriptor = null;
+        Collection<LicenseDescriptor> descriptors = new LinkedList<LicenseDescriptor>();
         final File archivePath = new File(archive.getName());
 
         try {
             while (entries.hasMoreElements()) {
                 entry = entries.nextElement();
 
-                if (licenseFile.matcher(entry.getName()).matches()) {
-                    descriptor = extractLicense(archivePath.getName(), archive.getInputStream(entry));
-                    break;
+                if (isKnownLicenseFile(entry.getName())) {
+                    descriptors.add(extractLicense(archivePath.getName(), archive.getInputStream(entry)));
                 }
             }
         }
@@ -139,7 +143,19 @@ public final class LicenseInspector implements DocumentationFacetProvider<Develo
             LOGGER.fatal(e.getMessage(), e);
         }
 
-        return descriptor == null ? new LicenseDescriptor(License.None, archivePath.getName(), "") : descriptor;
+        if (descriptors.isEmpty()) {
+            descriptors.add(new LicenseDescriptor(License.None, archivePath.getName(), ""));
+        }
+
+        return descriptors;
+    }
+
+    /**
+     * @param entry
+     * @return
+     */
+    protected boolean isKnownLicenseFile(String entryName) {
+        return licenseFile.matcher(entryName).matches();
     }
 
     /**
@@ -189,5 +205,15 @@ public final class LicenseInspector implements DocumentationFacetProvider<Develo
         content.close();
 
         return licenseText.toString().trim();
+    }
+
+    public static void main(String[] args) {
+        DevelopmentComponentFactory dcFactory = new DevelopmentComponentFactory();
+        AntHelper antHelper = new AntHelper("C:/tmp/jenkins/jobs/Libraries73/workspace", dcFactory);
+        LicenseInspector inspector = new LicenseInspector(antHelper);
+        DevelopmentComponent component = dcFactory.create("itext.org", "itext1.2", DevelopmentComponentType.ExternalLibrary);
+        Compartment compartment = Compartment.create("itext.org", "ITEXTPDF", CompartmentState.Source, "");
+        compartment.add(component);
+        inspector.execute(component);
     }
 }

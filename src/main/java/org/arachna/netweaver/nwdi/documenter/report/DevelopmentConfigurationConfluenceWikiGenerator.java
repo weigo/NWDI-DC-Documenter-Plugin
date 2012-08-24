@@ -193,7 +193,7 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator extends Abstr
      */
     @Override
     public void visit(final DevelopmentComponent component) {
-        if (!vendorFilter.accept(component) && component.isNeedsRebuild()) {
+        if (!vendorFilter.accept(component)) {
             final String pageName = component.getNormalizedName("_");
             final DiagramDescriptor descriptor = dotFileDescriptorContainer.getDescriptor(component);
 
