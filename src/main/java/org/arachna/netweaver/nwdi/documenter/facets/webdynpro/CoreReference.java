@@ -4,9 +4,12 @@
 package org.arachna.netweaver.nwdi.documenter.facets.webdynpro;
 
 /**
+ * A core reference should be thought of as a handle to the real object. It
+ * carries a name, a package and a type of the referred to object.
+ * 
  * @author Dirk Weigenand
  */
-final class CoreReference {
+public final class CoreReference {
     /**
      * package of this reference.
      */

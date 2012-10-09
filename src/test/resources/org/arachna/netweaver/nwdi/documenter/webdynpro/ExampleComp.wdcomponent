@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- MetaDataAPI generated on: Monday, April 2, 2012 6:34:00 PM CEST -->
+<Component xmlns="http://xml.sap.com/2002/10/metamodel/webdynpro" xmlns:IDX="urn:sap.com:WebDynpro.Component:3.0" mmRelease="7.00" mmVersion="3.0" mmTimestamp="1333384440766" name="ExampleComp" package="org.example.wd.comp" masterLanguage="de">
+    <Component.ComponentInterface>
+        <Core.Reference package="org.example.wd.comp" name="ExampleCompInterface" type="ComponentInterfaceImplementation"/>
+    </Component.ComponentInterface>
+    <Component.ComponentUsages>
+        <ComponentUsage lifecycleControl="createOnDemand" name="ExampleComp">
+            <AbstractComponentUsage.UsedComponent>
+                <Core.Reference package="org.example.wd.comp" name="ExampleCompInterface" type="ComponentInterfaceImplementation"/>
+            </AbstractComponentUsage.UsedComponent>
+            <ComponentUsage.ComponentControllerUsages>
+                <ComponentControllerUsage name="Interface">
+                    <ComponentControllerUsage.UsedComponentController>
+                        <Core.Reference package="org.example.wd.comp" name="ExampleCompInterface" type="Controller"/>
+                    </ComponentControllerUsage.UsedComponentController>
+                </ComponentControllerUsage>
+            </ComponentUsage.ComponentControllerUsages>
+        </ComponentUsage>
+    </Component.ComponentUsages>
+    <Component.Controllers>
+        <Core.Reference package="org.example.wd.comp" name="Fahrplaene" type="Controller"/>
+        <Core.Reference package="org.example.wd.comp" name="FahrplanPlausi" type="Controller"/>
+        <Core.Reference package="org.example.wd.comp" name="FahrplanVersenden" type="Controller"/>
+        <Core.Reference package="org.example.wd.comp" name="FahrplanVersendenDanke" type="Controller"/>
+        <Core.Reference package="org.example.wd.comp" name="Fahrplanhochladen" type="Controller"/>
+        <Core.Reference package="org.example.wd.comp" name="Fahrplanvorlagendatei" type="Controller"/>
+        <Core.Reference package="org.example.wd.comp" name="ExampleComp" type="Controller"/>
+    </Component.Controllers>
+    <Component.EmptyView>
+        <EmptyView name="EmptyView">
+            <AbstractView.InboundPlugs>
+                <InboundPlug name="ShowEmptyView">
+                </InboundPlug>
+            </AbstractView.InboundPlugs>
+        </EmptyView>
+    </Component.EmptyView>
+    <Component.MessagePool>
+        <Core.Reference package="org.example.wd.comp" name="ExampleCompMessagePool" type="MessagePool"/>
+    </Component.MessagePool>
+    <Component.Views>
+        <Core.Reference package="org.example.wd.comp" name="Fahrplaene" type="View"/>
+        <Core.Reference package="org.example.wd.comp" name="FahrplanPlausi" type="View"/>
+        <Core.Reference package="org.example.wd.comp" name="FahrplanVersenden" type="View"/>
+        <Core.Reference package="org.example.wd.comp" name="FahrplanVersendenDanke" type="View"/>
+        <Core.Reference package="org.example.wd.comp" name="Fahrplanhochladen" type="View"/>
+        <Core.Reference package="org.example.wd.comp" name="Fahrplanvorlagendatei" type="View"/>
+    </Component.Views>
+    <Component.Windows>
+        <Core.Reference package="org.example.wd.comp" name="LastgangWindow" type="Window"/>
+    </Component.Windows>
+    <Component.ComponentController>
+        <Core.Reference package="org.example.wd.comp" name="ExampleComp" type="Controller"/>
+    </Component.ComponentController>
+    <Component.UsedUIELibraries>
+        <Core.Reference package="com.sap.ide.webdynpro.uielementdefinitions" name="BusinessGraphics" type="UIElementLibrary"/>
+        <Core.Reference package="com.sap.ide.webdynpro.uielementdefinitions" name="Standard" type="UIElementLibrary"/>
+        <Core.Reference package="com.sap.ide.webdynpro.uielementlibraries.pattern" name="Pattern" type="UIElementLibrary"/>
+    </Component.UsedUIELibraries>
+</Component>
