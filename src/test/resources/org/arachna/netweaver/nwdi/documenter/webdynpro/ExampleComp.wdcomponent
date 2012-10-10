@@ -19,12 +19,7 @@
         </ComponentUsage>
     </Component.ComponentUsages>
     <Component.Controllers>
-        <Core.Reference package="org.example.wd.comp" name="Fahrplaene" type="Controller"/>
-        <Core.Reference package="org.example.wd.comp" name="FahrplanPlausi" type="Controller"/>
-        <Core.Reference package="org.example.wd.comp" name="FahrplanVersenden" type="Controller"/>
-        <Core.Reference package="org.example.wd.comp" name="FahrplanVersendenDanke" type="Controller"/>
-        <Core.Reference package="org.example.wd.comp" name="Fahrplanhochladen" type="Controller"/>
-        <Core.Reference package="org.example.wd.comp" name="Fahrplanvorlagendatei" type="Controller"/>
+        <Core.Reference package="org.example.wd.comp" name="ExampleViewCont" type="Controller"/>
         <Core.Reference package="org.example.wd.comp" name="ExampleComp" type="Controller"/>
     </Component.Controllers>
     <Component.EmptyView>
@@ -39,15 +34,10 @@
         <Core.Reference package="org.example.wd.comp" name="ExampleCompMessagePool" type="MessagePool"/>
     </Component.MessagePool>
     <Component.Views>
-        <Core.Reference package="org.example.wd.comp" name="Fahrplaene" type="View"/>
-        <Core.Reference package="org.example.wd.comp" name="FahrplanPlausi" type="View"/>
-        <Core.Reference package="org.example.wd.comp" name="FahrplanVersenden" type="View"/>
-        <Core.Reference package="org.example.wd.comp" name="FahrplanVersendenDanke" type="View"/>
-        <Core.Reference package="org.example.wd.comp" name="Fahrplanhochladen" type="View"/>
-        <Core.Reference package="org.example.wd.comp" name="Fahrplanvorlagendatei" type="View"/>
+        <Core.Reference package="org.example.wd.comp" name="ExampleView" type="View"/>
     </Component.Views>
     <Component.Windows>
-        <Core.Reference package="org.example.wd.comp" name="LastgangWindow" type="Window"/>
+        <Core.Reference package="org.example.wd.comp" name="ExampleWindow" type="Window"/>
     </Component.Windows>
     <Component.ComponentController>
         <Core.Reference package="org.example.wd.comp" name="ExampleComp" type="Controller"/>

@@ -41,6 +41,11 @@ public final class WebDynproComponent {
         new LinkedHashMap<ReferenceType, Collection<CoreReference>>();
 
     /**
+     * Handle to the WD component controller.
+     */
+    private CoreReference componentController;
+
+    /**
      * @return the name
      */
     public String getName() {
@@ -157,5 +162,22 @@ public final class WebDynproComponent {
      */
     public Collection<CoreReference> getWindows() {
         return getTypedReferences(ReferenceType.Window);
+    }
+
+    /**
+     * Get the component controller handle of this WD component.
+     * 
+     * @return the component controller handle of this WD component.
+     */
+    public CoreReference getComponentController() {
+        return componentController;
+    }
+
+    /**
+     * @param componentController
+     *            the componentController to set
+     */
+    public void setComponentController(final CoreReference componentController) {
+        this.componentController = componentController;
     }
 }

@@ -11,6 +11,7 @@ import static org.hamcrest.collection.IsEmptyCollection.empty;
 
 import java.io.InputStreamReader;
 import java.util.Collection;
+import java.util.Iterator;
 
 import org.junit.After;
 import org.junit.Before;
@@ -109,8 +110,11 @@ public final class WebDynproComponentReaderTest {
      */
     @Test
     public void verifySetUpCoreReferenceRulesForTypeController() {
-        final Collection<CoreReference> controllers = component.getControllers();
-        assertThat(controllers, not(empty()));
+        final Iterator<CoreReference> controllers = component.getControllers().iterator();
+        assertExpectedCoreReferenceProperties(controllers.next(), "ExampleViewCont", EXPECTED_PACKAGE,
+            ReferenceType.Controller);
+        assertExpectedCoreReferenceProperties(controllers.next(), "ExampleComp", EXPECTED_PACKAGE,
+            ReferenceType.Controller);
     }
 
     /**
@@ -120,8 +124,8 @@ public final class WebDynproComponentReaderTest {
      */
     @Test
     public void verifySetUpCoreReferenceRulesForTypeViews() {
-        final Collection<CoreReference> views = component.getViews();
-        assertThat(views, not(empty()));
+        final Iterator<CoreReference> views = component.getViews().iterator();
+        assertExpectedCoreReferenceProperties(views.next(), "ExampleView", EXPECTED_PACKAGE, ReferenceType.View);
     }
 
     /**
@@ -131,8 +135,19 @@ public final class WebDynproComponentReaderTest {
      */
     @Test
     public void verifySetUpCoreReferenceRulesForTypeWindows() {
-        final Collection<CoreReference> windows = component.getWindows();
-        assertThat(windows, not(empty()));
+        final Iterator<CoreReference> windows = component.getWindows().iterator();
+        assertExpectedCoreReferenceProperties(windows.next(), "ExampleWindow", EXPECTED_PACKAGE, ReferenceType.Window);
+    }
+
+    /**
+     * Test method for
+     * {@link org.arachna.netweaver.nwdi.documenter.facets.webdynpro.WebDynproComponentReader#read(java.io.Reader)}
+     * .
+     */
+    @Test
+    public void verifySetUpCoreReferenceRulesForComponentController() {
+        assertExpectedCoreReferenceProperties(component.getComponentController(), "ExampleComp", EXPECTED_PACKAGE,
+            ReferenceType.Controller);
     }
 
     /**
