@@ -13,7 +13,6 @@ import org.apache.log4j.Logger;
 import org.arachna.netweaver.dc.types.DevelopmentComponent;
 import org.arachna.netweaver.nwdi.documenter.facets.DocumentationFacetProvider;
 import org.arachna.netweaver.nwdi.documenter.java.MethodDocumentationProvider;
-import org.arachna.netweaver.nwdi.documenter.report.WebServiceDocumentationFacet;
 import org.arachna.util.io.FileFinder;
 import org.xml.sax.SAXException;
 
