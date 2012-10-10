@@ -29,6 +29,7 @@ import org.arachna.netweaver.nwdi.documenter.facets.DocumentationFacetProviderFa
 import org.arachna.netweaver.nwdi.documenter.report.ContextPropertyName;
 import org.arachna.netweaver.nwdi.documenter.report.DependencyGraphGenerator;
 import org.arachna.netweaver.nwdi.documenter.report.DevelopmentConfigurationConfluenceWikiGenerator;
+import org.arachna.netweaver.nwdi.documenter.report.ReportGeneratorFactory;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
 

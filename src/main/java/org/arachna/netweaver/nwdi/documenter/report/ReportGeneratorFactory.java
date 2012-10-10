@@ -1,17 +1,13 @@
 /**
  * 
  */
-package org.arachna.netweaver.nwdi.documenter;
+package org.arachna.netweaver.nwdi.documenter.report;
 
 import java.util.ResourceBundle;
 
 import org.apache.velocity.app.VelocityEngine;
 import org.arachna.netweaver.dc.types.DevelopmentComponentFactory;
 import org.arachna.netweaver.nwdi.documenter.facets.DocumentationFacetProviderFactory;
-import org.arachna.netweaver.nwdi.documenter.report.CompartmentReportGenerator;
-import org.arachna.netweaver.nwdi.documenter.report.DevelopmentComponentReportGenerator;
-import org.arachna.netweaver.nwdi.documenter.report.DevelopmentConfigurationReportGenerator;
-import org.arachna.netweaver.nwdi.documenter.report.GlobalLicenseOverviewReportGenerator;
 
 /**
  * Factory for development component report generators. Bundles knowledge to

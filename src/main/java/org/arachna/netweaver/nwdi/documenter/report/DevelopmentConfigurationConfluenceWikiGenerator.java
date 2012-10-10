@@ -23,7 +23,6 @@ import org.arachna.netweaver.dc.types.AbstractDevelopmentConfigurationVisitor;
 import org.arachna.netweaver.dc.types.Compartment;
 import org.arachna.netweaver.dc.types.DevelopmentComponent;
 import org.arachna.netweaver.dc.types.DevelopmentConfiguration;
-import org.arachna.netweaver.nwdi.documenter.ReportGeneratorFactory;
 import org.arachna.netweaver.nwdi.documenter.VendorFilter;
 import org.arachna.netweaver.nwdi.documenter.report.svg.SVGParser;
 import org.arachna.netweaver.nwdi.documenter.report.svg.SVGProperties;
