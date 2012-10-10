@@ -37,34 +37,38 @@ public final class DevelopmentConfigurationReportGenerator {
     private final ResourceBundle bundle;
 
     /**
-     * Create documentation generator for development configurations using the given velocity template engine and resource bundle for I18N.
+     * Create documentation generator for development configurations using the
+     * given velocity template engine and resource bundle for I18N.
      * 
      * @param velocityEngine
      *            template engine
      * @param bundle
      *            I18N resource bundle
      */
-    public DevelopmentConfigurationReportGenerator(final VelocityEngine velocityEngine,
-        final ResourceBundle bundle) {
+    public DevelopmentConfigurationReportGenerator(final VelocityEngine velocityEngine, final ResourceBundle bundle) {
         this.velocityEngine = velocityEngine;
         this.bundle = bundle;
     }
 
     /**
-     * Generate documentation for the given development component into the given writer object.
+     * Generate documentation for the given development component into the given
+     * writer object.
      * 
      * @param writer
      *            writer to generate documentation into.
-     * @param component
-     *            development component to document.
+     * @param configuration
+     *            development configuration to document.
      * @param additionalContext
-     *            additional context attributes supplied externally
+     *            additional context attributes supplied externally.
+     * @param template
+     *            for velocity template.
      */
     public void execute(final Writer writer, final DevelopmentConfiguration configuration,
-        final Map<String, Object> additionalContext, Reader template) {
+        final Map<String, Object> additionalContext, final Reader template) {
         final Context context = new VelocityContext();
         context.put("configuration", configuration);
-        List<Compartment> compartments = new ArrayList<Compartment>(configuration.getCompartments(CompartmentState.Source));
+        final List<Compartment> compartments =
+            new ArrayList<Compartment>(configuration.getCompartments(CompartmentState.Source));
         Collections.sort(compartments, new CompartmentByNameComparator());
         context.put("compartments", compartments);
         context.put("bundle", bundle);

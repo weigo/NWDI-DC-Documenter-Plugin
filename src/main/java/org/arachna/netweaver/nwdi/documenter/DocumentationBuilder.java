@@ -29,8 +29,6 @@ import org.arachna.netweaver.nwdi.documenter.facets.DocumentationFacetProviderFa
 import org.arachna.netweaver.nwdi.documenter.report.ContextPropertyName;
 import org.arachna.netweaver.nwdi.documenter.report.DependencyGraphGenerator;
 import org.arachna.netweaver.nwdi.documenter.report.DevelopmentConfigurationConfluenceWikiGenerator;
-import org.arachna.netweaver.nwdi.documenter.report.DevelopmentConfigurationHtmlGenerator;
-import org.arachna.netweaver.nwdi.documenter.report.ReportWriterConfiguration;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
 
@@ -283,11 +281,9 @@ public class DocumentationBuilder extends AntTaskBuilder {
             }
 
             if (createHtmlDocumentation) {
-                final ReportWriterConfiguration writerConfiguration = new ReportWriterConfiguration();
-                writerConfiguration.setOutputLocation(workspace.getAbsolutePath());
-
-                developmentConfiguration.accept(new DevelopmentConfigurationHtmlGenerator(writerConfiguration,
-                    dcFactory, vendorFilter, engine, generatorFactory.createDevelopmentComponentReportGenerator()));
+                ;
+                // FIXME: add code generate HTML when docbook conversion is
+                // there!
             }
         }
 
