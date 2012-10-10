@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.arachna.netweaver.nwdi.documenter.java;
+package org.arachna.netweaver.nwdi.documenter.facets.webservices;
 
 import japa.parser.ast.body.JavadocComment;
 import japa.parser.ast.body.MethodDeclaration;
@@ -16,8 +16,9 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.arachna.netweaver.nwdi.documenter.facets.webservices.Function;
-import org.arachna.netweaver.nwdi.documenter.facets.webservices.Parameter;
+import org.arachna.netweaver.nwdi.documenter.java.ClassNameResolver;
+import org.arachna.netweaver.nwdi.documenter.java.JavaDocCommentContainer;
+import org.arachna.netweaver.nwdi.documenter.java.TagDescriptor;
 
 /**
  * Implementation of {@link VoidVisitorAdapter} that extracts JavaDoc comments

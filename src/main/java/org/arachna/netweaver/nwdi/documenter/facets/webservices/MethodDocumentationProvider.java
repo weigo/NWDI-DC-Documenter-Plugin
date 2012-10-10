@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.arachna.netweaver.nwdi.documenter.java;
+package org.arachna.netweaver.nwdi.documenter.facets.webservices;
 
 import japa.parser.JavaParser;
 import japa.parser.ParseException;
@@ -19,8 +19,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.arachna.netweaver.nwdi.documenter.facets.webservices.Function;
-import org.arachna.netweaver.nwdi.documenter.facets.webservices.VirtualInterfaceDefinition;
+import org.arachna.netweaver.nwdi.documenter.java.ClassNameResolver;
 
 /**
  * Provider for JavaDoc-Documentation for methods.
