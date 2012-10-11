@@ -21,13 +21,25 @@ import org.xml.sax.helpers.XMLReaderFactory;
  */
 public final class WebDynproComponentReader {
     /**
-     * 
+     * method name to use for addSetNext() in
+     * setUpCoreReferenceRulesForParent().
+     */
+    private static final String SET_CORE_REFERENCE = "setCoreReference";
+
+    /**
+     * pattern prefix for XML parsing rules.
      */
     private static final String COMPONENT = "Component";
+
     /**
-     * 
+     * pattern prefix for XML parsing rules.
      */
     private static final String COMPONENT_INTERFACE = COMPONENT + "/Component.ComponentInterface";
+
+    /**
+     * factory for CoreReference object creation during XML parsing.
+     */
+    private final CoreReferenceFactory coreReferenceFactory = new CoreReferenceFactory();
 
     /**
      * Read a WebDynpro component using the given {@link Reader} instance.
@@ -86,7 +98,7 @@ public final class WebDynproComponentReader {
     private void setUpComponentComponentInterfaceRules(final Digester digester) {
         digester.addObjectCreate(COMPONENT_INTERFACE, ComponentInterface.class);
         digester.addSetNext(COMPONENT_INTERFACE, "setComponentInterface");
-        setUpCoreReferenceRulesForParent(digester, COMPONENT_INTERFACE, "setCoreReference");
+        setUpCoreReferenceRulesForParent(digester, COMPONENT_INTERFACE, SET_CORE_REFERENCE);
     }
 
     /**
@@ -97,11 +109,11 @@ public final class WebDynproComponentReader {
      */
     private void setUpComponentUsageRules(final Digester digester) {
         final String componentUsage = "Component/Component.ComponentUsages/ComponentUsage";
-        digester.addFactoryCreate(componentUsage, ComponentUsageFactory.class);
+        digester.addFactoryCreate(componentUsage, new ComponentUsageFactory());
         digester.addSetNext(componentUsage, "add", ComponentUsage.class.getName());
 
         setUpCoreReferenceRulesForParent(digester, componentUsage + "/AbstractComponentUsage.UsedComponent",
-            "setCoreReference");
+            SET_CORE_REFERENCE);
         final String componentControllerUsage =
             componentUsage + "/ComponentUsage.ComponentControllerUsages/ComponentControllerUsage";
 
@@ -109,7 +121,7 @@ public final class WebDynproComponentReader {
         digester.addSetProperties(componentControllerUsage);
         digester.addSetNext(componentControllerUsage, "add", ComponentControllerUsage.class.getName());
         setUpCoreReferenceRulesForParent(digester, componentControllerUsage
-            + "/ComponentControllerUsage.UsedComponentController", "setCoreReference");
+            + "/ComponentControllerUsage.UsedComponentController", SET_CORE_REFERENCE);
     }
 
     /**
@@ -126,7 +138,7 @@ public final class WebDynproComponentReader {
     protected void setUpCoreReferenceRulesForParent(final Digester digester, final String parent,
         final String setNextMethodName) {
         final String pattern = parent + "/Core.Reference";
-        digester.addFactoryCreate(pattern, CoreReferenceFactory.class);
+        digester.addFactoryCreate(pattern, coreReferenceFactory);
         digester.addSetNext(pattern, setNextMethodName);
     }
 
@@ -142,7 +154,7 @@ public final class WebDynproComponentReader {
      */
     private void setUpCoreReferenceRulesForType(final Digester digester, final String type) {
         final String pattern = String.format("Component/Component.%s/Core.Reference", type);
-        digester.addFactoryCreate(pattern, CoreReferenceFactory.class);
+        digester.addFactoryCreate(pattern, new CoreReferenceFactory());
         digester.addSetNext(pattern, "add", CoreReference.class.getName());
     }
 
@@ -152,7 +164,7 @@ public final class WebDynproComponentReader {
      * 
      * @author Dirk Weigenand
      */
-    public static final class CoreReferenceFactory extends AbstractObjectCreationFactory<CoreReference> {
+    private final class CoreReferenceFactory extends AbstractObjectCreationFactory<CoreReference> {
         /**
          * {@inheritDoc}
          */
@@ -173,7 +185,7 @@ public final class WebDynproComponentReader {
      * 
      * @author Dirk Weigenand
      */
-    public static final class ComponentUsageFactory extends AbstractObjectCreationFactory<ComponentUsage> {
+    private final class ComponentUsageFactory extends AbstractObjectCreationFactory<ComponentUsage> {
         /**
          * {@inheritDoc}
          */
