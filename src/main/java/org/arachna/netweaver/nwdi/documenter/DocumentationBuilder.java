@@ -25,10 +25,10 @@ import org.arachna.netweaver.dc.types.DevelopmentComponentFactory;
 import org.arachna.netweaver.dc.types.DevelopmentConfiguration;
 import org.arachna.netweaver.hudson.nwdi.AntTaskBuilder;
 import org.arachna.netweaver.hudson.nwdi.NWDIBuild;
-import org.arachna.netweaver.nwdi.documenter.facets.DocumentationFacetProviderFactory;
 import org.arachna.netweaver.nwdi.documenter.report.ContextPropertyName;
 import org.arachna.netweaver.nwdi.documenter.report.DependencyGraphGenerator;
 import org.arachna.netweaver.nwdi.documenter.report.DevelopmentConfigurationConfluenceWikiGenerator;
+import org.arachna.netweaver.nwdi.documenter.report.DocumentationFacetProviderFactory;
 import org.arachna.netweaver.nwdi.documenter.report.ReportGeneratorFactory;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
@@ -65,15 +65,6 @@ public class DocumentationBuilder extends AntTaskBuilder {
      * vendors.
      */
     private Pattern ignoreVendorRegexp;
-
-    /**
-     * regular expression for ignoring development components of certain
-     * software components.
-     * 
-     * @deprecated Not used anymore!
-     */
-    @Deprecated
-    private final transient Pattern ignoreSoftwareComponentRegex = null;
 
     /**
      * the confluence site to publish documentation to.
@@ -153,14 +144,6 @@ public class DocumentationBuilder extends AntTaskBuilder {
     }
 
     /**
-     * Return the regular expression to be used for software components to
-     * ignore when documenting development components.
-     */
-    public String getIgnoreSoftwareComponentRegex() {
-        return ignoreSoftwareComponentRegex.pattern();
-    }
-
-    /**
      * @return the publishToConfluence
      */
     public boolean getPublishToConfluence() {
@@ -234,22 +217,12 @@ public class DocumentationBuilder extends AntTaskBuilder {
         final DevelopmentComponentFactory dcFactory = nwdiBuild.getDevelopmentComponentFactory();
         final DevelopmentConfiguration developmentConfiguration = nwdiBuild.getDevelopmentConfiguration();
         final File workspace = new File(String.format("%s/documentation", getAntHelper().getPathToWorkspace()));
-
-        // FIXME: remove from production code
-        // for (final Compartment compartment :
-        // developmentConfiguration.getCompartments(CompartmentState.Source)) {
-        // for (final DevelopmentComponent component :
-        // compartment.getDevelopmentComponents()) {
-        // component.setNeedsRebuild(true);
-        // }
-        // }
-
         final VendorFilter vendorFilter = new VendorFilter(ignoreVendorRegexp);
+        final VelocityEngine engine = getVelocityEngine(listener.getLogger());
         final DependencyGraphGenerator dependenciesGenerator =
             new DependencyGraphGenerator(dcFactory, vendorFilter, workspace);
 
         developmentConfiguration.accept(dependenciesGenerator);
-        final VelocityEngine engine = getVelocityEngine(listener.getLogger());
 
         final boolean result =
             super.execute(build, launcher, listener, "",
