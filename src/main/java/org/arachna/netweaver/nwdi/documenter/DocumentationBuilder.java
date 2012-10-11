@@ -28,7 +28,6 @@ import org.arachna.netweaver.hudson.nwdi.NWDIBuild;
 import org.arachna.netweaver.nwdi.documenter.report.ContextPropertyName;
 import org.arachna.netweaver.nwdi.documenter.report.DependencyGraphGenerator;
 import org.arachna.netweaver.nwdi.documenter.report.DevelopmentConfigurationConfluenceWikiGenerator;
-import org.arachna.netweaver.nwdi.documenter.report.DocumentationFacetProviderFactory;
 import org.arachna.netweaver.nwdi.documenter.report.ReportGeneratorFactory;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
@@ -231,8 +230,8 @@ public class DocumentationBuilder extends AntTaskBuilder {
 
         if (result) {
             final ReportGeneratorFactory generatorFactory =
-                new ReportGeneratorFactory(new DocumentationFacetProviderFactory(getAntHelper()), dcFactory, engine,
-                    ResourceBundle.getBundle(DC_REPORT_BUNDLE, Locale.GERMAN));
+                new ReportGeneratorFactory(getAntHelper(), dcFactory, engine, ResourceBundle.getBundle(
+                    DC_REPORT_BUNDLE, Locale.GERMAN));
 
             if (publishToConfluence) {
                 try {

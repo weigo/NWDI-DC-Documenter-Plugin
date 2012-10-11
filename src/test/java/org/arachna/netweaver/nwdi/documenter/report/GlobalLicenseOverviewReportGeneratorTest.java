@@ -24,7 +24,6 @@ import org.arachna.netweaver.dc.types.DevelopmentConfiguration;
 import org.arachna.netweaver.nwdi.documenter.DocumentationBuilder;
 import org.arachna.netweaver.nwdi.documenter.facets.DocumentationFacet;
 import org.arachna.netweaver.nwdi.documenter.facets.DocumentationFacetProvider;
-import org.arachna.netweaver.nwdi.documenter.facets.DocumentationFacetProviderFactory;
 import org.arachna.netweaver.nwdi.documenter.facets.librarydc.License;
 import org.arachna.netweaver.nwdi.documenter.facets.librarydc.LicenseDescriptor;
 import org.junit.After;

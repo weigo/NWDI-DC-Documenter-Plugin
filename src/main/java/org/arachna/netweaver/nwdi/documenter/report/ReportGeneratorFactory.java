@@ -6,8 +6,8 @@ package org.arachna.netweaver.nwdi.documenter.report;
 import java.util.ResourceBundle;
 
 import org.apache.velocity.app.VelocityEngine;
+import org.arachna.ant.AntHelper;
 import org.arachna.netweaver.dc.types.DevelopmentComponentFactory;
-import org.arachna.netweaver.nwdi.documenter.facets.DocumentationFacetProviderFactory;
 
 /**
  * Factory for development component report generators. Bundles knowledge to
@@ -40,9 +40,9 @@ public final class ReportGeneratorFactory {
      * Create an instance of the factory using the given factory for
      * documentation facets, DC registry, template engine and resource bundle.
      * 
-     * @param facetProviderFactory
-     *            Factory for the various documentable facets of a development
-     *            component.
+     * @param antHelper
+     *            helper class for determining development component related
+     *            information (e.g. source paths)
      * @param dcFactory
      *            Registry for development components.
      * @param velocity
@@ -50,9 +50,9 @@ public final class ReportGeneratorFactory {
      * @param resourceBundle
      *            Resource bundle for texts/I18N.
      */
-    public ReportGeneratorFactory(final DocumentationFacetProviderFactory facetProviderFactory,
-        final DevelopmentComponentFactory dcFactory, final VelocityEngine velocity, final ResourceBundle resourceBundle) {
-        this.facetProviderFactory = facetProviderFactory;
+    public ReportGeneratorFactory(final AntHelper antHelper, final DevelopmentComponentFactory dcFactory,
+        final VelocityEngine velocity, final ResourceBundle resourceBundle) {
+        facetProviderFactory = new DocumentationFacetProviderFactory(antHelper);
         this.dcFactory = dcFactory;
         this.velocity = velocity;
         this.resourceBundle = resourceBundle;

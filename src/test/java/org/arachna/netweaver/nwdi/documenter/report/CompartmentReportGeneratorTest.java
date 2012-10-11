@@ -20,7 +20,6 @@ import org.arachna.netweaver.dc.types.CompartmentState;
 import org.arachna.netweaver.dc.types.DevelopmentComponent;
 import org.arachna.netweaver.dc.types.DevelopmentComponentFactory;
 import org.arachna.netweaver.nwdi.documenter.DocumentationBuilder;
-import org.arachna.netweaver.nwdi.documenter.facets.DocumentationFacetProviderFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -62,12 +61,14 @@ public class CompartmentReportGeneratorTest {
     @Before
     public void setUp() throws Exception {
         dcFactory = new DevelopmentComponentFactory();
-        AntHelper antHelper = new AntHelper("", dcFactory);
-        VelocityEngine engine = new VelocityEngine();
-        generatorFactory = new ReportGeneratorFactory(new DocumentationFacetProviderFactory(antHelper), dcFactory,
-            engine, ResourceBundle.getBundle(
+        final AntHelper antHelper = new AntHelper("", dcFactory);
+        final VelocityEngine engine = new VelocityEngine();
+        generatorFactory =
+            new ReportGeneratorFactory(antHelper, dcFactory, engine, ResourceBundle.getBundle(
                 DocumentationBuilder.DC_REPORT_BUNDLE, Locale.GERMAN));
-        compartment = new Compartment("example.com_EXAMPLE_SC_1", CompartmentState.Source, "example.com", "EXAMPLE_SC", "EXAMPLE_SC");
+        compartment =
+            new Compartment("example.com_EXAMPLE_SC_1", CompartmentState.Source, "example.com", "EXAMPLE_SC",
+                "EXAMPLE_SC");
         additionalContext = new HashMap<String, Object>();
         additionalContext.put("wikiSpace", WIKI_SPACE);
         additionalContext.put("trackName", TRACK_NAME);
@@ -98,12 +99,13 @@ public class CompartmentReportGeneratorTest {
      */
     @Test
     public final void testExecute() {
-        StringWriter writer = new StringWriter();
+        final StringWriter writer = new StringWriter();
         generator.execute(writer, compartment, additionalContext, getTemplateReader());
-        String result = writer.toString();
-        String link = String.format("[%s|%s:%s_%s]", component.getName(), WIKI_SPACE, TRACK_NAME, component.getNormalizedName("_"));
-        assertTrue(result,
-            result.contains(link));
+        final String result = writer.toString();
+        final String link =
+            String.format("[%s|%s:%s_%s]", component.getName(), WIKI_SPACE, TRACK_NAME,
+                component.getNormalizedName("_"));
+        assertTrue(result, result.contains(link));
     }
 
 }
