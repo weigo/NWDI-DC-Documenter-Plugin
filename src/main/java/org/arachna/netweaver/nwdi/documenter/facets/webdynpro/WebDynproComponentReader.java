@@ -164,7 +164,7 @@ public final class WebDynproComponentReader {
      * 
      * @author Dirk Weigenand
      */
-    private final class CoreReferenceFactory extends AbstractObjectCreationFactory<CoreReference> {
+    private static final class CoreReferenceFactory extends AbstractObjectCreationFactory<CoreReference> {
         /**
          * {@inheritDoc}
          */
@@ -185,7 +185,7 @@ public final class WebDynproComponentReader {
      * 
      * @author Dirk Weigenand
      */
-    private final class ComponentUsageFactory extends AbstractObjectCreationFactory<ComponentUsage> {
+    private static final class ComponentUsageFactory extends AbstractObjectCreationFactory<ComponentUsage> {
         /**
          * {@inheritDoc}
          */
