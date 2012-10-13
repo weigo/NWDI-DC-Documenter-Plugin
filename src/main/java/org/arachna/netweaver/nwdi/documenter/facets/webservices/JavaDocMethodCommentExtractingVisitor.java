@@ -47,14 +47,15 @@ public class JavaDocMethodCommentExtractingVisitor extends VoidVisitorAdapter {
      * <code>JavaDocMethodCommentExtractingVisitor</code> that updates the given
      * methods with JavaDoc comments from the respective methods.
      * 
-     * @param classNameProvider
+     * @param classNameResolver
+     *            resolver for class names.
      * 
      * @param methods
      *            list of methods to update with JavaDoc comments.
      */
-    public JavaDocMethodCommentExtractingVisitor(final ClassNameResolver classNameProvider,
+    public JavaDocMethodCommentExtractingVisitor(final ClassNameResolver classNameResolver,
         final Iterable<Function> methods) {
-        classNameResolver = classNameProvider;
+        this.classNameResolver = classNameResolver;
 
         for (final Function method : methods) {
             List<Function> mappedMethods = methodMapping.get(method.getOriginalName());
@@ -82,8 +83,14 @@ public class JavaDocMethodCommentExtractingVisitor extends VoidVisitorAdapter {
     }
 
     /**
+     * Update the given methods description by attempting to extract meaningful
+     * data from the associated {@link JavadocComment}.
+     * 
      * @param method
+     *            method whose description shall be updated from the given
+     *            JavaDoc comment.
      * @param javaDoc
+     *            JavaDoc comment to use for extracting a method description.
      */
     private void updateDescriptions(final Function method, final JavadocComment javaDoc) {
         final JavaDocCommentContainer content = new JavaDocCommentContainer(javaDoc.getContent());
@@ -104,6 +111,16 @@ public class JavaDocMethodCommentExtractingVisitor extends VoidVisitorAdapter {
         }
     }
 
+    /**
+     * Find matching WebService-{@link Function} for the given
+     * {@link MethodDeclaration}.
+     * 
+     * @param methodDeclaration
+     *            method declaration for which to find a matching WebService
+     *            function.
+     * @return a matching WebService function or <code>null</code> when none
+     *         could be found.
+     */
     private Function getFunction(final MethodDeclaration methodDeclaration) {
         final List<Function> mappedMethods = methodMapping.get(methodDeclaration.getName());
         Function method = null;
