@@ -1,4 +1,4 @@
-package org.arachna.netweaver.nwdi.documenter.report;
+package org.arachna.netweaver.nwdi.dot4j;
 
 /**
  * Descriptor for paths to generated dependency diagrams.

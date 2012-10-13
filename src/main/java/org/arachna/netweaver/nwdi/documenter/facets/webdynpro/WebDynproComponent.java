@@ -147,18 +147,18 @@ public final class WebDynproComponent {
     }
 
     /**
-     * Get the list of controllers in this WD component.
+     * Get the list of views in this WD component.
      * 
-     * @return list of controllers in this WD component.
+     * @return list of views in this WD component.
      */
     public Collection<CoreReference> getViews() {
         return getTypedReferences(ReferenceType.View);
     }
 
     /**
-     * Get the list of controllers in this WD component.
+     * Get the list of windows in this WD component.
      * 
-     * @return list of controllers in this WD component.
+     * @return list of windows in this WD component.
      */
     public Collection<CoreReference> getWindows() {
         return getTypedReferences(ReferenceType.Window);

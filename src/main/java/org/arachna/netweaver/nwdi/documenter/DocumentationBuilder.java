@@ -25,10 +25,11 @@ import org.arachna.netweaver.dc.types.DevelopmentComponentFactory;
 import org.arachna.netweaver.dc.types.DevelopmentConfiguration;
 import org.arachna.netweaver.hudson.nwdi.AntTaskBuilder;
 import org.arachna.netweaver.hudson.nwdi.NWDIBuild;
+import org.arachna.netweaver.nwdi.documenter.filter.VendorFilter;
 import org.arachna.netweaver.nwdi.documenter.report.ContextPropertyName;
-import org.arachna.netweaver.nwdi.documenter.report.DependencyGraphGenerator;
 import org.arachna.netweaver.nwdi.documenter.report.DevelopmentConfigurationConfluenceWikiGenerator;
 import org.arachna.netweaver.nwdi.documenter.report.ReportGeneratorFactory;
+import org.arachna.netweaver.nwdi.dot4j.DependencyGraphGenerator;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
 

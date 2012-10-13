@@ -16,17 +16,18 @@ import java.util.Map;
 
 import jenkins.plugins.confluence.soap.v1.RemoteException;
 import jenkins.plugins.confluence.soap.v1.RemotePage;
-import jenkins.plugins.confluence.soap.v1.RemotePageSummary;
 import jenkins.plugins.confluence.soap.v1.RemotePageUpdateOptions;
 
 import org.arachna.netweaver.dc.types.AbstractDevelopmentConfigurationVisitor;
 import org.arachna.netweaver.dc.types.Compartment;
 import org.arachna.netweaver.dc.types.DevelopmentComponent;
 import org.arachna.netweaver.dc.types.DevelopmentConfiguration;
-import org.arachna.netweaver.nwdi.documenter.VendorFilter;
+import org.arachna.netweaver.nwdi.documenter.filter.VendorFilter;
 import org.arachna.netweaver.nwdi.documenter.report.svg.SVGParser;
 import org.arachna.netweaver.nwdi.documenter.report.svg.SVGProperties;
 import org.arachna.netweaver.nwdi.documenter.report.svg.SVGPropertyName;
+import org.arachna.netweaver.nwdi.dot4j.DiagramDescriptor;
+import org.arachna.netweaver.nwdi.dot4j.DiagramDescriptorContainer;
 
 import com.myyearbook.hudson.plugins.confluence.ConfluenceSession;
 
@@ -157,7 +158,11 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator extends Abstr
     }
 
     /**
+     * Create an overview page of licenses for external libraries used in the
+     * given development configuration.
+     * 
      * @param configuration
+     *            development configuration to create license overview for.
      */
     private void createGlobalLicenseOverviewPage(final DevelopmentConfiguration configuration) {
         final StringWriter writer = new StringWriter();
@@ -178,10 +183,10 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator extends Abstr
     }
 
     /**
-     * Create wiki content for the given development component.
+     * Create wiki content for the given compartment.
      * 
-     * @param component
-     *            DC to generate wiki documentation from.
+     * @param compartment
+     *            compartment to generate wiki documentation from.
      * @return generated documentation
      */
     protected String generateWikiPageContent(final Compartment compartment) {
@@ -303,25 +308,21 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator extends Abstr
      *             has no permission to access the page.
      */
     protected RemotePage getRemotePage(final String pageName, final Long parent) throws java.rmi.RemoteException {
-        RemotePageSummary pageSummary = null;
+        RemotePage page = null;
 
         try {
-            pageSummary = session.getPageSummary(getSpaceKey(), pageName);
+            // FIXME: Create wrapper for Confluence v1/v2 SOAP API.
+            page = session.getPage(getSpaceKey(), pageName);
         }
         catch (final RemoteException e) {
             logger.append(String.format("Page %s does not exist yet.\n", pageName));
         }
 
-        RemotePage page = null;
-
-        if (pageSummary == null) {
+        if (page == null) {
             page = new RemotePage();
             page.setSpace(getSpaceKey());
             page.setTitle(pageName);
             page.setParentId(parent);
-        }
-        else {
-            page = (RemotePage)pageSummary;
         }
 
         return page;

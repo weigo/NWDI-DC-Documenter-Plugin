@@ -10,7 +10,7 @@ import java.util.Set;
 import org.arachna.dot4j.model.Attributes;
 import org.arachna.dot4j.model.Edge;
 import org.arachna.netweaver.dc.types.DevelopmentComponent;
-import org.arachna.netweaver.nwdi.documenter.VendorFilter;
+import org.arachna.netweaver.nwdi.documenter.filter.VendorFilter;
 
 /**
  * Generator for <code>.dot</code> files visualizing the relation to development components using a development component.

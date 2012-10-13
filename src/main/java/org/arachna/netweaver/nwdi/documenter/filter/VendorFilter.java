@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.arachna.netweaver.nwdi.documenter;
+package org.arachna.netweaver.nwdi.documenter.filter;
 
 import java.util.regex.Pattern;
 

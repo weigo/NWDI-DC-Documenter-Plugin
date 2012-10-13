@@ -1,15 +1,13 @@
 /**
  *
  */
-package org.arachna.netweaver.nwdi.documenter.report;
+package org.arachna.netweaver.nwdi.dot4j;
 
 import java.io.IOException;
 import java.util.List;
 
 import org.arachna.netweaver.dc.types.DevelopmentComponent;
-import org.arachna.netweaver.nwdi.documenter.VendorFilter;
-import org.arachna.netweaver.nwdi.dot4j.DotFileWriter;
-import org.arachna.netweaver.nwdi.dot4j.UsingDevelopmentComponentsDotFileGenerator;
+import org.arachna.netweaver.nwdi.documenter.filter.VendorFilter;
 
 /**
  * Diagram writer for usage relations of development components.

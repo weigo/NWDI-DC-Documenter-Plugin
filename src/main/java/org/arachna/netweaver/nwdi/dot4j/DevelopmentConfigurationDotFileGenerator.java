@@ -7,7 +7,7 @@ import org.arachna.dot4j.model.Attributes;
 import org.arachna.dot4j.model.Node;
 import org.arachna.netweaver.dc.types.Compartment;
 import org.arachna.netweaver.dc.types.DevelopmentConfiguration;
-import org.arachna.netweaver.nwdi.documenter.VendorFilter;
+import org.arachna.netweaver.nwdi.documenter.filter.VendorFilter;
 
 /**
  * Create a <code>.dot</code> file for a development configuration.

@@ -3,7 +3,6 @@
  */
 package org.arachna.netweaver.nwdi.documenter.report;
 
-import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
 import java.util.ArrayList;
@@ -12,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.context.Context;
 import org.arachna.netweaver.dc.types.Compartment;
@@ -25,17 +23,7 @@ import org.arachna.netweaver.dc.types.DevelopmentConfiguration;
  * 
  * @author Dirk Weigenand
  */
-public final class DevelopmentConfigurationReportGenerator {
-    /**
-     * velocity template engine.
-     */
-    private final VelocityEngine velocityEngine;
-
-    /**
-     * I18N resource bundle.
-     */
-    private final ResourceBundle bundle;
-
+public final class DevelopmentConfigurationReportGenerator extends AbstractReportGenerator {
     /**
      * Create documentation generator for development configurations using the
      * given velocity template engine and resource bundle for I18N.
@@ -46,8 +34,7 @@ public final class DevelopmentConfigurationReportGenerator {
      *            I18N resource bundle
      */
     public DevelopmentConfigurationReportGenerator(final VelocityEngine velocityEngine, final ResourceBundle bundle) {
-        this.velocityEngine = velocityEngine;
-        this.bundle = bundle;
+        super(velocityEngine, bundle);
     }
 
     /**
@@ -65,27 +52,14 @@ public final class DevelopmentConfigurationReportGenerator {
      */
     public void execute(final Writer writer, final DevelopmentConfiguration configuration,
         final Map<String, Object> additionalContext, final Reader template) {
-        final Context context = new VelocityContext();
+        final Context context = createContext(additionalContext);
         context.put("configuration", configuration);
         final List<Compartment> compartments =
             new ArrayList<Compartment>(configuration.getCompartments(CompartmentState.Source));
         Collections.sort(compartments, new CompartmentByNameComparator());
         context.put("compartments", compartments);
-        context.put("bundle", bundle);
-        context.put("bundleHelper", new BundleHelper(bundle));
         context.put("trackName", configuration.getName());
 
-        for (final Map.Entry<String, Object> entry : additionalContext.entrySet()) {
-            context.put(entry.getKey(), entry.getValue());
-        }
-
-        velocityEngine.evaluate(context, writer, "", template);
-
-        try {
-            writer.close();
-        }
-        catch (final IOException ioe) {
-            throw new RuntimeException(ioe);
-        }
+        evaluate(context, writer, template);
     }
 }

@@ -15,7 +15,7 @@ import org.arachna.dot4j.model.Node;
 import org.arachna.netweaver.dc.types.DevelopmentComponent;
 import org.arachna.netweaver.dc.types.DevelopmentComponentFactory;
 import org.arachna.netweaver.dc.types.PublicPartReference;
-import org.arachna.netweaver.nwdi.documenter.VendorFilter;
+import org.arachna.netweaver.nwdi.documenter.filter.VendorFilter;
 
 /**
  * Generator for graphviz <code>.dot</code> files depicting relations between a development component and development components used by

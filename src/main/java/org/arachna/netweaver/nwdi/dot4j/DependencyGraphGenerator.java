@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.arachna.netweaver.nwdi.documenter.report;
+package org.arachna.netweaver.nwdi.dot4j;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -18,11 +18,7 @@ import org.arachna.netweaver.dc.types.DevelopmentComponent;
 import org.arachna.netweaver.dc.types.DevelopmentComponentFactory;
 import org.arachna.netweaver.dc.types.DevelopmentConfiguration;
 import org.arachna.netweaver.dc.types.DevelopmentConfigurationVisitor;
-import org.arachna.netweaver.nwdi.documenter.VendorFilter;
-import org.arachna.netweaver.nwdi.dot4j.DevelopmentComponentDotFileGenerator;
-import org.arachna.netweaver.nwdi.dot4j.DevelopmentConfigurationDotFileGenerator;
-import org.arachna.netweaver.nwdi.dot4j.DotFileWriter;
-import org.arachna.netweaver.nwdi.dot4j.UsingDevelopmentComponentsDotFileGenerator;
+import org.arachna.netweaver.nwdi.documenter.filter.VendorFilter;
 
 /**
  * Generator for dependency graphs of software and development components of a development configuration.
