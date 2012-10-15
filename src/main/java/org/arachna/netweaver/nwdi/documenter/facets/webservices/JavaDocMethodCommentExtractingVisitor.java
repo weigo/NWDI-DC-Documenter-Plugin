@@ -156,7 +156,7 @@ public class JavaDocMethodCommentExtractingVisitor extends VoidVisitorAdapter {
             return true;
         }
 
-        boolean matches = methodParameters.size() == parameters.size();
+        boolean matches = methodParameters != null && methodParameters.size() == parameters.size();
 
         if (matches) {
             final Iterator<japa.parser.ast.body.Parameter> params = methodParameters.iterator();
