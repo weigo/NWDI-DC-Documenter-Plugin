@@ -26,7 +26,7 @@ final class LicenseExtractor {
     /**
      * Logger.
      */
-    private static final Logger LOGGER = Logger.getLogger(LicenseInspector.class);
+    private static final Logger LOGGER = Logger.getLogger(LicenseExtractor.class);
 
     /**
      * Regular expression to match Jar-Entries against. Matches jar entries that
