@@ -12,13 +12,14 @@ import java.util.ResourceBundle;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.context.Context;
+import org.apache.velocity.tools.generic.EscapeTool;
 
 /**
  * Base class for report generators.
  * 
  * @author Dirk Weigenand
  */
-public abstract class AbstractReportGenerator {
+public abstract class AbstractReportGenerator implements ReportGenerator {
     /**
      * velocity template engine.
      */
@@ -58,13 +59,17 @@ public abstract class AbstractReportGenerator {
      *            velocity template to use for transformation.
      */
     protected final void evaluate(final Context context, final Writer writer, final Reader template) {
-        velocityEngine.evaluate(context, writer, "", template);
-
         try {
-            writer.close();
+            velocityEngine.evaluate(context, writer, "", template);
         }
-        catch (final IOException ioe) {
-            throw new RuntimeException(ioe);
+        finally {
+            try {
+                writer.close();
+            }
+            catch (final IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         }
     }
 
@@ -78,13 +83,22 @@ public abstract class AbstractReportGenerator {
      */
     protected final Context createContext(final Map<String, Object> additionalContext) {
         final Context context = new VelocityContext();
-        context.put("bundle", bundle);
-        context.put("bundleHelper", new BundleHelper(bundle));
+        context.put("bundle", getBundle());
+        context.put("bundleHelper", new BundleHelper(getBundle()));
+        context.put("escape", new EscapeTool());
+        context.put("lang", getBundle().getLocale().getLanguage());
 
         for (final Map.Entry<String, Object> entry : additionalContext.entrySet()) {
             context.put(entry.getKey(), entry.getValue());
         }
 
         return context;
+    }
+
+    /**
+     * @return the bundle
+     */
+    public ResourceBundle getBundle() {
+        return bundle;
     }
 }

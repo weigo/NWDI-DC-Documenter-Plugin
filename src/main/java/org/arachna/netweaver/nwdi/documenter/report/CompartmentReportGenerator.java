@@ -19,6 +19,11 @@ import org.arachna.netweaver.dc.types.Compartment;
  */
 public final class CompartmentReportGenerator extends AbstractReportGenerator {
     /**
+     * Compartment to generate report for.
+     */
+    private final Compartment compartment;
+
+    /**
      * Create a <code>CompartmentReportGenerator</code> using the given
      * {@link VelocityEngine}, and resource bundle.
      * 
@@ -28,9 +33,13 @@ public final class CompartmentReportGenerator extends AbstractReportGenerator {
      *            VelocityEngine used to transform template.
      * @param bundle
      *            the ResourceBundle used for I18N.
+     * @param compartment
+     *            compartment/software component to document.
      */
-    public CompartmentReportGenerator(final VelocityEngine velocityEngine, final ResourceBundle bundle) {
+    public CompartmentReportGenerator(final VelocityEngine velocityEngine, final ResourceBundle bundle,
+        final Compartment compartment) {
         super(velocityEngine, bundle);
+        this.compartment = compartment;
     }
 
     /**
@@ -39,15 +48,12 @@ public final class CompartmentReportGenerator extends AbstractReportGenerator {
      * 
      * @param writer
      *            writer to generate documentation into.
-     * @param compartment
-     *            compartment/software component to document.
      * @param additionalContext
      *            additional context attributes supplied externally
      * @param template
      *            a reader to supply the used template
      */
-    public void execute(final Writer writer, final Compartment compartment,
-        final Map<String, Object> additionalContext, final Reader template) {
+    public void execute(final Writer writer, final Map<String, Object> additionalContext, final Reader template) {
         final Context context = createContext(additionalContext);
         context.put("compartment", compartment);
 

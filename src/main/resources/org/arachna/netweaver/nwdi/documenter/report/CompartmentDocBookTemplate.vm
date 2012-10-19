@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<chapter xmlns="http://docbook.org/ns/docbook" xmlns:xl="http://www.w3.org/1999/xlink" version="5.1" xmlns:xi="http://www.w3.org/2001/XInclude"
+ xml:id="$compartment.getName()" xml:lang="$lang">
+<title>$bundle.getString("softwareComponent") $compartment.vendor $compartment.softwareComponent</title>
+<indexterm>
+  <primary>$bundle.getString("softwareComponents")</primary>
+  <secondary>$compartment.vendor $compartment.softwareComponent</secondary>
+</indexterm>
+<indexterm>
+  <primary>$bundle.getString("vendor")</primary>
+  <secondary>$compartment.vendor</secondary>
+</indexterm>
+
+<para>$escape.xml($compartment.getDescription())</para>
+
+#if ($compartment.getDevelopmentComponents())
+<section>
+<title>$bundle.getString("developmentComponents")</title>
+
+<table>
+  <title>$bundleHelper.render("dcsInCompartment.table.caption", $compartment.getName())</title>
+  <tgroup cols="4">
+     <colspec colnum="1" colname="c1" colwidth="3*"/>
+     <colspec colnum="2" colname="c2" colwidth="3*"/>
+     <colspec colnum="3" colname="c3" colwidth="5*"/>
+     <colspec colnum="4" colname="c4" colwidth="5*"/>
+  <thead>
+    <row>
+      <entry>$bundle.getString("vendor")</entry>
+      <entry>$bundle.getString("developmentComponent")</entry>
+      <entry>$bundle.getString("dcType")</entry>
+      <entry>$bundle.getString("description")</entry>
+    </row>
+  </thead>
+  <tbody>
+#foreach($dc in $compartment.getDevelopmentComponents())
+    <row>
+      <entry>$dc.getVendor()</entry>
+      <entry><link role="wiki" linkend="${dc.getNormalizedName("_")}">$dc.getName()</link></entry>
+      <entry>$dc.getType().toString()</entry>
+      <entry>$escape.xml($dc.getCaption())</entry>
+    </row>
+#end
+  </tbody>
+  </tgroup>
+  </table>
+</section>
+#end
+
+#foreach($dc in $compartment.getDevelopmentComponents())
+<xi:include href="${dc.getNormalizedName("_")}.xml"/>
+#end
+</chapter>

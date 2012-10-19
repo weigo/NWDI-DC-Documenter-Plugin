@@ -7,12 +7,20 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.xml.transform.Templates;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerFactoryConfigurationError;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
 
 import jenkins.plugins.confluence.soap.v1.RemoteException;
 import jenkins.plugins.confluence.soap.v1.RemotePage;
@@ -24,8 +32,6 @@ import org.arachna.netweaver.dc.types.DevelopmentComponent;
 import org.arachna.netweaver.dc.types.DevelopmentConfiguration;
 import org.arachna.netweaver.nwdi.documenter.filter.VendorFilter;
 import org.arachna.netweaver.nwdi.documenter.report.svg.SVGParser;
-import org.arachna.netweaver.nwdi.documenter.report.svg.SVGProperties;
-import org.arachna.netweaver.nwdi.documenter.report.svg.SVGPropertyName;
 import org.arachna.netweaver.nwdi.dot4j.DiagramDescriptor;
 import org.arachna.netweaver.nwdi.dot4j.DiagramDescriptorContainer;
 
@@ -38,30 +44,9 @@ import com.myyearbook.hudson.plugins.confluence.ConfluenceSession;
  */
 public final class DevelopmentConfigurationConfluenceWikiGenerator extends AbstractDevelopmentConfigurationVisitor {
     /**
-     * velocity template for DC report generation.
+     * path to XSL stylesheets.
      */
-    public static final String DC_WIKI_TEMPLATE =
-        "/org/arachna/netweaver/nwdi/documenter/report/DevelopmentComponentWikiTemplate.vm";
-
-    /**
-     * velocity template for formatting wiki content for development
-     * configurations.
-     */
-    public static final String DEV_CONF_WIKI_TEMPLATE =
-        "/org/arachna/netweaver/nwdi/documenter/report/DevelopmentConfigurationWikiTemplate.vm";
-
-    /**
-     * velocity template for formatting wiki content for compartments.
-     */
-    public static final String COMPARTMENT_WIKI_TEMPLATE =
-        "/org/arachna/netweaver/nwdi/documenter/report/CompartmentWikiTemplate.vm";
-
-    /**
-     * velocity template for formatting wiki content for global overview over
-     * licenses of external libraries used in a track.
-     */
-    public static final String GLOBAL_LICENSE_OVERVIEW_WIKI_TEMPLATE =
-        "/org/arachna/netweaver/nwdi/documenter/report/GlobalLicenseOverviewWikiTemplate.vm";
+    private static final String STYLESHEET_PATH_TEMPLATE = "/org/arachna/netweaver/nwdi/documenter/report/%s";
 
     /**
      * Confluence session used to publish to confluence site.
@@ -74,10 +59,9 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator extends Abstr
     private final VendorFilter vendorFilter;
 
     /**
-     * Generator for a report on a development component. The target format is
-     * determined via the Velocity template given at build time.
+     * base folder containing docbook sources for wiki pages.
      */
-    private final ReportGeneratorFactory reportGeneratorFactory;
+    private final File reportSourceFolder;
 
     /**
      * Log exceptional messages.
@@ -117,11 +101,16 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator extends Abstr
     private String trackName;
 
     /**
+     * Template for transforming docbook to confluence wiki pages.
+     */
+    private final Templates template;
+
+    /**
      * Create an instance of the confluence wiki content generator for
      * development components.
      * 
-     * @param reportGeneratorFactory
-     *            the report generator factory.
+     * @param reportSourceFolder
+     *            base folder containing docbook sources for wiki pages.
      * @param vendorFilter
      *            filter for development components by vendor.
      * @param session
@@ -131,14 +120,27 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator extends Abstr
      * @param dotFileDescriptorContainer
      *            container for descriptors of generated dependency diagrams.
      */
-    public DevelopmentConfigurationConfluenceWikiGenerator(final ReportGeneratorFactory reportGeneratorFactory,
+    public DevelopmentConfigurationConfluenceWikiGenerator(final File reportSourceFolder,
         final VendorFilter vendorFilter, final ConfluenceSession session, final PrintStream logger,
         final DiagramDescriptorContainer dotFileDescriptorContainer) {
         this.vendorFilter = vendorFilter;
         this.session = session;
         this.logger = logger;
         this.dotFileDescriptorContainer = dotFileDescriptorContainer;
-        this.reportGeneratorFactory = reportGeneratorFactory;
+        this.reportSourceFolder = reportSourceFolder;
+
+        try {
+            template =
+                TransformerFactory.newInstance().newTemplates(
+                    new StreamSource(this.getClass().getResourceAsStream(
+                        String.format(STYLESHEET_PATH_TEMPLATE, "confluence-pre4.xsl"))));
+        }
+        catch (final TransformerConfigurationException e) {
+            throw new IllegalStateException(e);
+        }
+        catch (final TransformerFactoryConfigurationError e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     /**
@@ -148,7 +150,6 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator extends Abstr
     public void visit(final DevelopmentConfiguration configuration) {
         try {
             trackName = configuration.getName();
-            additionalContext.put("trackName", trackName);
             createOverviewPage(configuration);
             createGlobalLicenseOverviewPage(configuration);
         }
@@ -166,9 +167,6 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator extends Abstr
      */
     private void createGlobalLicenseOverviewPage(final DevelopmentConfiguration configuration) {
         final StringWriter writer = new StringWriter();
-
-        reportGeneratorFactory.createGlobalLicenseOverviewReportGenerator().execute(writer, configuration,
-            additionalContext, getTemplateReader(GLOBAL_LICENSE_OVERVIEW_WIKI_TEMPLATE));
 
         createOrUpdatePage("LicenseOverviewExternalLibraries", writer.toString(), trackOverviewPage.getId());
     }
@@ -190,12 +188,18 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator extends Abstr
      * @return generated documentation
      */
     protected String generateWikiPageContent(final Compartment compartment) {
-        final StringWriter writer = new StringWriter();
+        String docBook = String.format("%s/%s.xml", compartment.getName(),
+            compartment.getName());
+        return transform(createDocBookTemplateReader(docBook));
+    }
 
-        reportGeneratorFactory.createCompartmentReportGenerator().execute(writer, compartment, additionalContext,
-            getTemplateReader(COMPARTMENT_WIKI_TEMPLATE));
-
-        return writer.toString();
+    private Reader createDocBookTemplateReader(final String docBookTemplate) {
+        try {
+            return new FileReader(new File(reportSourceFolder, docBookTemplate));
+        }
+        catch (final FileNotFoundException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     /**
@@ -207,13 +211,6 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator extends Abstr
             final String pageName = component.getNormalizedName("_");
             final DiagramDescriptor descriptor = dotFileDescriptorContainer.getDescriptor(component);
 
-            if (descriptor != null) {
-                addDiagramWidthToAdditionalContext("UsedDCsDiagramWidth", "UsedDCsDiagramHeight",
-                    descriptor.getUsedDCsDiagram());
-                addDiagramWidthToAdditionalContext("UsingDCsDiagramWidth", "UsingDCsDiagramHeight",
-                    descriptor.getUsingDCsDiagram());
-            }
-
             final String pageContent = generateWikiPageContent(component);
             final RemotePage page = createOrUpdatePage(pageName, pageContent, currentCompartmentOverviewPage.getId());
 
@@ -221,22 +218,6 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator extends Abstr
                 addDependencyDiagram(page.getId(), descriptor.getUsedDCsDiagram());
                 addDependencyDiagram(page.getId(), descriptor.getUsingDCsDiagram());
             }
-        }
-    }
-
-    /**
-     * @param descriptor
-     */
-    private void addDiagramWidthToAdditionalContext(final String widthProperty, final String heightProperty,
-        final String diagramName) {
-        try {
-            final SVGProperties properties =
-                svgParser.parse(new FileReader(diagramName.replaceFirst("\\.dot", "\\.svg")));
-            additionalContext.put(widthProperty, properties.getProperty(SVGPropertyName.WIDTH));
-            additionalContext.put(heightProperty, properties.getProperty(SVGPropertyName.HEIGHT));
-        }
-        catch (final FileNotFoundException e) {
-            logger.append(e.getLocalizedMessage());
         }
     }
 
@@ -336,24 +317,9 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator extends Abstr
      * @return generated documentation
      */
     protected String generateWikiPageContent(final DevelopmentComponent component) {
-        final StringWriter writer = new StringWriter();
-
-        reportGeneratorFactory.createDevelopmentComponentReportGenerator().execute(writer, component,
-            additionalContext, getTemplateReader(DC_WIKI_TEMPLATE));
-
-        return writer.toString();
-    }
-
-    /**
-     * Return a reader for the template to use for generation of documentation.
-     * 
-     * @param template
-     *            name of classpath resource containing the Velocity template.
-     * @return {@link Reader} for velocity template used to generate
-     *         documentation.
-     */
-    protected Reader getTemplateReader(final String template) {
-        return new InputStreamReader(this.getClass().getResourceAsStream(template));
+        final String docBook =
+            String.format("%s/%s.xml", component.getCompartment().getName(), component.getNormalizedName("_"));
+        return transform(createDocBookTemplateReader(docBook));
     }
 
     /**
@@ -375,12 +341,8 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator extends Abstr
      * @return
      */
     private String generateWikiPageContent(final DevelopmentConfiguration configuration) {
-        final StringWriter writer = new StringWriter();
-
-        reportGeneratorFactory.createDevelopmentConfigurationReportGenerator().execute(writer, configuration,
-            additionalContext, getTemplateReader(DEV_CONF_WIKI_TEMPLATE));
-
-        return writer.toString();
+        String docBook = String.format("%s.xml", configuration.getName());
+        return transform(createDocBookTemplateReader(docBook));
     }
 
     /**
@@ -395,5 +357,33 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator extends Abstr
 
     private String getSpaceKey() {
         return (String)additionalContext.get(ContextPropertyName.WikiSpace.getName());
+    }
+
+    private Transformer newTransformer() {
+        Transformer transformer;
+
+        try {
+            transformer = template.newTransformer();
+            transformer.setParameter("wikiSpace", getSpaceKey());
+            transformer.setParameter("track", trackName);
+        }
+        catch (final TransformerConfigurationException e) {
+            throw new IllegalStateException(e);
+        }
+
+        return transformer;
+    }
+
+    private String transform(final Reader source) {
+        final StringWriter result = new StringWriter();
+
+        try {
+            newTransformer().transform(new StreamSource(source), new StreamResult(result));
+        }
+        catch (final TransformerException e) {
+            throw new IllegalStateException(e);
+        }
+
+        return result.toString();
     }
 }

@@ -11,9 +11,11 @@
     </sequential>
   </macrodef>
   <target name="convert-all">
+    <parallel threadCount="$threads">
 #foreach($dotFile in $dotFiles)
-    <echo message="Converting $dotFile to SVG." />
-    <convert-single source="$dotFile.replace('.dot', '')" />
+      <echo message="Converting $dotFile to SVG." />
+      <convert-single source="$dotFile.replace('.dot', '')" />
 #end
+    </parallel>
   </target>
 </project>

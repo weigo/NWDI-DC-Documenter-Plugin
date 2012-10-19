@@ -3,9 +3,7 @@
  */
 package org.arachna.netweaver.nwdi.documenter.report;
 
-import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.io.Reader;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -18,7 +16,6 @@ import org.arachna.netweaver.dc.types.DevelopmentComponentFactory;
 import org.arachna.netweaver.dc.types.DevelopmentComponentType;
 import org.arachna.netweaver.nwdi.documenter.DocumentationBuilder;
 import org.arachna.velocity.VelocityHelper;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -33,21 +30,15 @@ public class DevelopmentComponentReportGeneratorTest {
      * @throws java.lang.Exception
      */
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         dcFactory = new DevelopmentComponentFactory();
         final VelocityEngine velocityEngine = new VelocityHelper(System.out).getVelocityEngine();
         // final ResourceBundle bundle
+        final DevelopmentComponent component = dcFactory.create("example.com", "dc", DevelopmentComponentType.Java);
         generator =
             new DevelopmentComponentReportGenerator(
                 new DocumentationFacetProviderFactory(new AntHelper("", dcFactory)), dcFactory, velocityEngine,
-                ResourceBundle.getBundle(DocumentationBuilder.DC_REPORT_BUNDLE, Locale.GERMAN));
-    }
-
-    /**
-     * @throws java.lang.Exception
-     */
-    @After
-    public void tearDown() throws Exception {
+                ResourceBundle.getBundle(DocumentationBuilder.DC_REPORT_BUNDLE, Locale.GERMAN), component);
     }
 
     /**
@@ -61,14 +52,8 @@ public class DevelopmentComponentReportGeneratorTest {
         final Map<String, Object> context = new HashMap<String, Object>();
         context.put(ContextPropertyName.ProjectUrl.getName(), "projectUrl");
         context.put(ContextPropertyName.WikiSpace.getName(), "NWENV");
-        final DevelopmentComponent component = dcFactory.create("example.com", "dc", DevelopmentComponentType.Java);
 
-        generator.execute(writer, component, context, getTemplateReader());
+        // FIXME: add asserts for project url generation.
+        generator.execute(writer, context, DocBookVelocityTemplate.DevelopmentComponent.getTemplate());
     }
-
-    protected Reader getTemplateReader() {
-        return new InputStreamReader(this.getClass().getResourceAsStream(
-            DevelopmentConfigurationConfluenceWikiGenerator.DC_WIKI_TEMPLATE));
-    }
-
 }

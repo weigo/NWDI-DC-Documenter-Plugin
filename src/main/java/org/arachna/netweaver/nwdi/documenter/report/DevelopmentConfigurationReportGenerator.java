@@ -25,6 +25,11 @@ import org.arachna.netweaver.dc.types.DevelopmentConfiguration;
  */
 public final class DevelopmentConfigurationReportGenerator extends AbstractReportGenerator {
     /**
+     * development configuration to create report for.
+     */
+    private final DevelopmentConfiguration configuration;
+
+    /**
      * Create documentation generator for development configurations using the
      * given velocity template engine and resource bundle for I18N.
      * 
@@ -32,9 +37,13 @@ public final class DevelopmentConfigurationReportGenerator extends AbstractRepor
      *            template engine
      * @param bundle
      *            I18N resource bundle
+     * @param configuration
+     *            development configuration to create report for.
      */
-    public DevelopmentConfigurationReportGenerator(final VelocityEngine velocityEngine, final ResourceBundle bundle) {
+    public DevelopmentConfigurationReportGenerator(final VelocityEngine velocityEngine, final ResourceBundle bundle,
+        final DevelopmentConfiguration configuration) {
         super(velocityEngine, bundle);
+        this.configuration = configuration;
     }
 
     /**
@@ -43,17 +52,15 @@ public final class DevelopmentConfigurationReportGenerator extends AbstractRepor
      * 
      * @param writer
      *            writer to generate documentation into.
-     * @param configuration
-     *            development configuration to document.
      * @param additionalContext
      *            additional context attributes supplied externally.
      * @param template
      *            for velocity template.
      */
-    public void execute(final Writer writer, final DevelopmentConfiguration configuration,
-        final Map<String, Object> additionalContext, final Reader template) {
+    public void execute(final Writer writer, final Map<String, Object> additionalContext, final Reader template) {
         final Context context = createContext(additionalContext);
         context.put("configuration", configuration);
+
         final List<Compartment> compartments =
             new ArrayList<Compartment>(configuration.getCompartments(CompartmentState.Source));
         Collections.sort(compartments, new CompartmentByNameComparator());

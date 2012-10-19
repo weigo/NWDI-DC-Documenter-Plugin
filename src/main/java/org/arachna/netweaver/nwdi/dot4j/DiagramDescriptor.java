@@ -1,5 +1,7 @@
 package org.arachna.netweaver.nwdi.dot4j;
 
+import hudson.Util;
+
 /**
  * Descriptor for paths to generated dependency diagrams.
  * 
@@ -19,7 +21,8 @@ public final class DiagramDescriptor {
     private final String usingDCsDiagram;
 
     /**
-     * Create descriptor with absolute paths to the diagrams of used and using DCs.
+     * Create descriptor with absolute paths to the diagrams of used and using
+     * DCs.
      * 
      * @param usedDCsDiagram
      *            diagram for DCs used by the entity
@@ -27,9 +30,8 @@ public final class DiagramDescriptor {
      *            diagram for DCs using the entity
      */
     DiagramDescriptor(final String usedDCsDiagram, final String usingDCsDiagram) {
-        this.usedDCsDiagram = usedDCsDiagram;
-        this.usingDCsDiagram = usingDCsDiagram;
-
+        this.usedDCsDiagram = Util.fixNull(usedDCsDiagram);
+        this.usingDCsDiagram = Util.fixNull(usingDCsDiagram);
     }
 
     /**

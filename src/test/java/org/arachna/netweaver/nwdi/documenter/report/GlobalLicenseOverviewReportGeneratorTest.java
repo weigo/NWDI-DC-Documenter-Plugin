@@ -3,8 +3,6 @@
  */
 package org.arachna.netweaver.nwdi.documenter.report;
 
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -72,7 +70,7 @@ public class GlobalLicenseOverviewReportGeneratorTest {
             Mockito.mock(DocumentationFacetProviderFactory.class);
         Mockito.when(facetProviderFactory.getInstance(DevelopmentComponentType.ExternalLibrary)).thenReturn(providers);
         config = new DevelopmentConfiguration("DI0_Example_D");
-        Compartment compartment = Compartment.create(VENDOR, "EXAMPLE_SC", CompartmentState.Source, "");
+        final Compartment compartment = Compartment.create(VENDOR, "EXAMPLE_SC", CompartmentState.Source, "");
         config.add(compartment);
         additionalContext = new HashMap<String, Object>();
         additionalContext.put("wikiSpace", "NWENV");
@@ -83,7 +81,7 @@ public class GlobalLicenseOverviewReportGeneratorTest {
 
         generator =
             new GlobalLicenseOverviewReportGenerator(facetProviderFactory, new VelocityEngine(),
-                ResourceBundle.getBundle(DocumentationBuilder.DC_REPORT_BUNDLE, Locale.GERMAN));
+                ResourceBundle.getBundle(DocumentationBuilder.DC_REPORT_BUNDLE, Locale.GERMAN), config);
     }
 
     /**
@@ -100,13 +98,12 @@ public class GlobalLicenseOverviewReportGeneratorTest {
      */
     @Test
     public final void testExecute() {
-        licenseInspector.add(dcFactory.get(VENDOR, EXAMPLE_DC_1),
-            Arrays.asList(new LicenseDescriptor(License.Apache, "commons-1.2.3", "licenseText..."), new LicenseDescriptor(License.MIT,
-                "stapler.jar", "licenseText..."), new LicenseDescriptor(License.Other,
-                "junit-4.10.jar", "licenseText..."), new LicenseDescriptor(License.None,
-                "xyz.jar", "licenseText...")));
-        StringWriter result = new StringWriter();
-        generator.execute(result, config, additionalContext, getTemplate());
+        licenseInspector.add(dcFactory.get(VENDOR, EXAMPLE_DC_1), Arrays.asList(new LicenseDescriptor(License.Apache,
+            "commons-1.2.3", "licenseText..."), new LicenseDescriptor(License.MIT, "stapler.jar", "licenseText..."),
+            new LicenseDescriptor(License.Other, "junit-4.10.jar", "licenseText..."), new LicenseDescriptor(
+                License.None, "xyz.jar", "licenseText...")));
+        final StringWriter result = new StringWriter();
+        generator.execute(result, additionalContext, DocBookVelocityTemplate.LicenseOverView.getTemplate());
         System.err.println(result.toString());
     }
 
@@ -125,10 +122,5 @@ public class GlobalLicenseOverviewReportGeneratorTest {
         void add(final DevelopmentComponent component, final Collection<LicenseDescriptor> descriptors) {
             dc2LicenseDescriptors.put(component, descriptors);
         }
-    }
-
-    private Reader getTemplate() {
-        return new InputStreamReader(this.getClass().getResourceAsStream(
-            DevelopmentConfigurationConfluenceWikiGenerator.GLOBAL_LICENSE_OVERVIEW_WIKI_TEMPLATE));
     }
 }

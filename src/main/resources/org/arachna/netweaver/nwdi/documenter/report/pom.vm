@@ -1,0 +1,126 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>$configuration.getName()</groupId>
+  <artifactId>$configuration.getName()</artifactId>
+  <version>$configuration.getVersion()</version>
+  <packaging>pom</packaging>
+  <name>$configuration.getName()</name>
+  <description>$configuration.getDescription()</description>
+  <properties>
+    <source.encoding>UTF-8</source.encoding>
+  </properties>
+  
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>com.agilejava.docbkx</groupId>
+        <artifactId>docbkx-maven-plugin</artifactId>
+        <version>2.0.14</version>
+        <configuration>
+          <chunkedOutput>true</chunkedOutput>
+          <generateToc>1</generateToc>
+          <generateIndex>1</generateIndex>
+          <useExtensions>1</useExtensions>
+          <graphicsizeExtension>1</graphicsizeExtension>
+          <indexLinksToSection>1</indexLinksToSection>
+          <chunkerOutputIndent>yes</chunkerOutputIndent>
+          <chunkerOutputEncoding>$encoding</chunkerOutputEncoding>
+          <navigShowtitles>0</navigShowtitles>
+          <suppressNavigation>0</suppressNavigation>
+          <generateToc>book toc,title,figure chapter toc,title section title, appendix</generateToc>
+          <generateSectionTocLevel>3</generateSectionTocLevel>
+          <tocSectionDepth>5</tocSectionDepth>
+          <sectionAutolabel>1</sectionAutolabel>
+          <sectionLabelIncludesComponentLabel>1</sectionLabelIncludesComponentLabel>
+          <admonGraphics>1</admonGraphics>
+          <navigGraphics>1</navigGraphics>
+          <calloutDefaultcolumn>80</calloutDefaultcolumn>
+          <calloutGraphicsExtension>.png</calloutGraphicsExtension>
+          <calloutGraphicsPath>images/callouts/</calloutGraphicsPath>
+          <calloutGraphics>1</calloutGraphics>
+          <calloutsExtension>1</calloutsExtension>
+          <defaultTableWidth>100%</defaultTableWidth>
+          <htmlCellspacing>5</htmlCellspacing>
+          <htmlCellpadding>5</htmlCellpadding>
+          <htmlStylesheetType>text/css</htmlStylesheetType>
+          <htmlStylesheet>css/style.css</htmlStylesheet>
+          <cssDecoration>1</cssDecoration>
+          <xincludeSupported>true</xincludeSupported>
+          <!-- imgSrcPath>${project.build.directory}/docbkx/html/$configuration.getName()/</imgSrcPath -->
+          <includes>${configuration.getName()}.xml</includes>
+          <preProcess>
+            <copy todir="${project.build.directory}/docbkx/html/images" flatten="yes">
+              <fileset dir="src/docbkx">
+                <include name="**/*.png" />
+                <include name="**/*.gif" />
+                <include name="**/*.svg" />
+              </fileset>
+            </copy>
+            <copy todir="${project.build.directory}/docbkx/html/css">
+              <fileset dir="src/docbkx/css">
+                <include name="**/*.css" />
+              </fileset>
+            </copy>
+          </preProcess>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>generate-html</goal>
+              <goal>generate-pdf</goal>
+            </goals>
+          </execution>
+        </executions>
+        <dependencies>
+          <dependency>
+            <groupId>net.sf.docbook</groupId>
+            <artifactId>docbook-xsl</artifactId>
+            <version>1.77.1</version>
+            <type>zip</type>
+            <classifier>ns-resources</classifier>
+          </dependency>
+          <dependency>
+            <groupId>net.sf.docbook</groupId>
+            <artifactId>docbook-xml</artifactId>
+            <version>5.0-all</version>
+            <classifier>resources</classifier>
+            <type>zip</type>
+            <scope>runtime</scope>
+          </dependency>
+          <dependency>
+            <groupId>net.sf.docbook</groupId> 
+            <artifactId>docbook-xsl-saxon</artifactId>  
+            <version>1.0.0</version>
+          </dependency>
+          <dependency>
+            <groupId>net.sf.offo</groupId>
+            <artifactId>fop-hyph</artifactId>
+            <version>1.2</version>
+          </dependency>    
+          <dependency>
+            <groupId>net.sourceforge.saxon</groupId>
+            <artifactId>saxon</artifactId>
+            <version>9.1.0.8</version>
+            <classifier>jdom</classifier>
+            <scope>runtime</scope>
+          </dependency>
+          </dependencies>
+      </plugin>
+    </plugins>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-resources-plugin</artifactId>
+          <version>2.4.3</version>
+          <configuration>
+            <encoding>${source.encoding}</encoding>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+</project>

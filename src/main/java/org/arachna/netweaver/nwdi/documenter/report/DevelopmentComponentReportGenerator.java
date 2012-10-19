@@ -32,6 +32,11 @@ public final class DevelopmentComponentReportGenerator extends AbstractReportGen
     private final DocumentationFacetProviderFactory documentationFacetProviderFactory;
 
     /**
+     * development component to document.
+     */
+    private final DevelopmentComponent component;
+
+    /**
      * Create a <code>DevelopmentComponentReportGenerator</code> using the given
      * {@link DevelopmentComponentFactory}, {@link VelocityEngine} , velocity
      * template and resource bundle.
@@ -47,13 +52,17 @@ public final class DevelopmentComponentReportGenerator extends AbstractReportGen
      *            VelocityEngine used to transform template.
      * @param bundle
      *            the ResourceBundle used for I18N.
+     * @param component
+     *            development component to document.
      */
     public DevelopmentComponentReportGenerator(
         final DocumentationFacetProviderFactory documentationFacetProviderFactory,
-        final DevelopmentComponentFactory dcFactory, final VelocityEngine velocityEngine, final ResourceBundle bundle) {
+        final DevelopmentComponentFactory dcFactory, final VelocityEngine velocityEngine, final ResourceBundle bundle,
+        final DevelopmentComponent component) {
         super(velocityEngine, bundle);
         this.documentationFacetProviderFactory = documentationFacetProviderFactory;
         this.dcFactory = dcFactory;
+        this.component = component;
     }
 
     /**
@@ -62,16 +71,13 @@ public final class DevelopmentComponentReportGenerator extends AbstractReportGen
      * 
      * @param writer
      *            writer to generate documentation into.
-     * @param component
-     *            development component to document.
      * @param additionalContext
      *            additional context attributes supplied externally
      * @param template
      *            a Reader for supplying the velocity template used for
      *            generation of documentation.
      */
-    public void execute(final Writer writer, final DevelopmentComponent component,
-        final Map<String, Object> additionalContext, final Reader template) {
+    public void execute(final Writer writer, final Map<String, Object> additionalContext, final Reader template) {
         final Context context = createContext(additionalContext);
         context.put("component", component);
         context.put("dcFactory", dcFactory);

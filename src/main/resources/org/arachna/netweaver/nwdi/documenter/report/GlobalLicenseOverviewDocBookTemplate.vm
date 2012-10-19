@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<sect1 xmlns="http://docbook.org/ns/docbook" xmlns:xl="http://www.w3.org/1999/xlink" version="5.0">
+<title>$bundleHelper.render("external.library.overview.title", $configuration.getName())</title>
+
+#foreach($license in $licenseContainer.getLicenses())
+<sect2>
+<title>$license.getName()</title>
+
+<table>
+  <title>$bundleHelper.render("external.libraries.table.caption", $license.getName())</title>
+  <tgroup cols="3">
+     <colspec colnum="1" colname="c1" colwidth="3*"/>
+     <colspec colnum="2" colname="c2" colwidth="3*"/>
+     <colspec colnum="3" colname="c3" colwidth="5*"/>
+  <thead>
+    <row>
+      <entry>$bundle.getString("developmentComponent")</entry>
+      <entry>$bundle.getString("library")</entry>
+      <entry>$bundle.getString("license")</entry>
+    </row>
+  </thead>
+  <tbody>
+#foreach($component in $licenseContainer.getComponents($license))
+#set($componentDescriptor = $licenseContainer.getExternalLibraryComponentDescriptor($license, $component))
+#foreach($licenseDescriptor in $componentDescriptor.getLicenseDescriptors())   
+    <row>
+      <entry><link linkend="$component.getNormalizedName("_")">$component.getVendor() $component.getName()</link></entry>
+      <entry>$licenseDescriptor.getArchive()</entry>
+      <entry><uri xl:href="$licenseContainer.getEscapedLicenseURL($licenseDescriptor)">$licenseDescriptor.getLicense().getName()</uri></entry>
+    </row>
+#end
+#end
+  </tbody>
+  </tgroup>
+  </table>
+</sect2>
+#end
+</sect1>

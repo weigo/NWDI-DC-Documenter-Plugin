@@ -20,6 +20,11 @@ import org.xml.sax.helpers.XMLReaderFactory;
  */
 public final class SVGParser extends AbstractDefaultHandler {
     /**
+     * svg element.
+     */
+    private static final String SVG = "svg";
+
+    /**
      * Parse the given SVG and extract general properties (width, height).
      * 
      * @param reader
@@ -30,27 +35,27 @@ public final class SVGParser extends AbstractDefaultHandler {
         try {
             final Digester digester = new Digester(XMLReaderFactory.createXMLReader());
             digester.setEntityResolver(new NullEntityResolver());
-            digester.addObjectCreate("svg", SVGProperties.class);
+            digester.addObjectCreate(SVG, SVGProperties.class);
 
-            digester.addCallMethod("svg", "setWidth", 1);
-            digester.addCallParam("svg", 0, "width");
-            digester.addCallMethod("svg", "setHeight", 1);
-            digester.addCallParam("svg", 0, "height");
+            digester.addCallMethod(SVG, "setWidth", 1);
+            digester.addCallParam(SVG, 0, "width");
+            digester.addCallMethod(SVG, "setHeight", 1);
+            digester.addCallParam(SVG, 0, "height");
 
             return (SVGProperties)digester.parse(reader);
         }
         catch (final SAXException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
         catch (final IOException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
         finally {
             try {
                 reader.close();
             }
             catch (final IOException e) {
-                throw new RuntimeException(e);
+                throw new IllegalStateException(e);
             }
         }
     }

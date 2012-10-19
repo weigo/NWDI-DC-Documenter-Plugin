@@ -3,7 +3,6 @@
  */
 package org.arachna.netweaver.nwdi.documenter.report;
 
-import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
 import java.util.ArrayList;
@@ -15,14 +14,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import org.apache.velocity.VelocityContext;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.context.Context;
 import org.arachna.netweaver.dc.types.Compartment;
 import org.arachna.netweaver.dc.types.DevelopmentComponent;
 import org.arachna.netweaver.dc.types.DevelopmentComponentByNameComparator;
+import org.arachna.netweaver.dc.types.DevelopmentComponentByTypeFilter;
 import org.arachna.netweaver.dc.types.DevelopmentComponentType;
 import org.arachna.netweaver.dc.types.DevelopmentConfiguration;
+import org.arachna.netweaver.dc.types.IDevelopmentComponentFilter;
 import org.arachna.netweaver.nwdi.documenter.facets.DocumentationFacetProvider;
 import org.arachna.netweaver.nwdi.documenter.facets.librarydc.License;
 import org.arachna.netweaver.nwdi.documenter.facets.librarydc.LicenseComparator;
@@ -32,24 +33,21 @@ import org.arachna.netweaver.nwdi.documenter.facets.librarydc.LicenseDescriptor;
  * @author Dirk Weigenand
  * 
  */
-public final class GlobalLicenseOverviewReportGenerator {
-    /**
-     * velocity engine to generate a report for licenses of external libraries used in a development configuration.
-     */
-    private final VelocityEngine velocityEngine;
-
-    /**
-     * {@link ResourceBundle} for internationalization of reports.
-     */
-    private final ResourceBundle bundle;
-
+public final class GlobalLicenseOverviewReportGenerator extends AbstractReportGenerator {
     /**
      * factory for providers of documentation facets.
      */
     private final DocumentationFacetProviderFactory documentationFacetProviderFactory;
 
     /**
-     * Create a <code>CompartmentReportGenerator</code> using the given {@link VelocityEngine}, and resource bundle.
+     * development configuration to create license overview of used external
+     * libraries for.
+     */
+    private final DevelopmentConfiguration configuration;
+
+    /**
+     * Create a <code>CompartmentReportGenerator</code> using the given
+     * {@link VelocityEngine}, and resource bundle.
      * 
      * The given {@link ResourceBundle} is used for internationalization.
      * 
@@ -59,68 +57,63 @@ public final class GlobalLicenseOverviewReportGenerator {
      *            VelocityEngine used to transform template.
      * @param bundle
      *            the ResourceBundle used for I18N.
+     * @param configuration
+     *            development configuration to create license overview of used
+     *            external libraries for.
      */
     public GlobalLicenseOverviewReportGenerator(
         final DocumentationFacetProviderFactory documentationFacetProviderFactory, final VelocityEngine velocityEngine,
-        final ResourceBundle bundle) {
+        final ResourceBundle bundle, final DevelopmentConfiguration configuration) {
+        super(velocityEngine, bundle);
         this.documentationFacetProviderFactory = documentationFacetProviderFactory;
-        this.velocityEngine = velocityEngine;
-        this.bundle = bundle;
+        this.configuration = configuration;
     }
 
     /**
-     * Generate documentation for the given development component into the given writer object.
+     * Generate documentation for the given development component into the given
+     * writer object.
      * 
      * @param writer
      *            writer to generate documentation into.
-     * @param configuration
-     *            development configuration whose external libraries are to document.
      * @param additionalContext
      *            additional context attributes supplied externally
      * @param template
      *            a reader to supply the used template
      */
-    public void execute(final Writer writer, final DevelopmentConfiguration configuration,
-        final Map<String, Object> additionalContext, final Reader template) {
-        final Context context = new VelocityContext();
+    public void execute(final Writer writer, final Map<String, Object> additionalContext, final Reader template) {
+        final Context context = createContext(additionalContext);
         context.put("configuration", configuration);
-        context.put("bundle", bundle);
-        context.put("bundleHelper", new BundleHelper(bundle));
-
-        for (final Map.Entry<String, Object> entry : additionalContext.entrySet()) {
-            context.put(entry.getKey(), entry.getValue());
-        }
-
         context.put("licenseContainer", getLicenseContainer(configuration));
 
-        velocityEngine.evaluate(context, writer, "", template);
-
-        try {
-            writer.close();
-        }
-        catch (final IOException ioe) {
-            throw new RuntimeException(ioe);
-        }
+        evaluate(context, writer, template);
     }
 
     /**
-     * Get {@link LicenseDescriptor} objects for each development component of type {@see DevelopmentComponentType#ExternalLibrary}.
+     * Get {@link LicenseDescriptor} objects for each development component of
+     * type {@see DevelopmentComponentType#ExternalLibrary}.
      * 
      * @param configuration
-     *            development configuration whose external library components shall be inspected.
-     * @return a list of all license descriptors found (grouped by development component).
+     *            development configuration whose external library components
+     *            shall be inspected.
+     * @return a list of all license descriptors found (grouped by development
+     *         component).
      */
     @SuppressWarnings("unchecked")
     protected ExternalLibraryComponentDescriptorContainer getLicenseContainer(
         final DevelopmentConfiguration configuration) {
+        // FIXME: for tracks using external library DCs built in other tracks
+        // this logic is not sufficient! DCs of type EAR, JEE Library etc.
+        // should be inspected too...
         final DocumentationFacetProvider<DevelopmentComponent> facetProvider =
             documentationFacetProviderFactory.getInstance(DevelopmentComponentType.ExternalLibrary).iterator().next();
 
         final ExternalLibraryComponentDescriptorContainer container = new ExternalLibraryComponentDescriptorContainer();
+        final IDevelopmentComponentFilter filter =
+            new DevelopmentComponentByTypeFilter(DevelopmentComponentType.ExternalLibrary,
+                DevelopmentComponentType.J2EEEnterpriseApplication, DevelopmentComponentType.J2EEServerComponentLibrary);
 
         for (final Compartment compartment : configuration.getCompartments()) {
-            for (final DevelopmentComponent component : compartment
-                .getDevelopmentComponents(DevelopmentComponentType.ExternalLibrary)) {
+            for (final DevelopmentComponent component : compartment.getDevelopmentComponents(filter)) {
                 container.add(component, (Collection<LicenseDescriptor>)facetProvider.execute(component).getContent());
             }
         }
@@ -130,7 +123,8 @@ public final class GlobalLicenseOverviewReportGenerator {
 
     public class ExternalLibraryComponentDescriptorContainer {
         /**
-         * Mapping of licenses to development components and their external libraries.
+         * Mapping of licenses to development components and their external
+         * libraries.
          */
         private final Map<License, Map<DevelopmentComponent, ExternalLibraryComponentDescriptor>> licenseMap =
             new HashMap<License, Map<DevelopmentComponent, ExternalLibraryComponentDescriptor>>();
@@ -138,24 +132,27 @@ public final class GlobalLicenseOverviewReportGenerator {
         /**
          * Return URL to the used license or a URL to a google search.
          * 
+         * @param descriptor
+         *            the {@link LicenseDescriptor} the URL is requested for.
          * @return URL to the used license or a URL to a google search.
          */
         public String getLicenseURL(final LicenseDescriptor descriptor) {
-            String url = "";
-
             final License license = descriptor.getLicense();
-            switch (license) {
-            case Other:
-            case None:
-                url = license.getUrl() + descriptor.getArchive();
-                break;
+            final String url = license.getUrl();
 
-            default:
-                url = license.getUrl();
-                break;
-            }
+            return license.equals(License.Other) || license.equals(License.None) ? url + descriptor.getArchive() : url;
+        }
 
-            return url;
+        /**
+         * Return URL to the used license or a URL to a google search. The
+         * returned string can be used as XML attribute value.
+         * 
+         * @param descriptor
+         *            the {@link LicenseDescriptor} the URL is requested for.
+         * @return URL to the used license or a URL to a google search.
+         */
+        public String getEscapedLicenseURL(final LicenseDescriptor descriptor) {
+            return StringEscapeUtils.escapeXml(getLicenseURL(descriptor));
         }
 
         /**
@@ -240,7 +237,8 @@ public final class GlobalLicenseOverviewReportGenerator {
             private final Collection<LicenseDescriptor> licenseDescriptors = new LinkedList<LicenseDescriptor>();
 
             /**
-             * Create a new descriptor instance with the given component and license descriptors.
+             * Create a new descriptor instance with the given component and
+             * license descriptors.
              * 
              * @param component
              *            component containing external libraries.
@@ -269,6 +267,15 @@ public final class GlobalLicenseOverviewReportGenerator {
              */
             public Collection<LicenseDescriptor> getLicenseDescriptors() {
                 return licenseDescriptors;
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public String toString() {
+                return "ExternalLibraryComponentDescriptor [component=" + component.getNormalizedName("~")
+                    + ", licenseDescriptors=" + licenseDescriptors + "]";
             }
         }
     }

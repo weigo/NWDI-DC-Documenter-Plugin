@@ -28,8 +28,9 @@ import org.arachna.netweaver.hudson.nwdi.NWDIBuild;
 import org.arachna.netweaver.nwdi.documenter.filter.VendorFilter;
 import org.arachna.netweaver.nwdi.documenter.report.ContextPropertyName;
 import org.arachna.netweaver.nwdi.documenter.report.DevelopmentConfigurationConfluenceWikiGenerator;
-import org.arachna.netweaver.nwdi.documenter.report.ReportGeneratorFactory;
+import org.arachna.netweaver.nwdi.documenter.report.DocBookReportGenerator;
 import org.arachna.netweaver.nwdi.dot4j.DependencyGraphGenerator;
+import org.arachna.netweaver.nwdi.dot4j.DiagramDescriptorContainer;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
 
@@ -216,52 +217,123 @@ public class DocumentationBuilder extends AntTaskBuilder {
         final NWDIBuild nwdiBuild = (NWDIBuild)build;
         final DevelopmentComponentFactory dcFactory = nwdiBuild.getDevelopmentComponentFactory();
         final DevelopmentConfiguration developmentConfiguration = nwdiBuild.getDevelopmentConfiguration();
-        final File workspace = new File(String.format("%s/documentation", getAntHelper().getPathToWorkspace()));
+        final File workspace = new File(getAntHelper().getPathToWorkspace());
+        final File docBookSourceFolder = new File(workspace, "src/docbkx");
         final VendorFilter vendorFilter = new VendorFilter(ignoreVendorRegexp);
         final VelocityEngine engine = getVelocityEngine(listener.getLogger());
-        final DependencyGraphGenerator dependenciesGenerator =
-            new DependencyGraphGenerator(dcFactory, vendorFilter, workspace);
-
-        developmentConfiguration.accept(dependenciesGenerator);
-
+        final DiagramDescriptorContainer descriptorContainer =
+            generateDependencyDiagrams(dcFactory, developmentConfiguration, docBookSourceFolder, vendorFilter);
         final boolean result =
-            super.execute(build, launcher, listener, "",
-                dependenciesGenerator.materializeDot2SvgBuildXml(engine, DESCRIPTOR.getDotExecutable(), TIMEOUT),
-                getAntProperties());
+            generateDot2SvgBuildFile(build, launcher, listener, workspace, engine, descriptorContainer);
 
         if (result) {
-            final ReportGeneratorFactory generatorFactory =
-                new ReportGeneratorFactory(getAntHelper(), dcFactory, engine, ResourceBundle.getBundle(
-                    DC_REPORT_BUNDLE, Locale.GERMAN));
+            // FIXME: make language configurable!
+            final ResourceBundle bundle = ResourceBundle.getBundle(DC_REPORT_BUNDLE, Locale.GERMAN);
+            generateDocBookDocuments(dcFactory, developmentConfiguration, workspace, vendorFilter, engine,
+                descriptorContainer, bundle);
 
             if (publishToConfluence) {
-                try {
-                    final ConfluenceSite site = getSelectedConfluenceSite();
-
-                    if (site != null) {
-                        final ConfluenceSession confluenceSession = site.createSession();
-                        final DevelopmentConfigurationConfluenceWikiGenerator visitor =
-                            new DevelopmentConfigurationConfluenceWikiGenerator(generatorFactory, vendorFilter,
-                                confluenceSession, listener.getLogger(), dependenciesGenerator.getDescriptorContainer());
-                        visitor.addToGlobalContext(ContextPropertyName.WikiSpace, confluenceSpace);
-                        visitor.addToGlobalContext(ContextPropertyName.ProjectUrl, Jenkins.getInstance().getRootUrl()
-                            + build.getProject().getUrl());
-                        developmentConfiguration.accept(visitor);
-                    }
-                }
-                catch (final RemoteException e) {
-                    throw new RuntimeException(e);
-                }
+                publishToConfluence(build, listener, developmentConfiguration, docBookSourceFolder, vendorFilter,
+                    descriptorContainer);
             }
 
             if (createHtmlDocumentation) {
                 ;
-                // FIXME: add code generate HTML when docbook conversion is
+                // FIXME: add code to generate HTML when docbook conversion is
                 // there!
             }
         }
 
         return result;
+    }
+
+    /**
+     * @param dcFactory
+     * @param developmentConfiguration
+     * @param docBookSourceFolder
+     * @param vendorFilter
+     * @return
+     */
+    protected DiagramDescriptorContainer generateDependencyDiagrams(final DevelopmentComponentFactory dcFactory,
+        final DevelopmentConfiguration developmentConfiguration, final File docBookSourceFolder,
+        final VendorFilter vendorFilter) {
+        final DependencyGraphGenerator dependenciesGenerator =
+            new DependencyGraphGenerator(dcFactory, vendorFilter, docBookSourceFolder);
+
+        developmentConfiguration.accept(dependenciesGenerator);
+        final DiagramDescriptorContainer descriptorContainer = dependenciesGenerator.getDescriptorContainer();
+        return descriptorContainer;
+    }
+
+    /**
+     * @param build
+     * @param launcher
+     * @param listener
+     * @param workspace
+     * @param engine
+     * @param descriptorContainer
+     * @return
+     */
+    protected boolean generateDot2SvgBuildFile(final AbstractBuild build, final Launcher launcher,
+        final BuildListener listener, final File workspace, final VelocityEngine engine,
+        final DiagramDescriptorContainer descriptorContainer) {
+        final Dot2SvgBuildFileGenerator generator =
+            new Dot2SvgBuildFileGenerator(workspace, engine, DESCRIPTOR.getDotExecutable(), TIMEOUT, Runtime
+                .getRuntime().availableProcessors());
+        return super.execute(build, launcher, listener, "", generator.execute(descriptorContainer.getDotFiles()),
+            getAntProperties());
+    }
+
+    /**
+     * @param dcFactory
+     * @param developmentConfiguration
+     * @param workspace
+     * @param vendorFilter
+     * @param engine
+     * @param descriptorContainer
+     * @param bundle
+     */
+    protected void generateDocBookDocuments(final DevelopmentComponentFactory dcFactory,
+        final DevelopmentConfiguration developmentConfiguration, final File workspace, final VendorFilter vendorFilter,
+        final VelocityEngine engine, final DiagramDescriptorContainer descriptorContainer, final ResourceBundle bundle) {
+        final DocBookReportGenerator generator =
+            new DocBookReportGenerator(workspace, getAntHelper(), dcFactory, engine, bundle, vendorFilter,
+                descriptorContainer);
+        developmentConfiguration.accept(generator);
+    }
+
+    /**
+     * @param build
+     * @param listener
+     * @param developmentConfiguration
+     * @param docBookSourceFolder
+     * @param vendorFilter
+     * @param descriptorContainer
+     */
+    protected void publishToConfluence(final AbstractBuild build, final BuildListener listener,
+        final DevelopmentConfiguration developmentConfiguration, final File docBookSourceFolder,
+        final VendorFilter vendorFilter, final DiagramDescriptorContainer descriptorContainer) {
+        try {
+            final ConfluenceSite site = getSelectedConfluenceSite();
+
+            if (site != null) {
+                // FIXME: encapsulate ConfluenceSession in wrapper class
+                // and move page handling code from
+                // DevelopmentConfigurationConfluenceWikiGenerator into
+                // it!
+                final ConfluenceSession confluenceSession = site.createSession();
+                final DevelopmentConfigurationConfluenceWikiGenerator visitor =
+                    new DevelopmentConfigurationConfluenceWikiGenerator(docBookSourceFolder, vendorFilter,
+                        confluenceSession, listener.getLogger(), descriptorContainer);
+                visitor.addToGlobalContext(ContextPropertyName.WikiSpace, confluenceSpace);
+                visitor.addToGlobalContext(ContextPropertyName.ProjectUrl, Jenkins.getInstance().getRootUrl()
+                    + build.getProject().getUrl());
+                developmentConfiguration.accept(visitor);
+            }
+        }
+        catch (final RemoteException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     /**

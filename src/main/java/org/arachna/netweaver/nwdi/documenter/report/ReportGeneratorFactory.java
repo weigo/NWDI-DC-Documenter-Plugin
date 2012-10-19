@@ -7,7 +7,10 @@ import java.util.ResourceBundle;
 
 import org.apache.velocity.app.VelocityEngine;
 import org.arachna.ant.AntHelper;
+import org.arachna.netweaver.dc.types.Compartment;
+import org.arachna.netweaver.dc.types.DevelopmentComponent;
 import org.arachna.netweaver.dc.types.DevelopmentComponentFactory;
+import org.arachna.netweaver.dc.types.DevelopmentConfiguration;
 
 /**
  * Factory for development component report generators. Bundles knowledge to
@@ -61,40 +64,50 @@ public final class ReportGeneratorFactory {
     /**
      * Create a new generator for documentation of development components.
      * 
+     * @param component
+     *            development component to generate report for.
      * @return a new instance of a generator for documentation of development
      *         components.
      */
-    public DevelopmentComponentReportGenerator createDevelopmentComponentReportGenerator() {
-        return new DevelopmentComponentReportGenerator(facetProviderFactory, dcFactory, velocity, resourceBundle);
+    public ReportGenerator create(final DevelopmentComponent component) {
+        return new DevelopmentComponentReportGenerator(facetProviderFactory, dcFactory, velocity, resourceBundle,
+            component);
     }
 
     /**
      * Create a new generator for documentation of a development configuration.
      * 
+     * @param configuration
+     *            development configuration to generate report for.
      * @return a new instance of a generator for documentation of a development
      *         configuration.
      */
-    public DevelopmentConfigurationReportGenerator createDevelopmentConfigurationReportGenerator() {
-        return new DevelopmentConfigurationReportGenerator(velocity, resourceBundle);
+    public ReportGenerator create(final DevelopmentConfiguration configuration) {
+        return new DevelopmentConfigurationReportGenerator(velocity, resourceBundle, configuration);
     }
 
     /**
      * Create a new generator for documentation of compartment.
      * 
+     * @param compartment
+     *            compartment to generate report for.
      * @return a new instance of a generator for documentation of a compartment.
      */
-    public CompartmentReportGenerator createCompartmentReportGenerator() {
-        return new CompartmentReportGenerator(velocity, resourceBundle);
+    public ReportGenerator create(final Compartment compartment) {
+        return new CompartmentReportGenerator(velocity, resourceBundle, compartment);
     }
 
     /**
      * Create a new generator for documentation of external libraries contained
      * in a track.
      * 
+     * @param configuration
+     *            development configuration to create license overview of used
+     *            external libraries for.
      * @return a new instance of a generator for documentation of external
      *         libraries contained in a track.
      */
-    public GlobalLicenseOverviewReportGenerator createGlobalLicenseOverviewReportGenerator() {
-        return new GlobalLicenseOverviewReportGenerator(facetProviderFactory, velocity, resourceBundle);
+    public ReportGenerator createGlobalLicenseOverviewReportGenerator(final DevelopmentConfiguration configuration) {
+        return new GlobalLicenseOverviewReportGenerator(facetProviderFactory, velocity, resourceBundle, configuration);
     }
 }

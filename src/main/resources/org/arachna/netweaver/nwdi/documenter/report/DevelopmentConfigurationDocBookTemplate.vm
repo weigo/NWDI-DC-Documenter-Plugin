@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<book xmlns="http://docbook.org/ns/docbook" xmlns:xl="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude"
+ version="5.1" xml:lang="$lang">
+<title>$configuration.getName()</title>
+
+<toc />
+
+<chapter>
+<title>$bundle.getString("overview")</title>
+
+<section>
+<title>$bundle.getString("description")</title>
+
+<para>$configuration.getDescription()</para>
+
+</section>
+<section>
+<title>$bundle.getString("softwareComponents")</title>
+
+<table>
+  <title>$bundleHelper.render("scsInDevelopmentConfiguration.table.caption", $configuration.getName())</title>
+  <tgroup cols="2">
+     <colspec colnum="1" colname="c1" colwidth="1*"/>
+     <colspec colnum="2" colname="c2" colwidth="3*"/>
+  <thead>
+    <row>
+      <entry>$bundle.getString("softwareComponent")</entry>
+      <entry>$bundle.getString("description")</entry>
+    </row>
+  </thead>
+  <tbody>
+#foreach ($sc in $compartments)
+    <row>
+      <entry><link role="wiki" linkend="$sc.getName()">$sc.getName()</link></entry>
+      <entry>$sc.getDescription()</entry>
+    </row>
+#end
+  </tbody>
+  </tgroup>
+</table>
+</section>
+
+<xi:include href="LicenseOverview.xml"/>
+</chapter>
+
+#foreach ($sc in $compartments)
+<xi:include href="${sc.getName()}/${sc.getName()}.xml"/>
+#end
+
+<index />
+</book>

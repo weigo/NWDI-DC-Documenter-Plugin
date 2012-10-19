@@ -5,8 +5,6 @@ package org.arachna.netweaver.nwdi.documenter.report;
 
 import static org.junit.Assert.assertTrue;
 
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Locale;
@@ -43,7 +41,7 @@ public class CompartmentReportGeneratorTest {
     /**
      * instance under test.
      */
-    private CompartmentReportGenerator generator;
+    private ReportGenerator generator;
 
     private DevelopmentComponentFactory dcFactory;
 
@@ -74,7 +72,7 @@ public class CompartmentReportGeneratorTest {
         additionalContext.put("trackName", TRACK_NAME);
         component = dcFactory.create("example.com", "example/dc");
         compartment.add(component);
-        generator = generatorFactory.createCompartmentReportGenerator();
+        generator = generatorFactory.create(compartment);
     }
 
     /**
@@ -85,14 +83,6 @@ public class CompartmentReportGeneratorTest {
     }
 
     /**
-     * 
-     */
-    private Reader getTemplateReader() {
-        return new InputStreamReader(this.getClass().getResourceAsStream(
-            DevelopmentConfigurationConfluenceWikiGenerator.COMPARTMENT_WIKI_TEMPLATE));
-    }
-
-    /**
      * Test method for
      * {@link org.arachna.netweaver.nwdi.documenter.report.CompartmentReportGenerator#execute(java.io.Writer, org.arachna.netweaver.dc.types.Compartment, java.util.Map, java.io.Reader)}
      * .
@@ -100,7 +90,7 @@ public class CompartmentReportGeneratorTest {
     @Test
     public final void testExecute() {
         final StringWriter writer = new StringWriter();
-        generator.execute(writer, compartment, additionalContext, getTemplateReader());
+        generator.execute(writer, additionalContext, DocBookVelocityTemplate.Compartment.getTemplate());
         final String result = writer.toString();
         final String link =
             String.format("[%s|%s:%s_%s]", component.getName(), WIKI_SPACE, TRACK_NAME,

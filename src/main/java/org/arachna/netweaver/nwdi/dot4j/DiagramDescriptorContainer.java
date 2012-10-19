@@ -39,8 +39,14 @@ public final class DiagramDescriptorContainer {
      */
     private void add(final String key, final DiagramDescriptor descriptor) {
         descriptors.put(key, descriptor);
-        dotFiles.add(descriptor.getUsedDCsDiagram());
-        dotFiles.add(descriptor.getUsingDCsDiagram());
+
+        if (!descriptor.getUsedDCsDiagram().isEmpty()) {
+            dotFiles.add(descriptor.getUsedDCsDiagram());
+        }
+
+        if (!descriptor.getUsingDCsDiagram().isEmpty()) {
+            dotFiles.add(descriptor.getUsingDCsDiagram());
+        }
     }
 
     /**
@@ -86,7 +92,7 @@ public final class DiagramDescriptorContainer {
      * 
      * @return collection of all generated dot files.
      */
-    Collection<String> getDotFiles() {
+    public Collection<String> getDotFiles() {
         return Collections.unmodifiableCollection(dotFiles);
     }
 
@@ -94,7 +100,8 @@ public final class DiagramDescriptorContainer {
      * Return the descriptor for the given development component.
      * 
      * @param component
-     * @return
+     *            development component the diagram descriptor is asked for.
+     * @return diagram descriptor for the given DC or <code>null</code>.
      */
     public DiagramDescriptor getDescriptor(final DevelopmentComponent component) {
         return descriptors.get(component.getNormalizedName("_"));
