@@ -11,8 +11,8 @@
 		<!-- Optional @help points to the help document HTML. /plugin/NWDI-DC-Documenter-Plugin
 			is mapped to our webapp/ directory, so this is a convenient way to serve
 			static resources. -->
-		<f:entry title="${%dot.path.title}"
-			description="${%dot.path.description}"
+		<f:entry title="${%path to 'dot' executable}"
+			description="${%Please enter the absolute path to the GraphViz 'dot' executable}"
 			help="/plugin/NWDI-DC-Documenter-Plugin/help-globalConfig.html">
 			<f:textbox name="dotExecutable" value="${descriptor.getDotExecutable()}" />
 		</f:entry>

@@ -3,18 +3,18 @@
 
   <!-- Creates a text field that shows the value of the "name" property. When submitted, it will be passed to the corresponding constructor parameter. -->
   <f:section>
-    <f:entry title="${%ignore.vendors.title}" field="ignoreVendorRegexp">
+    <f:entry title="${%exclude vendors when generating documentation}" field="ignoreVendorRegexp">
       <f:textbox />
     </f:entry>
 
-    <f:entry title="${%create.html}" description="${%create.html.description}" field="createHtmlDocumentation">
+    <f:entry title="${%create HTML}" description="${%create documentation in HTML format}" field="createHtmlDocumentation">
       <f:checkbox default="false" value="${instance.createHtmlDocumentation}" clazz="required" />
     </f:entry>
 
-    <f:entry title="${%publishToConfluence.title}" description="${%publishToConfluence.description}" field="publishToConfluence">
+    <f:entry title="${%publish documentation to confluence}" description="${%publish documentation of this track to Confluence Wiki.}" field="publishToConfluence">
       <f:checkbox default="false" value="${instance.publishToConfluence}" clazz="required" />
     </f:entry>
-    <f:entry title="Confluence Site" description="${%confluence.configuration.description}" help="${descriptor.getHelpFile('confluenceSite')}"
+    <f:entry title="Confluence Site" description="${%Choose Confluence site to publish documentation to}" help="${descriptor.getHelpFile('confluenceSite')}"
       field="confluenceSite">
       <select class="setting-input" name="confluenceSite">
         <j:forEach var="s" items="${instance.confluenceSites}">
@@ -22,7 +22,7 @@
         </j:forEach>
       </select>
     </f:entry>
-    <f:entry title="${%confluenceSpace.title}" description="${%confluenceSpace.description}" field="confluenceSpace">
+    <f:entry title="${%Confluence space}" description="${%Enter the Confluence space to publish the documentation to.}" field="confluenceSpace">
       <f:textbox />
     </f:entry>
   </f:section>
