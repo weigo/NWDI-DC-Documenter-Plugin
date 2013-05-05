@@ -13,6 +13,7 @@ import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.xml.transform.ErrorListener;
 import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
@@ -26,12 +27,11 @@ import jenkins.plugins.confluence.soap.v1.RemoteException;
 import jenkins.plugins.confluence.soap.v1.RemotePage;
 import jenkins.plugins.confluence.soap.v1.RemotePageUpdateOptions;
 
-import org.arachna.netweaver.dc.types.AbstractDevelopmentConfigurationVisitor;
 import org.arachna.netweaver.dc.types.Compartment;
 import org.arachna.netweaver.dc.types.DevelopmentComponent;
 import org.arachna.netweaver.dc.types.DevelopmentConfiguration;
+import org.arachna.netweaver.dc.types.DevelopmentConfigurationVisitor;
 import org.arachna.netweaver.nwdi.documenter.filter.VendorFilter;
-import org.arachna.netweaver.nwdi.documenter.report.svg.SVGParser;
 import org.arachna.netweaver.nwdi.dot4j.DiagramDescriptor;
 import org.arachna.netweaver.nwdi.dot4j.DiagramDescriptorContainer;
 
@@ -42,7 +42,7 @@ import com.myyearbook.hudson.plugins.confluence.ConfluenceSession;
  * 
  * @author Dirk Weigenand
  */
-public final class DevelopmentConfigurationConfluenceWikiGenerator extends AbstractDevelopmentConfigurationVisitor {
+public final class DevelopmentConfigurationConfluenceWikiGenerator implements DevelopmentConfigurationVisitor {
     /**
      * path to XSL stylesheets.
      */
@@ -91,11 +91,6 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator extends Abstr
     private final Map<String, Object> additionalContext = new HashMap<String, Object>();
 
     /**
-     * parser for SVG diagrams.
-     */
-    private final SVGParser svgParser = new SVGParser();
-
-    /**
      * NWDI track name documentation is generated for.
      */
     private String trackName;
@@ -130,10 +125,31 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator extends Abstr
         this.reportSourceFolder = reportSourceFolder;
 
         try {
+            final TransformerFactory factory = TransformerFactory.newInstance();
+            factory.setErrorListener(new ErrorListener() {
+
+                @Override
+                public void warning(final TransformerException exception) throws TransformerException {
+                    System.err.println(exception.getMessageAndLocation());
+                    throw new IllegalStateException(exception);
+                }
+
+                @Override
+                public void error(final TransformerException exception) throws TransformerException {
+                    System.err.println(exception.getMessageAndLocation());
+                    throw new IllegalStateException(exception);
+                }
+
+                @Override
+                public void fatalError(final TransformerException exception) throws TransformerException {
+                    System.err.println(exception.getMessageAndLocation());
+                    throw new IllegalStateException(exception);
+                }
+
+            });
             template =
-                TransformerFactory.newInstance().newTemplates(
-                    new StreamSource(this.getClass().getResourceAsStream(
-                        String.format(STYLESHEET_PATH_TEMPLATE, "confluence-pre4.xsl"))));
+                factory.newTemplates(new StreamSource(this.getClass().getResourceAsStream(
+                    String.format(STYLESHEET_PATH_TEMPLATE, "confluence-pre4.xsl"))));
         }
         catch (final TransformerConfigurationException e) {
             throw new IllegalStateException(e);
@@ -176,8 +192,11 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator extends Abstr
      */
     @Override
     public void visit(final Compartment compartment) {
-        currentCompartmentOverviewPage =
-            createOrUpdatePage(compartment.getName(), generateWikiPageContent(compartment), trackOverviewPage.getId());
+        if (!vendorFilter.accept(compartment)) {
+            currentCompartmentOverviewPage =
+                createOrUpdatePage(compartment.getName(), generateWikiPageContent(compartment),
+                    trackOverviewPage.getId());
+        }
     }
 
     /**
@@ -188,8 +207,7 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator extends Abstr
      * @return generated documentation
      */
     protected String generateWikiPageContent(final Compartment compartment) {
-        String docBook = String.format("%s/%s.xml", compartment.getName(),
-            compartment.getName());
+        final String docBook = String.format("%s/%s.xml", compartment.getName(), compartment.getName());
         return transform(createDocBookTemplateReader(docBook));
     }
 
@@ -230,11 +248,15 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator extends Abstr
      *            name of original diagram description (.dot).
      */
     private void addDependencyDiagram(final long pageId, final String dotFileName) {
-        try {
-            session.addAttachment(pageId, new File(dotFileName.replaceFirst("\\.dot", "\\.svg")), "image/svg+xml", "");
-        }
-        catch (final IOException e) {
-            e.printStackTrace(logger);
+        if (!dotFileName.isEmpty()) {
+            final File attachment = new File(dotFileName.replaceFirst("\\.dot", "\\.svg"));
+
+            try {
+                session.addAttachment(pageId, attachment, "image/svg+xml", "");
+            }
+            catch (final IOException e) {
+                logger.println(String.format("Attachment not found: %s!", attachment.getAbsolutePath()));
+            }
         }
     }
 
@@ -341,7 +363,7 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator extends Abstr
      * @return
      */
     private String generateWikiPageContent(final DevelopmentConfiguration configuration) {
-        String docBook = String.format("%s.xml", configuration.getName());
+        final String docBook = String.format("%s.xml", configuration.getName());
         return transform(createDocBookTemplateReader(docBook));
     }
 

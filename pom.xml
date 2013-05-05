@@ -130,4 +130,5 @@
       <version>2.0</version>
     </dependency>
   </dependencies>
+  <groupId>org.arachna.netweaver</groupId>
 </project>
