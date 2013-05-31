@@ -7,18 +7,16 @@ import java.io.IOException;
 import java.io.Reader;
 
 import org.apache.commons.digester3.Digester;
-import org.arachna.xml.AbstractDefaultHandler;
 import org.arachna.xml.NullEntityResolver;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.XMLReaderFactory;
 
 /**
- * Parser for SVG documents. Extracts general properties of an SVG {@see
- * SVGProperties}.
+ * Parser for SVG documents. Extracts general properties of an SVG {@see SVGProperties}.
  * 
  * @author Dirk Weigenand
  */
-public final class SVGParser extends AbstractDefaultHandler {
+public final class SVGParser {
     /**
      * svg element.
      */
