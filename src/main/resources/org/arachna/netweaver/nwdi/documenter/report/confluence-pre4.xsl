@@ -48,20 +48,59 @@
 <xsl:output method="text" encoding="utf-8" indent="yes"/>    
 <xsl:strip-space elements="*"/>
 
-<xsl:param name="wikiSpace" select="." required="yes"></xsl:param>
-<xsl:param name="track" select="." required="yes"></xsl:param>
+<xsl:param name="wikiSpace" select="." ></xsl:param>
+<xsl:param name="track" select="."></xsl:param>
 
 <xsl:template match="/">
-  <xsl:text>{toc:maxLevel=3}
-</xsl:text>
-  <xsl:apply-templates/>
+  <xsl:apply-templates />
+</xsl:template>
+
+<xsl:template match="d:caption" />
+
+<xsl:template name="caption">
+  <xsl:if test="d:caption">
+    <xsl:text>*</xsl:text>
+    <xsl:value-of select="d:caption/text()" />
+    <xsl:text>*</xsl:text>
+    <xsl:call-template name="newline"/>
+    <xsl:call-template name="newline"/>
+  </xsl:if>
+  <xsl:if test="d:title">
+    <xsl:text>*</xsl:text>
+    <xsl:value-of select="d:title/text()" />
+    <xsl:text>*</xsl:text>
+    <xsl:call-template name="newline"/>
+    <xsl:call-template name="newline"/>
+  </xsl:if>
+</xsl:template>
+
+<xsl:template match="d:mediaobject">
+  <xsl:apply-templates select="d:imageobject" />
+  <xsl:call-template name="caption" />
 </xsl:template>
 
 <!-- imagedata -->
 
 <xsl:template match="d:imagedata">
-  <xsl:if test="parent::d:imageobject[@role!='fo' or not(@role)]">
-    <xsl:text>!</xsl:text>
+<xsl:choose>
+    <xsl:when test="parent::d:imageobject[@condition='web']">
+      <xsl:text>{svgweb4a:</xsl:text>
+      <xsl:call-template name="image"/>
+      <xsl:text>}</xsl:text>
+      <xsl:call-template name="newline"/>
+    </xsl:when>
+    <xsl:otherwise>
+    <xsl:if test="parent::d:imageobject[@condition!=print and (@role!='fo' or not(@role))]">
+      <xsl:text>!</xsl:text>
+      <xsl:call-template name="image"/>
+      <xsl:text>!</xsl:text>
+      <xsl:call-template name="newline"/>
+    </xsl:if>
+    </xsl:otherwise>
+</xsl:choose>
+</xsl:template>
+
+<xsl:template name="image">
     <xsl:call-template name="getfilename">
       <xsl:with-param name="fileref">
         <xsl:value-of select="@fileref"/>
@@ -79,11 +118,13 @@
         <xsl:text>align=center</xsl:text>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:text>!</xsl:text>
-    <xsl:call-template name="newline"/>
-  </xsl:if>  
+    <xsl:if test="@width">
+        <xsl:text>|width=</xsl:text><xsl:value-of select="@width" />
+    </xsl:if>
+    <xsl:if test="@depth">
+        <xsl:text>|height=</xsl:text><xsl:value-of select="@depth" />
+    </xsl:if>
 </xsl:template>
-
 <!-- chapter title -->
 
 <xsl:template match="d:title[parent::d:chapter]">
@@ -171,6 +212,10 @@
 <!-- article/title|info -->
 
 <xsl:template match="d:title|d:info[parent::d:article]"/>
+
+<!--  index -->
+
+<xsl:template match="d:indexterm"/>
 
 <!-- link -->
 
@@ -467,10 +512,9 @@
 
 <!-- XXX: CLAS table -->
 
-<xsl:template match="d:table/d:title">
-  <xsl:call-template name="indent"/>
-  <xsl:apply-templates/>
-  <xsl:call-template name="newline"/>
+<xsl:template match="d:table">
+  <xsl:apply-templates />
+  <xsl:call-template name="caption" />
 </xsl:template>
 
 <xsl:template match="d:tgroup">

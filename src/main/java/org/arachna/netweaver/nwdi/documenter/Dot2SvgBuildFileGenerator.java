@@ -110,7 +110,7 @@ public final class Dot2SvgBuildFileGenerator {
             }
         }
 
-        return String.format("%s/%s", baseDirectory.getName(), buildFileName);
+        return buildFileName;
     }
 
     private Reader getTemplateReader() {

@@ -29,6 +29,8 @@ import org.arachna.netweaver.nwdi.documenter.filter.VendorFilter;
 import org.arachna.netweaver.nwdi.documenter.report.ContextPropertyName;
 import org.arachna.netweaver.nwdi.documenter.report.DevelopmentConfigurationConfluenceWikiGenerator;
 import org.arachna.netweaver.nwdi.documenter.report.DocBookReportGenerator;
+import org.arachna.netweaver.nwdi.documenter.report.POMGenerator;
+import org.arachna.netweaver.nwdi.documenter.report.ReportGeneratorFactory;
 import org.arachna.netweaver.nwdi.dot4j.DependencyGraphGenerator;
 import org.arachna.netweaver.nwdi.dot4j.DiagramDescriptorContainer;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -229,7 +231,7 @@ public class DocumentationBuilder extends AntTaskBuilder {
         if (result) {
             // FIXME: make language configurable!
             final ResourceBundle bundle = ResourceBundle.getBundle(DC_REPORT_BUNDLE, Locale.GERMAN);
-            generateDocBookDocuments(dcFactory, developmentConfiguration, workspace, vendorFilter, engine,
+            generateDocBookDocuments(dcFactory, developmentConfiguration, docBookSourceFolder, vendorFilter, engine,
                 descriptorContainer, bundle);
 
             if (publishToConfluence) {
@@ -238,7 +240,7 @@ public class DocumentationBuilder extends AntTaskBuilder {
             }
 
             if (createHtmlDocumentation) {
-                ;
+                new POMGenerator(workspace, docBookSourceFolder, developmentConfiguration, engine).execute();
                 // FIXME: add code to generate HTML when docbook conversion is
                 // there!
             }
@@ -287,18 +289,20 @@ public class DocumentationBuilder extends AntTaskBuilder {
     /**
      * @param dcFactory
      * @param developmentConfiguration
-     * @param workspace
+     * @param docBookSourceFolder
      * @param vendorFilter
      * @param engine
      * @param descriptorContainer
      * @param bundle
      */
     protected void generateDocBookDocuments(final DevelopmentComponentFactory dcFactory,
-        final DevelopmentConfiguration developmentConfiguration, final File workspace, final VendorFilter vendorFilter,
-        final VelocityEngine engine, final DiagramDescriptorContainer descriptorContainer, final ResourceBundle bundle) {
+        final DevelopmentConfiguration developmentConfiguration, final File docBookSourceFolder,
+        final VendorFilter vendorFilter, final VelocityEngine engine,
+        final DiagramDescriptorContainer descriptorContainer, final ResourceBundle bundle) {
+        final ReportGeneratorFactory reportGeneratorFactory =
+            new ReportGeneratorFactory(getAntHelper(), dcFactory, engine, bundle);
         final DocBookReportGenerator generator =
-            new DocBookReportGenerator(workspace, getAntHelper(), dcFactory, engine, bundle, vendorFilter,
-                descriptorContainer);
+            new DocBookReportGenerator(docBookSourceFolder, reportGeneratorFactory, vendorFilter, descriptorContainer);
         developmentConfiguration.accept(generator);
     }
 

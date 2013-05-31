@@ -108,23 +108,25 @@ public final class DependencyGraphGenerator implements DevelopmentConfigurationV
      */
     @Override
     public void visit(final Compartment compartment) {
-        try {
-            final File baseDir =
-                createDirectoryIffNotExists(baseDirectory, String.format("%s/images", compartment.getName()));
-            final DotFileWriter dotFileWriter = new DotFileWriter(baseDir.getAbsolutePath());
-            final String usingDCs =
-                dotFileWriter
-                    .write(new UsingDevelopmentComponentsDotFileGenerator(compartment.getDevelopmentComponents(),
-                        vendorFilter), compartment.getName() + "-usingDCs");
-            final String usedDCs =
-                dotFileWriter.write(
-                    new DevelopmentComponentDotFileGenerator(dcFactory, compartment.getDevelopmentComponents(),
-                        vendorFilter), compartment.getName() + "-usedDCs");
+        if (!vendorFilter.accept(compartment)) {
+            try {
+                final File baseDir =
+                    createDirectoryIffNotExists(baseDirectory, String.format("%s/images", compartment.getName()));
+                final DotFileWriter dotFileWriter = new DotFileWriter(baseDir.getAbsolutePath());
+                final String usingDCs =
+                    dotFileWriter.write(
+                        new UsingDevelopmentComponentsDotFileGenerator(compartment.getDevelopmentComponents(),
+                            vendorFilter), compartment.getName() + "-usingDCs");
+                final String usedDCs =
+                    dotFileWriter.write(
+                        new DevelopmentComponentDotFileGenerator(dcFactory, compartment.getDevelopmentComponents(),
+                            vendorFilter), compartment.getName() + "-usedDCs");
 
-            descriptorContainer.add(compartment, new DiagramDescriptor(usedDCs, usingDCs));
-        }
-        catch (final IOException e) {
-            throw new RuntimeException(e);
+                descriptorContainer.add(compartment, new DiagramDescriptor(usedDCs, usingDCs));
+            }
+            catch (final IOException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
@@ -136,8 +138,8 @@ public final class DependencyGraphGenerator implements DevelopmentConfigurationV
         if (!vendorFilter.accept(component) && component.isNeedsRebuild()) {
             try {
                 final File baseDir =
-                    createDirectoryIffNotExists(baseDirectory, component.getCompartment().getName()
-                        + File.separatorChar + "images");
+                    createDirectoryIffNotExists(baseDirectory,
+                        String.format("%s/images", component.getCompartment().getName()));
                 final DotFileWriter dotFileWriter = new DotFileWriter(baseDir.getAbsolutePath());
 
                 final String componentName = component.getNormalizedName("~");
