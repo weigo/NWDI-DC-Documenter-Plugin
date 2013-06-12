@@ -14,8 +14,7 @@ import org.arachna.netweaver.dc.types.DevelopmentConfigurationVisitor;
 import org.arachna.netweaver.nwdi.documenter.filter.VendorFilter;
 
 /**
- * Generator for dependency graphs of software and development components of a
- * development configuration.
+ * Generator for dependency graphs of software and development components of a development configuration.
  * 
  * @author Dirk Weigenand
  */
@@ -41,28 +40,25 @@ public final class DependencyGraphGenerator implements DevelopmentConfigurationV
     private final DiagramDescriptorContainer descriptorContainer = new DiagramDescriptorContainer();
 
     /**
-     * Create a new instance of the dependency graph generator for the given
-     * development configuration. Use the given baseDirectory as base for
-     * output. Filter compartments using the given filter.
+     * Create a new instance of the dependency graph generator for the given development configuration. Use the given baseDirectory as base
+     * for output. Filter compartments using the given filter.
      * 
      * @param dcFactory
      *            registry for development components.
      * @param vendorFilter
-     *            filter development components or compartments by vendors using
-     *            this filter.
+     *            filter development components or compartments by vendors using this filter.
      * @param baseDirectory
      *            use base directory for graph generation.
      */
-    public DependencyGraphGenerator(final DevelopmentComponentFactory dcFactory, final VendorFilter vendorFilter,
-        final File baseDirectory) {
+    public DependencyGraphGenerator(final DevelopmentComponentFactory dcFactory, final VendorFilter vendorFilter, final File baseDirectory) {
         this.dcFactory = dcFactory;
         this.vendorFilter = vendorFilter;
         this.baseDirectory = baseDirectory;
     }
 
     /**
-     * Create a directory for the given file iff it does not exist. Throws a
-     * <code>RuntimeException</code> if the directory could not be created.
+     * Create a directory for the given file iff it does not exist. Throws a <code>RuntimeException</code> if the directory could not be
+     * created.
      * 
      * @param baseFolder
      *            base folder where to generate images to
@@ -74,7 +70,7 @@ public final class DependencyGraphGenerator implements DevelopmentConfigurationV
         final File directory = new File(String.format("%s/%s", baseFolder.getAbsolutePath(), folderName));
 
         if (!directory.exists() && !directory.mkdirs()) {
-            throw new RuntimeException("Could not create " + directory.getAbsolutePath() + "!");
+            throw new IllegalStateException("Could not create " + directory.getAbsolutePath() + "!");
         }
 
         return directory;
@@ -84,8 +80,7 @@ public final class DependencyGraphGenerator implements DevelopmentConfigurationV
      * Create dependency graph for the given development configuration.
      * 
      * @param configuration
-     *            the development configuration to generate the dependency graph
-     *            for.
+     *            the development configuration to generate the dependency graph for.
      */
     @Override
     public void visit(final DevelopmentConfiguration configuration) {
@@ -95,11 +90,11 @@ public final class DependencyGraphGenerator implements DevelopmentConfigurationV
 
             descriptorContainer.add(
                 configuration,
-                new DiagramDescriptor(dotFileWriter.write(new DevelopmentConfigurationDotFileGenerator(configuration,
-                    vendorFilter), configuration.getName()), ""));
+                new DiagramDescriptor(dotFileWriter.write(new DevelopmentConfigurationDotFileGenerator(configuration, vendorFilter),
+                    configuration.getName()), ""));
         }
         catch (final IOException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
     }
 
@@ -110,22 +105,20 @@ public final class DependencyGraphGenerator implements DevelopmentConfigurationV
     public void visit(final Compartment compartment) {
         if (!vendorFilter.accept(compartment)) {
             try {
-                final File baseDir =
-                    createDirectoryIffNotExists(baseDirectory, String.format("%s/images", compartment.getName()));
+                final File baseDir = createDirectoryIffNotExists(baseDirectory, String.format("%s/images", compartment.getName()));
                 final DotFileWriter dotFileWriter = new DotFileWriter(baseDir.getAbsolutePath());
                 final String usingDCs =
                     dotFileWriter.write(
-                        new UsingDevelopmentComponentsDotFileGenerator(compartment.getDevelopmentComponents(),
-                            vendorFilter), compartment.getName() + "-usingDCs");
+                        new UsingDevelopmentComponentsDotFileGenerator(compartment.getDevelopmentComponents(), vendorFilter),
+                        compartment.getName() + "-usingDCs");
                 final String usedDCs =
-                    dotFileWriter.write(
-                        new DevelopmentComponentDotFileGenerator(dcFactory, compartment.getDevelopmentComponents(),
-                            vendorFilter), compartment.getName() + "-usedDCs");
+                    dotFileWriter.write(new DevelopmentComponentDotFileGenerator(dcFactory, compartment.getDevelopmentComponents(),
+                        vendorFilter), compartment.getName() + "-usedDCs");
 
                 descriptorContainer.add(compartment, new DiagramDescriptor(usedDCs, usingDCs));
             }
             catch (final IOException e) {
-                throw new RuntimeException(e);
+                throw new IllegalStateException(e);
             }
         }
     }
@@ -138,8 +131,7 @@ public final class DependencyGraphGenerator implements DevelopmentConfigurationV
         if (!vendorFilter.accept(component) && component.isNeedsRebuild()) {
             try {
                 final File baseDir =
-                    createDirectoryIffNotExists(baseDirectory,
-                        String.format("%s/images", component.getCompartment().getName()));
+                    createDirectoryIffNotExists(baseDirectory, String.format("%s/images", component.getCompartment().getName()));
                 final DotFileWriter dotFileWriter = new DotFileWriter(baseDir.getAbsolutePath());
 
                 final String componentName = component.getNormalizedName("~");
@@ -157,7 +149,7 @@ public final class DependencyGraphGenerator implements DevelopmentConfigurationV
                 descriptorContainer.add(component, new DiagramDescriptor(usedDCs, usingDCs));
             }
             catch (final IOException e) {
-                throw new RuntimeException(e);
+                throw new IllegalStateException(e);
             }
         }
     }
