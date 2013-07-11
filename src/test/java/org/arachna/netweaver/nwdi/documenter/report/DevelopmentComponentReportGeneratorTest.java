@@ -3,7 +3,7 @@
  */
 package org.arachna.netweaver.nwdi.documenter.report;
 
-import java.io.OutputStreamWriter;
+import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -22,38 +22,47 @@ import org.junit.Test;
 /**
  * @author Dirk Weigenand
  */
-public class DevelopmentComponentReportGeneratorTest {
+public class DevelopmentComponentReportGeneratorTest extends AbstractXmlTestCase {
     private DevelopmentComponentReportGenerator generator;
     private DevelopmentComponentFactory dcFactory;
 
     /**
      * @throws java.lang.Exception
      */
+    @Override
     @Before
     public void setUp() {
         dcFactory = new DevelopmentComponentFactory();
-        final VelocityEngine velocityEngine = new VelocityHelper(System.out).getVelocityEngine();
-        // final ResourceBundle bundle
+        final VelocityEngine velocityEngine = new VelocityHelper().getVelocityEngine();
         final DevelopmentComponent component = dcFactory.create("example.com", "dc", DevelopmentComponentType.Java);
         generator =
-            new DevelopmentComponentReportGenerator(
-                new DocumentationFacetProviderFactory(new AntHelper("", dcFactory)), dcFactory, velocityEngine,
-                ResourceBundle.getBundle(DocumentationBuilder.DC_REPORT_BUNDLE, Locale.GERMAN), component);
+            new DevelopmentComponentReportGenerator(new DocumentationFacetProviderFactory(new AntHelper("", dcFactory)), dcFactory,
+                velocityEngine, ResourceBundle.getBundle(DocumentationBuilder.DC_REPORT_BUNDLE, Locale.GERMAN), component);
     }
 
     /**
      * Test method for
-     * {@link org.arachna.netweaver.nwdi.documenter.report.DevelopmentComponentReportGenerator#execute(java.io.Writer, org.arachna.netweaver.dc.types.DevelopmentComponent, java.util.Map, java.io.Reader)}
+     * {@link DevelopmentComponentReportGenerator#execute(java.io.Writer, org.arachna.netweaver.dc.types.DevelopmentComponent, java.util.Map, java.io.Reader)}
      * .
      */
     @Test
     public final void testExecute() {
-        final OutputStreamWriter writer = new OutputStreamWriter(System.out);
+        // FIXME: add asserts for project url generation.
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected String createDocument() {
+        final StringWriter writer = new StringWriter();
+
         final Map<String, Object> context = new HashMap<String, Object>();
         context.put(ContextPropertyName.ProjectUrl.getName(), "projectUrl");
         context.put(ContextPropertyName.WikiSpace.getName(), "NWENV");
 
-        // FIXME: add asserts for project url generation.
         generator.execute(writer, context, DocBookVelocityTemplate.DevelopmentComponent.getTemplate());
+
+        return writer.toString();
     }
 }

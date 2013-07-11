@@ -3,7 +3,6 @@
  */
 package org.arachna.netweaver.nwdi.documenter.report;
 
-import java.io.IOException;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -19,20 +18,16 @@ import org.arachna.netweaver.dc.types.DevelopmentComponent;
 import org.arachna.netweaver.dc.types.DevelopmentComponentFactory;
 import org.arachna.netweaver.nwdi.documenter.DocumentationBuilder;
 import org.custommonkey.xmlunit.SimpleNamespaceContext;
-import org.custommonkey.xmlunit.XMLTestCase;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.custommonkey.xmlunit.exceptions.XpathException;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.xml.sax.SAXException;
 
 /**
  * Unit tests for {@link CompartmentReportGenerator}.
  * 
  * @author Dirk Weigenand
  */
-public class CompartmentReportGeneratorTest extends XMLTestCase {
+public class CompartmentReportGeneratorTest extends AbstractXmlTestCase {
     /**
      * name of track to be documented.
      */
@@ -84,19 +79,12 @@ public class CompartmentReportGeneratorTest extends XMLTestCase {
         // nameSpaceMappings.put("xl", "http://www.w3.org/1999/xlink");
         nameSpaceMappings.put("xi", "http://www.w3.org/2001/XInclude");
         XMLUnit.setXpathNamespaceContext(new SimpleNamespaceContext(nameSpaceMappings));
-    }
-
-    /**
-     * @throws java.lang.Exception
-     */
-    @Override
-    @After
-    public void tearDown() throws Exception {
+        XMLUnit.getControlDocumentBuilderFactory().setNamespaceAware(false);
     }
 
     /**
      * Test method for
-     * {@link org.arachna.netweaver.nwdi.documenter.report.CompartmentReportGenerator#execute(java.io.Writer, org.arachna.netweaver.dc.types.Compartment, java.util.Map, java.io.Reader)}
+     * {@link CompartmentReportGenerator#execute(java.io.Writer, org.arachna.netweaver.dc.types.Compartment, java.util.Map, java.io.Reader)}
      * .
      */
     @Test
@@ -107,34 +95,12 @@ public class CompartmentReportGeneratorTest extends XMLTestCase {
         // assertTrue(result, result.contains(link));
     }
 
-    private void assertXpathEvaluatesTo(final String expected, final String xPath) {
-        try {
-            assertXpathEvaluatesTo(expected, xPath, createDocument());
-        }
-        catch (final XpathException e) {
-            fail(e);
-        }
-        catch (final SAXException e) {
-            fail(e);
-        }
-        catch (final IOException e) {
-            fail(e);
-        }
-    }
-
-    private void fail(final Throwable t) {
-        if (t.getCause() != null) {
-            fail(t.getCause());
-        }
-        else {
-            fail(t.getLocalizedMessage());
-        }
-    }
-
     /**
-     * @return
-     * @throws IOException
+     * Create example document for a compartment.
+     * 
+     * @return example document to test against.
      */
+    @Override
     protected String createDocument() {
         final StringWriter writer = new StringWriter();
         generator.execute(writer, additionalContext, DocBookVelocityTemplate.Compartment.getTemplate());

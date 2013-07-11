@@ -7,6 +7,13 @@
       <f:textbox />
     </f:entry>
 
+    <f:entry title="${%documentation language}" description="${%Choose the language the documentation shall be generated in.}">
+      <select class="setting-input" name="selectedLocale">
+        <j:forEach var="l" items="${instance.availableDocumentationLanguages}">
+          <f:option value="${l.language}" selected="${l.language==instance.selectedLocale}">${l.displayLanguage}</f:option>
+        </j:forEach>
+      </select>
+    </f:entry>
     <f:entry title="${%create HTML}" description="${%create documentation in HTML format}" field="createHtmlDocumentation">
       <f:checkbox default="false" value="${instance.createHtmlDocumentation}" clazz="required" />
     </f:entry>
