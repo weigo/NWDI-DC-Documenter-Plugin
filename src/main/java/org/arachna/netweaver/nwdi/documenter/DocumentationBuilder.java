@@ -243,22 +243,28 @@ public class DocumentationBuilder extends AntTaskBuilder {
 
         final DiagramDescriptorContainer descriptorContainer =
             generateDependencyDiagrams(dcFactory, developmentConfiguration, docBookSourceFolder, vendorFilter);
-        final boolean result = generateDot2SvgBuildFile(build, launcher, listener, workspace, engine, descriptorContainer);
+        boolean result = true;
 
-        if (result) {
-            final ResourceBundle bundle = ResourceBundle.getBundle(DC_REPORT_BUNDLE, getLocale());
-            generateDocBookDocuments(dcFactory, developmentConfiguration, docBookSourceFolder, vendorFilter, engine, descriptorContainer,
-                bundle);
+        try {
+            result = generateDot2SvgBuildFile(build, launcher, listener, workspace, engine, descriptorContainer);
 
-            if (publishToConfluence) {
-                publishToConfluence(build, listener, developmentConfiguration, docBookSourceFolder, vendorFilter, descriptorContainer);
+            if (result) {
+                generateDocBookDocuments(dcFactory, developmentConfiguration, docBookSourceFolder, vendorFilter, descriptorContainer);
+
+                if (publishToConfluence) {
+                    publishToConfluence(build, listener, developmentConfiguration, docBookSourceFolder, vendorFilter, descriptorContainer);
+                }
+
+                if (createHtmlDocumentation) {
+                    new POMGenerator(workspace, docBookSourceFolder, developmentConfiguration, engine).execute();
+                    // FIXME: add code to generate HTML when docbook conversion is
+                    // there!
+                }
             }
 
-            if (createHtmlDocumentation) {
-                new POMGenerator(workspace, docBookSourceFolder, developmentConfiguration, engine).execute();
-                // FIXME: add code to generate HTML when docbook conversion is
-                // there!
-            }
+        }
+        catch (final InterruptedException e) {
+            // Ignore, we have been interrupted.
         }
 
         return result;
@@ -287,9 +293,11 @@ public class DocumentationBuilder extends AntTaskBuilder {
      * @param engine
      * @param descriptorContainer
      * @return
+     * @throws InterruptedException
      */
     protected boolean generateDot2SvgBuildFile(final AbstractBuild build, final Launcher launcher, final BuildListener listener,
-        final File workspace, final VelocityEngine engine, final DiagramDescriptorContainer descriptorContainer) {
+        final File workspace, final VelocityEngine engine, final DiagramDescriptorContainer descriptorContainer)
+        throws InterruptedException {
         final Dot2SvgBuildFileGenerator generator =
             new Dot2SvgBuildFileGenerator(workspace, engine, DESCRIPTOR.getDotExecutable(), TIMEOUT, Runtime.getRuntime()
                 .availableProcessors());
@@ -297,6 +305,7 @@ public class DocumentationBuilder extends AntTaskBuilder {
     }
 
     /**
+     * 
      * @param dcFactory
      * @param developmentConfiguration
      * @param docBookSourceFolder
@@ -307,8 +316,10 @@ public class DocumentationBuilder extends AntTaskBuilder {
      */
     protected void generateDocBookDocuments(final DevelopmentComponentFactory dcFactory,
         final DevelopmentConfiguration developmentConfiguration, final File docBookSourceFolder, final VendorFilter vendorFilter,
-        final VelocityEngine engine, final DiagramDescriptorContainer descriptorContainer, final ResourceBundle bundle) {
-        final ReportGeneratorFactory reportGeneratorFactory = new ReportGeneratorFactory(getAntHelper(), dcFactory, engine, bundle);
+        final DiagramDescriptorContainer descriptorContainer) {
+        final ResourceBundle bundle = ResourceBundle.getBundle(DC_REPORT_BUNDLE, getLocale());
+        final ReportGeneratorFactory reportGeneratorFactory =
+            new ReportGeneratorFactory(getAntHelper(), dcFactory, getVelocityEngine(), bundle);
         final DocBookReportGenerator generator =
             new DocBookReportGenerator(docBookSourceFolder, reportGeneratorFactory, vendorFilter, descriptorContainer);
         developmentConfiguration.accept(generator);
