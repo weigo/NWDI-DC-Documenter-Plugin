@@ -6,42 +6,22 @@ package org.arachna.netweaver.nwdi.documenter.facets.webservices;
 import java.io.IOException;
 import java.io.Reader;
 
-import org.apache.commons.digester3.Digester;
+import org.apache.commons.digester3.binder.AbstractRulesModule;
+import org.apache.commons.digester3.binder.LinkedRuleBuilder;
+import org.apache.commons.digester3.binder.RulesModule;
+import org.arachna.xml.DigesterHelper;
+import org.arachna.xml.RulesModuleProducer;
 import org.xml.sax.SAXException;
-import org.xml.sax.helpers.XMLReaderFactory;
 
 /**
  * Reader for virtual interface definitions of web services.
  * 
  * @author Dirk Weigenand
  */
-public class VirtualInterfaceDefinitionReader {
-    private final Digester digester;
-
-    public VirtualInterfaceDefinitionReader() {
-        try {
-            digester = new Digester(XMLReaderFactory.createXMLReader());
-        }
-        catch (SAXException e) {
-            throw new RuntimeException(e);
-        }
-        
-        setUpVirtualInterfaceHandling();
-        setUpFunctionHandling();
-        setUpIncomingParameterHandling();
-        setUpIncomingParameterSimpleTypeHandling();
-        setUpIncomingParameterTableTypeHandling();
-        setUpIncomingParameterComplexTypeHandling();
-        setUpResponseHandling();
-        setUpResponseParameterHandling();
-        setUpResponseParameterSimpleTypeHandling();
-        setUpResponseParameterTableTypeHandling();
-        setUpResponseParameterComplexTypeHandling();
-    }
-
+public class VirtualInterfaceDefinitionReader implements RulesModuleProducer {
     /**
-     * Reads the definition of a virtual interface of a web service from the
-     * given reader and returns a descriptor representing the interface.
+     * Reads the definition of a virtual interface of a web service from the given reader and returns a descriptor representing the
+     * interface.
      * 
      * @param reader
      *            reader to read interface definition from
@@ -50,180 +30,146 @@ public class VirtualInterfaceDefinitionReader {
      * @throws IOException
      */
     public VirtualInterfaceDefinition read(final Reader reader) throws IOException, SAXException {
-        return (VirtualInterfaceDefinition)digester.parse(reader);
+        return new DigesterHelper<VirtualInterfaceDefinition>(this).execute(reader);
     }
 
     /**
-     * @param digester
+     * Producer for parsing rules for interface definitions (NW 7.0 web services).
+     * 
+     * @author Dirk Weigenand
      */
-    private void setUpResponseParameterTableTypeHandling() {
-        digester
-            .addObjectCreate(
-                "VirtualInterface/VirtualInterface.Functions/Function/Function.OutgoingParameters/Parameter/Parameter.MappedTypeReference/ConvertedTableReference",
-                Type.class);
-        digester
-            .addSetNext(
-                "VirtualInterface/VirtualInterface.Functions/Function/Function.OutgoingParameters/Parameter/Parameter.MappedTypeReference/ConvertedTableReference",
-                "setType");
-        digester
-            .addSetProperties("VirtualInterface/VirtualInterface.Functions/Function/Function.OutgoingParameters/Parameter/Parameter.MappedTypeReference/ConvertedTableReference");
-    }
+    @Override
+    public RulesModule getRulesModule() {
+        return new AbstractRulesModule() {
+            @Override
+            protected void configure() {
+                setUpVirtualInterfaceHandling();
+                setUpFunctionHandling();
+                setUpIncomingParameterHandling();
+                setUpIncomingParameterSimpleTypeHandling();
+                setUpIncomingParameterTableTypeHandling();
+                setUpIncomingParameterComplexTypeHandling();
+                setUpResponseHandling();
+                setUpResponseParameterHandling();
+                setUpResponseParameterSimpleTypeHandling();
+                setUpResponseParameterTableTypeHandling();
+                setUpResponseParameterComplexTypeHandling();
+            }
 
-    /**
-     * @param digester
-     */
-    private void setUpResponseParameterSimpleTypeHandling() {
-        digester
-            .addObjectCreate(
-                "VirtualInterface/VirtualInterface.Functions/Function/Function.OutgoingParameters/Parameter/Parameter.MappedTypeReference/ConvertedTypeReference",
-                Type.class);
-        digester
-            .addSetNext(
-                "VirtualInterface/VirtualInterface.Functions/Function/Function.OutgoingParameters/Parameter/Parameter.MappedTypeReference/ConvertedTypeReference",
-                "setType");
-        digester
-            .addSetProperties("VirtualInterface/VirtualInterface.Functions/Function/Function.OutgoingParameters/Parameter/Parameter.MappedTypeReference/ConvertedTypeReference");
-    }
+            private LinkedRuleBuilder createObjectSetPropertiesAndAddToParent(final String pattern, final Class<?> type,
+                final String methodName) {
+                return forPattern(pattern).createObject().ofType(type).then().setNext(methodName).then().setProperties().then();
+            }
 
-    /**
-     * @param digester
-     */
-    private void setUpResponseParameterComplexTypeHandling() {
-        digester
-            .addObjectCreate(
-                "VirtualInterface/VirtualInterface.Functions/Function/Function.OutgoingParameters/Parameter/Parameter.MappedTypeReference/ComplexTypeReference",
-                Type.class);
-        digester
-            .addSetNext(
-                "VirtualInterface/VirtualInterface.Functions/Function/Function.OutgoingParameters/Parameter/Parameter.MappedTypeReference/ComplexTypeReference",
-                "setType");
-        digester
-            .addSetProperties("VirtualInterface/VirtualInterface.Functions/Function/Function.OutgoingParameters/Parameter/Parameter.MappedTypeReference/ComplexTypeReference");
-    }
+            private LinkedRuleBuilder callMethod(final LinkedRuleBuilder builder, final String methodName, final String attributeName) {
+                return builder.callMethod(methodName).withParamTypes(String.class).then().callParam().ofIndex(0)
+                    .fromAttribute(attributeName).then();
+            }
 
-    /**
-     * @param digester
-     */
-    private void setUpResponseParameterHandling() {
-        digester.addObjectCreate(
-            "VirtualInterface/VirtualInterface.Functions/Function/Function.OutgoingParameters/Parameter",
-            Parameter.class);
-        digester.addSetNext(
-            "VirtualInterface/VirtualInterface.Functions/Function/Function.OutgoingParameters/Parameter",
-            "setParameter");
-        digester
-            .addSetProperties("VirtualInterface/VirtualInterface.Functions/Function/Function.OutgoingParameters/Parameter");
+            /**
+             * @param digester
+             */
+            private void setUpResponseParameterTableTypeHandling() {
+                createObjectSetPropertiesAndAddToParent(
+                    "VirtualInterface/VirtualInterface.Functions/Function/Function.OutgoingParameters/Parameter/Parameter.MappedTypeReference/ConvertedTableReference",
+                    Type.class, "setType");
+            }
 
-        digester.addCallMethod(
-            "VirtualInterface/VirtualInterface.Functions/Function/Function.OutgoingParameters/Parameter",
-            "setMappedName", 1);
-        digester.addCallParam(
-            "VirtualInterface/VirtualInterface.Functions/Function/Function.OutgoingParameters/Parameter", 0,
-            "nameMappedTo");
-    }
+            /**
+             * @param digester
+             */
+            private void setUpResponseParameterSimpleTypeHandling() {
+                createObjectSetPropertiesAndAddToParent(
+                    "VirtualInterface/VirtualInterface.Functions/Function/Function.OutgoingParameters/Parameter/Parameter.MappedTypeReference/ConvertedTypeReference",
+                    Type.class, "setType");
+            }
 
-    /**
-     * @param digester
-     */
-    private void setUpResponseHandling() {
-        digester.addObjectCreate("VirtualInterface/VirtualInterface.Functions/Function/Function.OutgoingParameters",
-            Response.class);
-        digester.addSetNext("VirtualInterface/VirtualInterface.Functions/Function/Function.OutgoingParameters",
-            "setResponse");
-    }
+            /**
+             * @param digester
+             */
+            private void setUpResponseParameterComplexTypeHandling() {
+                createObjectSetPropertiesAndAddToParent(
+                    "VirtualInterface/VirtualInterface.Functions/Function/Function.OutgoingParameters/Parameter/Parameter.MappedTypeReference/ComplexTypeReference",
+                    Type.class, "setType");
+            }
 
-    /**
-     * @param digester
-     */
-    private void setUpIncomingParameterSimpleTypeHandling() {
-        digester
-            .addObjectCreate(
-                "VirtualInterface/VirtualInterface.Functions/Function/Function.IncomingParameters/Parameter/Parameter.MappedTypeReference/ConvertedTypeReference",
-                Type.class);
-        digester
-            .addSetNext(
-                "VirtualInterface/VirtualInterface.Functions/Function/Function.IncomingParameters/Parameter/Parameter.MappedTypeReference/ConvertedTypeReference",
-                "setType");
-        digester
-            .addSetProperties("VirtualInterface/VirtualInterface.Functions/Function/Function.IncomingParameters/Parameter/Parameter.MappedTypeReference/ConvertedTypeReference");
-    }
+            /**
+             * @param digester
+             */
+            private void setUpResponseParameterHandling() {
+                final LinkedRuleBuilder builder =
+                    createObjectSetPropertiesAndAddToParent(
+                        "VirtualInterface/VirtualInterface.Functions/Function/Function.OutgoingParameters/Parameter", Parameter.class,
+                        "setParameter");
+                callMethod(builder, "setMappedName", "nameMappedTo");
+            }
 
-    /**
-     * @param digester
-     */
-    private void setUpIncomingParameterTableTypeHandling() {
-        digester
-            .addObjectCreate(
-                "VirtualInterface/VirtualInterface.Functions/Function/Function.IncomingParameters/Parameter/Parameter.MappedTypeReference/ConvertedTableReference",
-                Type.class);
-        digester
-            .addSetNext(
-                "VirtualInterface/VirtualInterface.Functions/Function/Function.IncomingParameters/Parameter/Parameter.MappedTypeReference/ConvertedTableReference",
-                "setType");
-        digester
-            .addSetProperties("VirtualInterface/VirtualInterface.Functions/Function/Function.IncomingParameters/Parameter/Parameter.MappedTypeReference/ConvertedTableReference");
-    }
+            /**
+             * @param digester
+             */
+            private void setUpResponseHandling() {
+                createObjectSetPropertiesAndAddToParent("VirtualInterface/VirtualInterface.Functions/Function/Function.OutgoingParameters",
+                    Response.class, "setResponse");
+            }
 
-    /**
-     * @param digester
-     */
-    private void setUpIncomingParameterComplexTypeHandling() {
-        digester
-            .addObjectCreate(
-                "VirtualInterface/VirtualInterface.Functions/Function/Function.IncomingParameters/Parameter/Parameter.MappedTypeReference/ComplexTypeReference",
-                Type.class);
-        digester
-            .addSetNext(
-                "VirtualInterface/VirtualInterface.Functions/Function/Function.IncomingParameters/Parameter/Parameter.MappedTypeReference/ComplexTypeReference",
-                "setType");
-        digester
-            .addSetProperties("VirtualInterface/VirtualInterface.Functions/Function/Function.IncomingParameters/Parameter/Parameter.MappedTypeReference/ComplexTypeReference");
-    }
+            /**
+             * @param digester
+             */
+            private void setUpIncomingParameterSimpleTypeHandling() {
+                createObjectSetPropertiesAndAddToParent(
+                    "VirtualInterface/VirtualInterface.Functions/Function/Function.IncomingParameters/Parameter/Parameter.MappedTypeReference/ConvertedTypeReference",
+                    Type.class, "setType");
+            }
 
-    /**
-     * @param digester
-     */
-    private void setUpIncomingParameterHandling() {
-        digester.addObjectCreate(
-            "VirtualInterface/VirtualInterface.Functions/Function/Function.IncomingParameters/Parameter",
-            Parameter.class);
-        digester.addSetNext(
-            "VirtualInterface/VirtualInterface.Functions/Function/Function.IncomingParameters/Parameter",
-            "addParameter");
-        digester
-            .addSetProperties("VirtualInterface/VirtualInterface.Functions/Function/Function.IncomingParameters/Parameter");
+            /**
+             * @param digester
+             */
+            private void setUpIncomingParameterTableTypeHandling() {
+                createObjectSetPropertiesAndAddToParent(
+                    "VirtualInterface/VirtualInterface.Functions/Function/Function.IncomingParameters/Parameter/Parameter.MappedTypeReference/ConvertedTableReference",
+                    Type.class, "setType");
+            }
 
-        digester.addCallMethod(
-            "VirtualInterface/VirtualInterface.Functions/Function/Function.IncomingParameters/Parameter",
-            "setMappedName", 1);
-        digester.addCallParam(
-            "VirtualInterface/VirtualInterface.Functions/Function/Function.IncomingParameters/Parameter", 0,
-            "nameMappedTo");
-    }
+            /**
+             * @param digester
+             */
+            private void setUpIncomingParameterComplexTypeHandling() {
+                createObjectSetPropertiesAndAddToParent(
+                    "VirtualInterface/VirtualInterface.Functions/Function/Function.IncomingParameters/Parameter/Parameter.MappedTypeReference/ComplexTypeReference",
+                    Type.class, "setType");
+            }
 
-    /**
-     * @param digester
-     */
-    private void setUpFunctionHandling() {
-        digester.addObjectCreate("VirtualInterface/VirtualInterface.Functions/Function", Function.class);
-        digester.addSetNext("VirtualInterface/VirtualInterface.Functions/Function", "addMethod");
-        digester.addSetProperties("VirtualInterface/VirtualInterface.Functions/Function");
+            /**
+             * @param digester
+             */
+            private void setUpIncomingParameterHandling() {
+                final LinkedRuleBuilder builder =
+                    createObjectSetPropertiesAndAddToParent(
+                        "VirtualInterface/VirtualInterface.Functions/Function/Function.IncomingParameters/Parameter", Parameter.class,
+                        "addParameter");
+                callMethod(builder, "setMappedName", "nameMappedTo");
+            }
 
-        digester.addCallMethod("VirtualInterface/VirtualInterface.Functions/Function", "setMappedName", 1);
-        digester.addCallParam("VirtualInterface/VirtualInterface.Functions/Function", 0, "nameMappedTo");
-    }
+            /**
+             * @param digester
+             */
+            private void setUpFunctionHandling() {
+                final LinkedRuleBuilder builder =
+                    createObjectSetPropertiesAndAddToParent("VirtualInterface/VirtualInterface.Functions/Function", Function.class,
+                        "addMethod");
+                callMethod(builder, "setMappedName", "nameMappedTo");
+            }
 
-    /**
-     * @param digester
-     */
-    private void setUpVirtualInterfaceHandling() {
-        digester.addObjectCreate("VirtualInterface", VirtualInterfaceDefinition.class);
-        digester.addCallMethod("VirtualInterface", "setName", 1);
-        digester.addCallParam("VirtualInterface", 0, "name");
+            /**
+             * @param digester
+             */
+            private void setUpVirtualInterfaceHandling() {
+                forPattern("VirtualInterface").createObject().ofType(VirtualInterfaceDefinition.class).then().callMethod("setName")
+                    .withParamTypes(String.class).then().callParam().ofIndex(0).fromAttribute("name");
 
-        digester.addCallMethod("VirtualInterface/VirtualInterface.EndpointReference/ClassEndpointReference",
-            "setEndPointClass", 1);
-        digester.addCallParam("VirtualInterface/VirtualInterface.EndpointReference/ClassEndpointReference", 0,
-            "qualifiedClassName");
+                forPattern("VirtualInterface/VirtualInterface.EndpointReference/ClassEndpointReference").callMethod("setEndPointClass")
+                    .withParamTypes(String.class).then().callParam().ofIndex(0).fromAttribute("qualifiedClassName");
+            }
+        };
     }
 }

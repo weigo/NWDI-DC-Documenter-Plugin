@@ -3,26 +3,26 @@
  */
 package org.arachna.netweaver.nwdi.documenter.facets.webdynpro;
 
-import java.io.IOException;
 import java.io.Reader;
 
 import org.apache.commons.digester3.AbstractObjectCreationFactory;
 import org.apache.commons.digester3.Digester;
+import org.apache.commons.digester3.ObjectCreationFactory;
+import org.apache.commons.digester3.binder.AbstractRulesModule;
+import org.apache.commons.digester3.binder.RulesModule;
+import org.arachna.xml.DigesterHelper;
+import org.arachna.xml.RulesModuleProducer;
 import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.XMLReaderFactory;
 
 /**
- * Reader for <code>wdcomponent</code> files. Reads the referenced
- * views/window/controller configuration files and creates the respective
+ * Reader for <code>wdcomponent</code> files. Reads the referenced views/window/controller configuration files and creates the respective
  * objects.
  * 
  * @author Dirk Weigenand
  */
-public final class WebDynproComponentReader {
+public final class WebDynproComponentReader implements RulesModuleProducer {
     /**
-     * method name to use for addSetNext() in
-     * setUpCoreReferenceRulesForParent().
+     * method name to use for addSetNext() in setUpCoreReferenceRulesForParent().
      */
     private static final String SET_CORE_REFERENCE = "setCoreReference";
 
@@ -45,122 +45,103 @@ public final class WebDynproComponentReader {
      * Read a WebDynpro component using the given {@link Reader} instance.
      * 
      * @param reader
-     *            <code>Reader</code> to read a WebDynpro component definition
-     *            from (from a <code>.wdcomponent</code> file).
-     * @return a {@link WebDynproComponent} set up wrt. to the content of the
-     *         WebDynpro component descriptor read.
+     *            <code>Reader</code> to read a WebDynpro component definition from (from a <code>.wdcomponent</code> file).
+     * @return a {@link WebDynproComponent} set up wrt. to the content of the WebDynpro component descriptor read.
      */
     public WebDynproComponent read(final Reader reader) {
-        try {
-            final Digester digester = new Digester(XMLReaderFactory.createXMLReader());
-
-            setUpCreateWebDynproComponent(digester);
-            setUpComponentComponentInterfaceRules(digester);
-            setUpComponentUsageRules(digester);
-
-            setUpCoreReferenceRulesForType(digester, "Controllers");
-            setUpCoreReferenceRulesForType(digester, "Views");
-            setUpCoreReferenceRulesForType(digester, "Windows");
-
-            setUpCoreReferenceRulesForParent(digester, "Component/Component.ComponentController",
-                "setComponentController");
-
-            return (WebDynproComponent)digester.parse(reader);
-        }
-        catch (final SAXException e) {
-            throw new RuntimeException(e);
-        }
-        catch (final IOException e) {
-            throw new RuntimeException(e);
-        }
+        return new DigesterHelper<WebDynproComponent>(this).execute(reader);
     }
 
     /**
-     * Set up rules for creating the {@link WebDynproComponent} instance and
-     * initial properties.
-     * 
-     * @param digester
-     *            {@link Digester} instance to add rules to.
+     * {@inheritdoc}
      */
-    private void setUpCreateWebDynproComponent(final Digester digester) {
-        digester.addObjectCreate(COMPONENT, WebDynproComponent.class);
-        digester.addSetProperties(COMPONENT);
-        digester.addCallMethod(COMPONENT, "setPackageName", 1);
-        digester.addCallParam(COMPONENT, 0, "package");
+    @Override
+    public RulesModule getRulesModule() {
+        return new AbstractRulesModule() {
+            @Override
+            protected void configure() {
+                setUpCreateWebDynproComponent();
+                setUpComponentComponentInterfaceRules();
+                setUpComponentUsageRules();
+
+                setUpCoreReferenceRulesForType("Controllers");
+                setUpCoreReferenceRulesForType("Views");
+                setUpCoreReferenceRulesForType("Windows");
+
+                setUpCoreReferenceRulesForParent("Component/Component.ComponentController", "setComponentController");
+            }
+
+            /**
+             * Set up rules for creating the {@link WebDynproComponent} instance and initial properties.
+             */
+            private void setUpCreateWebDynproComponent() {
+                forPattern(COMPONENT).createObject().ofType(WebDynproComponent.class).then().setProperties().then()
+                    .callMethod("setPackageName").withParamTypes(String.class).then().callParam().ofIndex(0).fromAttribute("package");
+            }
+
+            /**
+             * Set up rules wrt. parsing the XML for a WD component interface reference.
+             * 
+             * @param digester
+             *            {@link Digester} instance to add rules to.
+             */
+            private void setUpComponentComponentInterfaceRules() {
+                forPattern(COMPONENT_INTERFACE).createObject().ofType(ComponentInterface.class).then().setNext("setComponentInterface");
+                setUpCoreReferenceRulesForParent(COMPONENT_INTERFACE, SET_CORE_REFERENCE);
+            }
+
+            /**
+             * Set up digester rules for reading WD component usages.
+             * 
+             * @param digester
+             *            digester to add rules to.
+             */
+            private void setUpComponentUsageRules() {
+                final String componentUsage = "Component/Component.ComponentUsages/ComponentUsage";
+                forPattern(componentUsage).factoryCreate().usingFactory(new ComponentUsageFactory()).then().setNext("add");
+
+                setUpCoreReferenceRulesForParent(componentUsage + "/AbstractComponentUsage.UsedComponent", SET_CORE_REFERENCE);
+                final String componentControllerUsage =
+                    componentUsage + "/ComponentUsage.ComponentControllerUsages/ComponentControllerUsage";
+
+                forPattern(componentControllerUsage).createObject().ofType(ComponentControllerUsage.class).then().setProperties().then()
+                    .setNext("add");
+                setUpCoreReferenceRulesForParent(componentControllerUsage + "/ComponentControllerUsage.UsedComponentController",
+                    SET_CORE_REFERENCE);
+            }
+
+            /**
+             * Set up rule for adding "Core.Reference"s to a parent using the given parent pattern and method name.
+             * 
+             * @param digester
+             *            digester instance to add rule to.
+             * @param parent
+             *            parent path pattern.
+             * @param setNextMethodName
+             *            method name to use to add core reference to parent.
+             */
+            protected void setUpCoreReferenceRulesForParent(final String parent, final String setNextMethodName) {
+                forPattern(parent + "/Core.Reference").factoryCreate().usingFactory(coreReferenceFactory).then().setNext(setNextMethodName);
+            }
+
+            /**
+             * Set up rules for parsing core references for reference types (Controllers, Views, Window). Take advantage of commonalities in
+             * XML representation.
+             * 
+             * @param digester
+             *            digester to add rules to.
+             * @param type
+             *            the type to parse (Controller, View, Window).
+             */
+            private void setUpCoreReferenceRulesForType(final String type) {
+                final String pattern = String.format("Component/Component.%s/Core.Reference", type);
+                forPattern(pattern).factoryCreate().usingFactory(new CoreReferenceFactory()).then().setNext("add");
+            }
+        };
     }
 
     /**
-     * Set up rules wrt. parsing the XML for a WD component interface reference.
-     * 
-     * @param digester
-     *            {@link Digester} instance to add rules to.
-     */
-    private void setUpComponentComponentInterfaceRules(final Digester digester) {
-        digester.addObjectCreate(COMPONENT_INTERFACE, ComponentInterface.class);
-        digester.addSetNext(COMPONENT_INTERFACE, "setComponentInterface");
-        setUpCoreReferenceRulesForParent(digester, COMPONENT_INTERFACE, SET_CORE_REFERENCE);
-    }
-
-    /**
-     * Set up digester rules for reading WD component usages.
-     * 
-     * @param digester
-     *            digester to add rules to.
-     */
-    private void setUpComponentUsageRules(final Digester digester) {
-        final String componentUsage = "Component/Component.ComponentUsages/ComponentUsage";
-        digester.addFactoryCreate(componentUsage, new ComponentUsageFactory());
-        digester.addSetNext(componentUsage, "add", ComponentUsage.class.getName());
-
-        setUpCoreReferenceRulesForParent(digester, componentUsage + "/AbstractComponentUsage.UsedComponent",
-            SET_CORE_REFERENCE);
-        final String componentControllerUsage =
-            componentUsage + "/ComponentUsage.ComponentControllerUsages/ComponentControllerUsage";
-
-        digester.addObjectCreate(componentControllerUsage, ComponentControllerUsage.class);
-        digester.addSetProperties(componentControllerUsage);
-        digester.addSetNext(componentControllerUsage, "add", ComponentControllerUsage.class.getName());
-        setUpCoreReferenceRulesForParent(digester, componentControllerUsage
-            + "/ComponentControllerUsage.UsedComponentController", SET_CORE_REFERENCE);
-    }
-
-    /**
-     * Set up rule for adding "Core.Reference"s to a parent using the given
-     * parent pattern and method name.
-     * 
-     * @param digester
-     *            digester instance to add rule to.
-     * @param parent
-     *            parent path pattern.
-     * @param setNextMethodName
-     *            method name to use to add core reference to parent.
-     */
-    protected void setUpCoreReferenceRulesForParent(final Digester digester, final String parent,
-        final String setNextMethodName) {
-        final String pattern = parent + "/Core.Reference";
-        digester.addFactoryCreate(pattern, coreReferenceFactory);
-        digester.addSetNext(pattern, setNextMethodName);
-    }
-
-    /**
-     * Set up rules for parsing core references for reference types
-     * (Controllers, Views, Window). Take advantage of commonalities in XML
-     * representation.
-     * 
-     * @param digester
-     *            digester to add rules to.
-     * @param type
-     *            the type to parse (Controller, View, Window).
-     */
-    private void setUpCoreReferenceRulesForType(final Digester digester, final String type) {
-        final String pattern = String.format("Component/Component.%s/Core.Reference", type);
-        digester.addFactoryCreate(pattern, new CoreReferenceFactory());
-        digester.addSetNext(pattern, "add", CoreReference.class.getName());
-    }
-
-    /**
-     * Implementation of an {@link ObjectCreationFactory} for
-     * {@link CoreReference} objects. Set type of reference from enum.
+     * Implementation of an {@link ObjectCreationFactory} for {@link CoreReference} objects. Set type of reference from enum.
      * 
      * @author Dirk Weigenand
      */
@@ -180,8 +161,7 @@ public final class WebDynproComponentReader {
     }
 
     /**
-     * Implementation of an {@link ObjectCreationFactory} for
-     * {@link ComponentUsage} objects. Set type of life cycle control from enum.
+     * Implementation of an {@link ObjectCreationFactory} for {@link ComponentUsage} objects. Set type of life cycle control from enum.
      * 
      * @author Dirk Weigenand
      */
@@ -198,4 +178,5 @@ public final class WebDynproComponentReader {
             return usage;
         }
     }
+
 }
