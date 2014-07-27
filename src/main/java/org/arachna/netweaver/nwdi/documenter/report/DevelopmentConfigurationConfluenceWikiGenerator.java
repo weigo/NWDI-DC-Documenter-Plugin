@@ -6,27 +6,27 @@ package org.arachna.netweaver.nwdi.documenter.report;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.Reader;
 import java.io.StringWriter;
+import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.xml.transform.ErrorListener;
 import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
-import jenkins.plugins.confluence.soap.v1.RemoteException;
-import jenkins.plugins.confluence.soap.v1.RemotePage;
-import jenkins.plugins.confluence.soap.v1.RemotePageUpdateOptions;
+import jenkins.plugins.confluence.soap.v1.RemotePageSummary;
+import jenkins.plugins.confluence.soap.v2.RemotePage;
+import jenkins.plugins.confluence.soap.v2.RemotePageUpdateOptions;
 
+import org.apache.commons.io.IOUtils;
 import org.arachna.netweaver.dc.types.Compartment;
 import org.arachna.netweaver.dc.types.DevelopmentComponent;
 import org.arachna.netweaver.dc.types.DevelopmentConfiguration;
@@ -43,11 +43,6 @@ import com.myyearbook.hudson.plugins.confluence.ConfluenceSession;
  * @author Dirk Weigenand
  */
 public final class DevelopmentConfigurationConfluenceWikiGenerator implements DevelopmentConfigurationVisitor {
-    /**
-     * path to XSL stylesheets.
-     */
-    private static final String STYLESHEET_PATH_TEMPLATE = "/org/arachna/netweaver/nwdi/documenter/report/%s";
-
     /**
      * Confluence session used to publish to confluence site.
      */
@@ -69,14 +64,12 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator implements De
     private final PrintStream logger;
 
     /**
-     * keep track of track overview page (to append compartment pages as
-     * children).
+     * keep track of track overview page (to append compartment pages as children).
      */
     private RemotePage trackOverviewPage;
 
     /**
-     * keep track of the current compartment overview page (to add development
-     * component reports as child pages).
+     * keep track of the current compartment overview page (to add development component reports as child pages).
      */
     private RemotePage currentCompartmentOverviewPage;
 
@@ -101,8 +94,7 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator implements De
     private final Templates template;
 
     /**
-     * Create an instance of the confluence wiki content generator for
-     * development components.
+     * Create an instance of the confluence wiki content generator for development components.
      * 
      * @param reportSourceFolder
      *            base folder containing docbook sources for wiki pages.
@@ -115,48 +107,15 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator implements De
      * @param dotFileDescriptorContainer
      *            container for descriptors of generated dependency diagrams.
      */
-    public DevelopmentConfigurationConfluenceWikiGenerator(final File reportSourceFolder,
-        final VendorFilter vendorFilter, final ConfluenceSession session, final PrintStream logger,
-        final DiagramDescriptorContainer dotFileDescriptorContainer) {
+    public DevelopmentConfigurationConfluenceWikiGenerator(final File reportSourceFolder, final VendorFilter vendorFilter,
+        final ConfluenceSession session, final PrintStream logger, final DiagramDescriptorContainer dotFileDescriptorContainer,
+        final Templates templates) {
         this.vendorFilter = vendorFilter;
         this.session = session;
         this.logger = logger;
         this.dotFileDescriptorContainer = dotFileDescriptorContainer;
         this.reportSourceFolder = reportSourceFolder;
-
-        try {
-            final TransformerFactory factory = TransformerFactory.newInstance();
-            factory.setErrorListener(new ErrorListener() {
-
-                @Override
-                public void warning(final TransformerException exception) throws TransformerException {
-                    System.err.println(exception.getMessageAndLocation());
-                    throw new IllegalStateException(exception);
-                }
-
-                @Override
-                public void error(final TransformerException exception) throws TransformerException {
-                    System.err.println(exception.getMessageAndLocation());
-                    throw new IllegalStateException(exception);
-                }
-
-                @Override
-                public void fatalError(final TransformerException exception) throws TransformerException {
-                    System.err.println(exception.getMessageAndLocation());
-                    throw new IllegalStateException(exception);
-                }
-
-            });
-            template =
-                factory.newTemplates(new StreamSource(this.getClass().getResourceAsStream(
-                    String.format(STYLESHEET_PATH_TEMPLATE, "confluence-pre4.xsl"))));
-        }
-        catch (final TransformerConfigurationException e) {
-            throw new IllegalStateException(e);
-        }
-        catch (final TransformerFactoryConfigurationError e) {
-            throw new IllegalStateException(e);
-        }
+        template = templates;
     }
 
     /**
@@ -175,16 +134,14 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator implements De
     }
 
     /**
-     * Create an overview page of licenses for external libraries used in the
-     * given development configuration.
+     * Create an overview page of licenses for external libraries used in the given development configuration.
      * 
      * @param configuration
      *            development configuration to create license overview for.
      */
     private void createGlobalLicenseOverviewPage(final DevelopmentConfiguration configuration) {
-        final StringWriter writer = new StringWriter();
-
-        createOrUpdatePage("LicenseOverviewExternalLibraries", writer.toString(), trackOverviewPage.getId());
+        createOrUpdatePage("LicenseOverviewExternalLibraries", transform(createDocBookTemplateReader("LicenseOverview.xml")),
+            trackOverviewPage.getId());
     }
 
     /**
@@ -194,8 +151,7 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator implements De
     public void visit(final Compartment compartment) {
         if (!vendorFilter.accept(compartment)) {
             currentCompartmentOverviewPage =
-                createOrUpdatePage(compartment.getName(), generateWikiPageContent(compartment),
-                    trackOverviewPage.getId());
+                createOrUpdatePage(compartment.getName(), generateWikiPageContent(compartment), trackOverviewPage.getId());
         }
     }
 
@@ -261,8 +217,7 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator implements De
     }
 
     /**
-     * Create or update a wiki page with the given content. Associate it with
-     * the given parent page.
+     * Create or update a wiki page with the given content. Associate it with the given parent page.
      * 
      * @param pageName
      *            name of wiki page to create or update.
@@ -273,33 +228,37 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator implements De
      * @return the newly created or update page.
      */
     protected RemotePage createOrUpdatePage(final String pageName, final String pageContent, final Long parent) {
+        final String realPageName = trackName.equals(pageName) ? pageName : trackName + '_' + pageName;
+
         try {
-            final String realPageName = trackName.equals(pageName) ? pageName : trackName + '_' + pageName;
             RemotePage page = getRemotePage(realPageName, parent);
 
             if (!pageContent.equals(page.getContent())) {
                 page.setContent(pageContent);
-
-                if (page.getId() == 0) {
-                    session.storePage(page);
-                    page = getRemotePage(realPageName, parent);
-                }
-                else {
-                    session.updatePage(page, new RemotePageUpdateOptions(true, ""));
-                }
+                page = session.updatePageV2(page, new RemotePageUpdateOptions(true, ""));
             }
 
             return page;
         }
         catch (final java.rmi.RemoteException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
+        }
+        finally {
+            try {
+                final Writer writer = new FileWriter(new File(System.getProperty("java.io.tmpdir"), realPageName));
+                writer.write(pageContent);
+                writer.close();
+            }
+            catch (final IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         }
     }
 
     /**
-     * Returns the remote page with the given name. If it does not exist yet a
-     * new page object will be created and associated with the given parent
-     * page.
+     * Returns the remote page with the given name. If it does not exist yet a new page object will be created and associated with the given
+     * parent page.
      * 
      * @param pageName
      *            name of remote page to be retrieved.
@@ -307,28 +266,27 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator implements De
      *            parent page a newly created page should be associated with.
      * @return the remote page iff it exists or a newly created page object.
      * @throws java.rmi.RemoteException
-     *             when the user associated with the current confluence session
-     *             has no permission to access the page.
+     *             when the user associated with the current confluence session has no permission to access the page.
      */
     protected RemotePage getRemotePage(final String pageName, final Long parent) throws java.rmi.RemoteException {
-        RemotePage page = null;
+        long pageId = -1;
 
         try {
-            // FIXME: Create wrapper for Confluence v1/v2 SOAP API.
-            page = session.getPage(getSpaceKey(), pageName);
+            final RemotePageSummary pageSummary = session.getPageSummary(getSpaceKey(), pageName);
+            pageId = pageSummary.getId();
         }
-        catch (final RemoteException e) {
+        catch (final Exception e) {
             logger.append(String.format("Page %s does not exist yet.\n", pageName));
+            final jenkins.plugins.confluence.soap.v1.RemotePage p = new jenkins.plugins.confluence.soap.v1.RemotePage();
+            p.setContent("");
+            p.setTitle(pageName);
+            p.setSpace(getSpaceKey());
+            p.setParentId(parent);
+
+            pageId = session.storePage(p).getId();
         }
 
-        if (page == null) {
-            page = new RemotePage();
-            page.setSpace(getSpaceKey());
-            page.setTitle(pageName);
-            page.setParentId(parent);
-        }
-
-        return page;
+        return session.getPageV2(pageId);
     }
 
     /**
@@ -339,9 +297,28 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator implements De
      * @return generated documentation
      */
     protected String generateWikiPageContent(final DevelopmentComponent component) {
-        final String docBook =
-            String.format("%s/%s.xml", component.getCompartment().getName(), component.getNormalizedName("_"));
-        return transform(createDocBookTemplateReader(docBook));
+        final String docBook = String.format("%s/%s.xml", component.getCompartment().getName(), component.getNormalizedName("_"));
+
+        try {
+            return transform(createDocBookTemplateReader(docBook));
+        }
+        catch (final IllegalStateException ise) {
+            final StringWriter msg = new StringWriter();
+            msg.write("generateWikiPageContent: ");
+            msg.write(docBook);
+            msg.write("\n");
+
+            try {
+                IOUtils.copy(createDocBookTemplateReader(docBook), msg);
+                throw new IllegalStateException(msg.toString(), ise);
+            }
+            catch (final IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+
+        return "";
     }
 
     /**
@@ -354,8 +331,7 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator implements De
      */
     protected void createOverviewPage(final DevelopmentConfiguration configuration) throws java.rmi.RemoteException {
         final Long homePageId = session.getSpace(getSpaceKey()).getHomePage();
-        trackOverviewPage =
-            createOrUpdatePage(configuration.getName(), generateWikiPageContent(configuration), homePageId);
+        trackOverviewPage = createOrUpdatePage(configuration.getName(), generateWikiPageContent(configuration), homePageId);
     }
 
     /**
