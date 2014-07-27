@@ -6,7 +6,6 @@ package org.arachna.netweaver.nwdi.documenter.facets.webdynpro;
 import java.io.Reader;
 
 import org.apache.commons.digester3.AbstractObjectCreationFactory;
-import org.apache.commons.digester3.Digester;
 import org.apache.commons.digester3.ObjectCreationFactory;
 import org.apache.commons.digester3.binder.AbstractRulesModule;
 import org.apache.commons.digester3.binder.RulesModule;
@@ -81,9 +80,6 @@ public final class WebDynproComponentReader implements RulesModuleProducer {
 
             /**
              * Set up rules wrt. parsing the XML for a WD component interface reference.
-             * 
-             * @param digester
-             *            {@link Digester} instance to add rules to.
              */
             private void setUpComponentComponentInterfaceRules() {
                 forPattern(COMPONENT_INTERFACE).createObject().ofType(ComponentInterface.class).then().setNext("setComponentInterface");
@@ -92,9 +88,6 @@ public final class WebDynproComponentReader implements RulesModuleProducer {
 
             /**
              * Set up digester rules for reading WD component usages.
-             * 
-             * @param digester
-             *            digester to add rules to.
              */
             private void setUpComponentUsageRules() {
                 final String componentUsage = "Component/Component.ComponentUsages/ComponentUsage";
@@ -113,8 +106,6 @@ public final class WebDynproComponentReader implements RulesModuleProducer {
             /**
              * Set up rule for adding "Core.Reference"s to a parent using the given parent pattern and method name.
              * 
-             * @param digester
-             *            digester instance to add rule to.
              * @param parent
              *            parent path pattern.
              * @param setNextMethodName
@@ -128,8 +119,6 @@ public final class WebDynproComponentReader implements RulesModuleProducer {
              * Set up rules for parsing core references for reference types (Controllers, Views, Window). Take advantage of commonalities in
              * XML representation.
              * 
-             * @param digester
-             *            digester to add rules to.
              * @param type
              *            the type to parse (Controller, View, Window).
              */
@@ -178,5 +167,4 @@ public final class WebDynproComponentReader implements RulesModuleProducer {
             return usage;
         }
     }
-
 }

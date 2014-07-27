@@ -18,6 +18,14 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.regex.Pattern;
 
+import javax.xml.transform.ErrorListener;
+import javax.xml.transform.Templates;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerFactoryConfigurationError;
+import javax.xml.transform.stream.StreamSource;
+
 import jenkins.model.Jenkins;
 import net.sf.json.JSONObject;
 
@@ -37,8 +45,8 @@ import org.arachna.netweaver.nwdi.dot4j.DiagramDescriptorContainer;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
 
-import com.myyearbook.hudson.plugins.confluence.ConfluencePublisher;
 import com.myyearbook.hudson.plugins.confluence.ConfluenceSession;
+import com.myyearbook.hudson.plugins.confluence.ConfluencePublisher;
 import com.myyearbook.hudson.plugins.confluence.ConfluenceSite;
 
 /**
@@ -51,6 +59,11 @@ public class DocumentationBuilder extends AntTaskBuilder {
      * bundle to use for report internationalization.
      */
     public static final String DC_REPORT_BUNDLE = "org/arachna/netweaver/nwdi/documenter/report/DevelopmentComponentReport";
+
+    /**
+     * path to XSL stylesheets.
+     */
+    private static final String STYLESHEET_PATH_TEMPLATE = "/org/arachna/netweaver/nwdi/documenter/report/%s";
 
     /**
      * descriptor for DocumentationBuilder.
@@ -346,9 +359,11 @@ public class DocumentationBuilder extends AntTaskBuilder {
                 // DevelopmentConfigurationConfluenceWikiGenerator into
                 // it!
                 confluenceSession = site.createSession();
+
                 final DevelopmentConfigurationConfluenceWikiGenerator visitor =
                     new DevelopmentConfigurationConfluenceWikiGenerator(docBookSourceFolder, vendorFilter, confluenceSession,
-                        listener.getLogger(), descriptorContainer);
+                        listener.getLogger(), descriptorContainer, createConfluenceTemplates(confluenceSession.getServerInfo()
+                            .getMajorVersion()));
                 visitor.addToGlobalContext(ContextPropertyName.WikiSpace, confluenceSpace);
                 visitor
                     .addToGlobalContext(ContextPropertyName.ProjectUrl, Jenkins.getInstance().getRootUrl() + build.getProject().getUrl());
@@ -356,6 +371,38 @@ public class DocumentationBuilder extends AntTaskBuilder {
             }
         }
         catch (final RemoteException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    private Templates createConfluenceTemplates(final int confluenceMajorVersion) {
+        try {
+            final TransformerFactory factory = TransformerFactory.newInstance();
+
+            factory.setErrorListener(new ErrorListener() {
+                @Override
+                public void warning(final TransformerException exception) throws TransformerException {
+                    throw new IllegalStateException(exception);
+                }
+
+                @Override
+                public void error(final TransformerException exception) throws TransformerException {
+                    throw new IllegalStateException(exception);
+                }
+
+                @Override
+                public void fatalError(final TransformerException exception) throws TransformerException {
+                    throw new IllegalStateException(exception);
+                }
+            });
+
+            return factory.newTemplates(new StreamSource(this.getClass().getResourceAsStream(
+                String.format(STYLESHEET_PATH_TEMPLATE, ConfluenceVersion.fromConfluenceVersion(confluenceMajorVersion).getTemplate()))));
+        }
+        catch (final TransformerConfigurationException e) {
+            throw new IllegalStateException(e);
+        }
+        catch (final TransformerFactoryConfigurationError e) {
             throw new IllegalStateException(e);
         }
     }

@@ -3,20 +3,21 @@
  */
 package org.arachna.netweaver.nwdi.documenter.facets.webdynpro;
 
-import java.io.IOException;
 import java.io.Reader;
 
-import org.apache.commons.digester3.Digester;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.XMLReaderFactory;
+import org.apache.commons.digester3.AbstractObjectCreationFactory;
+import org.apache.commons.digester3.binder.AbstractRulesModule;
+import org.apache.commons.digester3.binder.RulesModule;
+import org.arachna.xml.DigesterHelper;
+import org.arachna.xml.RulesModuleProducer;
+import org.xml.sax.Attributes;
 
 /**
- * Reader for XLIFF files. These files contain information for
- * internationalization of Web Dynpro text resources.
+ * Reader for XLIFF files. These files contain information for internationalization of Web Dynpro text resources.
  * 
  * @author Dirk Weigenand
  */
-public final class XLIFFReader {
+public final class XLIFFReader implements RulesModuleProducer {
     /**
      * 
      */
@@ -31,27 +32,37 @@ public final class XLIFFReader {
     private static final String TRANS_UNIT_SOURCE = TRANS_UNIT + "/source";
 
     public Xliff execute(final Reader reader) {
-        try {
-            final Digester digester = new Digester(XMLReaderFactory.createXMLReader());
-            digester.addObjectCreate("xliff", Xliff.class);
-            digester.addObjectCreate(XLIFF_BODY_GROUP, XliffGroup.class);
-            digester.addSetProperties(XLIFF_BODY_GROUP, "restype", "resourceType");
-            digester.addSetNext(XLIFF_BODY_GROUP, "addResourceType");
+        return new DigesterHelper<Xliff>(this).execute(reader);
+    }
 
-            digester.addObjectCreate(TRANS_UNIT, TranslationUnit.class);
-            digester.addSetProperties(TRANS_UNIT, "resname", "resourceName");
-            digester.addCallMethod(TRANS_UNIT_SOURCE, "setText", 1);
-            digester.addCallParam(TRANS_UNIT_SOURCE, 0);
-            // digester.addSetProperties(TRANS_UNIT + "/source", "text");
-            digester.addSetNext(TRANS_UNIT, "addTranslationUnit");
+    /**
+     * {@inheritdoc}
+     */
+    @Override
+    public RulesModule getRulesModule() {
+        return new AbstractRulesModule() {
+            @Override
+            protected void configure() {
+                forPattern("xliff").createObject().ofType(Xliff.class);
+                forPattern(XLIFF_BODY_GROUP).factoryCreate().usingFactory(new XliffGroupFactory()).then().setNext("addResourceType");
+                forPattern(TRANS_UNIT).factoryCreate().usingFactory(new TranslationUnitFactory());
+                forPattern(TRANS_UNIT_SOURCE).callMethod("setText").withParamTypes(String.class).usingElementBodyAsArgument().then()
+                    .setNext("addTranslationUnit");
+            }
 
-            return (Xliff)digester.parse(reader);
-        }
-        catch (final IOException e) {
-            throw new RuntimeException(e);
-        }
-        catch (final SAXException e) {
-            throw new RuntimeException(e);
-        }
+            class XliffGroupFactory extends AbstractObjectCreationFactory<XliffGroup> {
+                @Override
+                public XliffGroup createObject(final Attributes attributes) throws Exception {
+                    return new XliffGroup(attributes.getValue("restype"));
+                }
+            }
+
+            class TranslationUnitFactory extends AbstractObjectCreationFactory<TranslationUnit> {
+                @Override
+                public TranslationUnit createObject(final Attributes attributes) throws Exception {
+                    return new TranslationUnit(attributes.getValue("resname"));
+                }
+            }
+        };
     }
 }

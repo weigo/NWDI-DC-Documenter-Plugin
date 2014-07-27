@@ -1,252 +1,240 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<section xmlns="http://docbook.org/ns/docbook" xmlns:xl="http://www.w3.org/1999/xlink" version="5.1"
- xml:id="${component.getNormalizedName("_")}" xml:lang="$lang">
-<title>$bundle.getString("developmentComponent") $component.getName()</title>
-<indexterm>
-  <primary>$bundle.getString("developmentComponents")</primary>
-  <secondary>$component.vendor $component.name</secondary>
-</indexterm>
-<indexterm>
-  <primary>$component.getType().toString()</primary>
-  <secondary>$component.vendor $component.name</secondary>
-</indexterm>
-<section>
-<title>$bundle.getString("caption")</title>
-<para>$escape.xml($component.getCaption())</para>
-</section>
-<section>
-<title>$bundle.getString("description")</title>
-<para>$escape.xml($component.description)</para>
-
-#if ($javaDocUrl)
-<para>$bundleHelper.render("javaDocLinkText",$javaDocUrl)</para>
-
-#set( $usageDocLink = "$component.getNormalizedName('_')_usageDocumentation" )
-<para>$bundleHelper.render("usageDocLink",$usageDocLink)</para>
-#end
-</section>
-
-#if ($component.usedDevelopmentComponents)
-<section>
-<title>$bundle.getString("usedComponents")</title>
-#if ($UsedDCsDiagramHeight && $UsedDCsDiagramWidth)
-<mediaobject>
-  <caption>$bundleHelper.render("usedComponents.image.caption", $component.name)</caption>
-  <imageobject condition="web">
-    <imagedata fileref="images/${component.getNormalizedName('~')}-usedDCs.svg" format="SVG" width="$UsedDCsDiagramWidth" depth="$UsedDCsDiagramHeight"/>
-  </imageobject>
-  <imageobject condition="print">
-    <imagedata fileref="images/${component.getNormalizedName('~')}-usedDCs.png" format="PNG"/>
-  </imageobject>
-</mediaobject>
-#end
-<table>
-<title>$bundleHelper.render("usedComponents.table.caption", $component.getName())</title>
-<tgroup cols="7">
-     <colspec colnum="1" colname="c1" colwidth="3*"/>
-     <colspec colnum="2" colname="c2" colwidth="3*"/>
-     <colspec colnum="3" colname="c3" colwidth="5*"/>
-     <colspec colnum="4" colname="c4" colwidth="3*"/>
-     <colspec colnum="5" colname="c5" colwidth="3*"/>
-     <colspec colnum="6" colname="c6" colwidth="5*"/>
-     <colspec colnum="7" colname="c7" colwidth="5*"/>
-  <thead>
-    <row>
-      <entry>$bundle.getString("developmentComponent")</entry>
-      <entry>$bundle.getString("dcType")</entry>
-      <entry>$bundle.getString("vendor")</entry>
-      <entry>$bundle.getString("PublicPartName")</entry>
-      <entry>$bundle.getString("buildTime")</entry>
-      <entry>$bundle.getString("runTime")</entry>
-      <entry>$bundle.getString("softwareComponent")</entry>
-    </row>
-  </thead>
-  <tbody>
-#foreach($pp in $component.getUsedDevelopmentComponents())
-#set($usedDC = $dcFactory.get($pp))
-    <row>
-      <entry>$pp.getComponentName()</entry>
-      <entry>$usedDC.getType().toString()</entry>
-      <entry>$pp.getVendor()</entry>
-      <entry>$pp.getName()</entry>
-      <entry>#if($pp.isAtBuildTime())x#else #end</entry>
-      <entry>#if($pp.isAtRunTime())x#else #end</entry>
-      <entry>#if (!$bundleHelper.isNull($usedDC.getCompartment()))$usedDC.getCompartment().getSoftwareComponent()#end</entry>
-    </row>
-#end  
-  </tbody>
-</tgroup>
-</table>
-</section>
-#end
-
-#if (!$component.getUsingDevelopmentComponents().isEmpty())
-<section>
-<title>$bundleHelper.render("usingComponents", $component.getName())</title>
-
-<itemizedlist>
-#foreach($usingDC in $component.getUsingDevelopmentComponents())
-  <listitem>
-    <para>
-      <link role="wiki" linkend="$usingDC.getNormalizedName("_")">$usingDC.getName()</link>
-    </para>
-  </listitem>
-#end
-</itemizedlist>
-
-<mediaobject>
-  <caption>$bundleHelper.render("usedComponents.image.caption", $component.name)</caption>
-  <imageobject condition="web">
-    <imagedata fileref="images/${component.getNormalizedName('~')}-usingDCs.svg" format="SVG" width="${UsingDCsDiagramWidth}" depth="${UsingDCsDiagramHeight}"/>
-  </imageobject>
-  <imageobject condition="print">
-    <imagedata fileref="images/${component.getNormalizedName('~')}-usingDCs.png" format="PNG"/>
-  </imageobject>
-</mediaobject>
-</section>
-#end
-
-#if (!$component.publicParts.isEmpty())
-<section>
-<title>$bundle.getString("publicParts.section.caption")</title>
-
-<table>
-<title>$bundleHelper.render("publicParts.table.caption",$component.getName())</title>
-<tgroup cols="4">
-     <colspec colnum="1" colname="c1" colwidth="3*"/>
-     <colspec colnum="2" colname="c2" colwidth="3*"/>
-     <colspec colnum="3" colname="c3" colwidth="5*"/>
-     <colspec colnum="4" colname="c4" colwidth="3*"/>
-  <thead>
-    <row>
-      <entry>$bundle.getString("PublicPartName")</entry>
-      <entry>$bundle.getString("ppType")</entry>
-      <entry>$bundle.getString("caption")</entry>
-      <entry>$bundle.getString("description")</entry>
-    </row>
-  </thead>
-  <tbody>
-#foreach($pp in $component.getPublicParts())
-    <row>
-      <entry>$pp.getPublicPart()</entry>
-      <entry>$pp.getType().toString()</entry>
-      <entry>$escape.xml($pp.getCaption())</entry>
-      <entry>$escape.xml($pp.getDescription())</entry>
-    </row>
-#end  
-  </tbody>
-</tgroup>
-</table>
-</section>
-#end
-
-#if ($webServices && !$webServices.isEmpty())
-<section>
-<title>$bundle.getString("WebServices")</title>
-#foreach($service in $webServices)
-<section>
-<title>$service.getName()</title>
-<para>$bundle.getString("Endpoint"): *$service.getEndPointClass()*</para>
-
-<table>
-<title>$bundleHelper.render("methods.table.caption",$component.getName())</title>
-<tgroup cols="5">
-     <colspec colnum="1" colname="c1" colwidth="3*"/>
-     <colspec colnum="2" colname="c2" colwidth="3*"/>
-     <colspec colnum="3" colname="c3" colwidth="5*"/>
-     <colspec colnum="4" colname="c4" colwidth="3*"/>
-     <colspec colnum="5" colname="c5" colwidth="3*"/>
-  <thead>
-    <row>
-      <entry>$bundle.getString("signature")</entry>
-      <entry>$bundle.getString("originalName")</entry>
-      <entry>$bundle.getString("mappedName")</entry>
-      <entry>$bundle.getString("caption")</entry>
-      <entry>$bundle.getString("description")</entry>
-    </row>
-  </thead>
-  <tbody>
-#foreach($method in $service.getMethods())
-    <row>
-      <entry>Signatur der Methode...</entry>
-      <entry>$method.getOriginalName()</entry>
-      <entry>$method.getMappedName()</entry>
-      <entry>$escape.xmml($method.getDescription())</entry>
-      <entry>Langbeschreibung...</entry>
-    </row>
-#end  
-  </tbody>
-</tgroup>
-</table>
-
-<section>
-<title>$bundle.getString("WebServiceMethods")</title>
-#foreach($m in $service.getMethods())
-<section>
-<title>$m.getMappedName()</title>
-<para>$m.getDescription()</para>
-
-<table>
-<title>$bundleHelper.render("methods.table.caption",$component.getName())</title>
-<tgroup cols="5">
-     <colspec colnum="1" colname="c1" colwidth="3*"/>
-     <colspec colnum="2" colname="c2" colwidth="3*"/>
-     <colspec colnum="3" colname="c3" colwidth="5*"/>
-     <colspec colnum="4" colname="c4" colwidth="3*"/>
-     <colspec colnum="5" colname="c5" colwidth="3*"/>
-  <thead>
-    <row>
-      <entry>$bundle.getString("signature")</entry>
-      <entry>$bundle.getString("originalName")</entry>
-      <entry>$bundle.getString("mappedName")</entry>
-      <entry>$bundle.getString("caption")</entry>
-      <entry>$bundle.getString("description")</entry>
-    </row>
-  </thead>
-  <tbody>
-#foreach($parameter in $m.getParameters())
-    <row>
-      <entry>Signatur der Methode...</entry>
-      <entry>$method.getOriginalName()</entry>
-      <entry>$method.getMappedName()</entry>
-      <entry>$escape.xml($method.getDescription())</entry>
-      <entry>Langbeschreibung...</entry>
-    </row>
-#end  
-  </tbody>
-</tgroup>
-</table>
-#end
-</section>
-#end
-</section>
-</section>
-#end
-
-#if ($externalLibraries)
-<section>
-<title>$bundle.getString("external.libraries.title")</title>
-<table>
-<title>$bundleHelper.render("external.libraries.caption",$component.getName())</title>
-<tgroup cols="2">
-     <colspec colnum="1" colname="c1" colwidth="3*"/>
-     <colspec colnum="2" colname="c2" colwidth="3*"/>
-  <thead>
-    <row>
-      <entry>$bundle.getString("library")</entry>
-      <entry>$bundle.getString("license")</entry>
-    </row>
-  </thead>
-  <tbody>
-#foreach($descriptor in $externalLibraries)
-    <row>
-      <entry>$descriptor.getArchive()</entry>
-      <entry>$descriptor.getLicense().getName()</entry>
-    </row>
-#end  
-  </tbody>
-</tgroup>
-</table>
-</section>
-#end
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" version="5.1"
+    xml:id="${component.getNormalizedName("_")}" xml:lang="$lang">
+    <title>$bundle.getString("developmentComponent") $component.getName()</title>
+    <indexterm>
+        <primary>$bundle.getString("developmentComponents")</primary>
+        <secondary>$component.vendor $component.name</secondary>
+    </indexterm>
+    <indexterm>
+        <primary>$component.getType().toString()</primary>
+        <secondary>$component.vendor $component.name</secondary>
+    </indexterm>
+    <section>
+        <title>$bundle.getString("caption")</title>
+        <para>$escape.xml($component.getCaption())</para>
+    </section>
+    <section>
+        <title>$bundle.getString("description")</title>
+        <para>$escape.xml($component.description)</para>
+        #if ($!javaDocUrl.length() > 0)
+            <para>$bundleHelper.render("javaDocLinkText",$javaDocUrl)</para>
+        #end
+        #set( $usageDocLink = "$component.getNormalizedName('_')_usageDocumentation" )
+        <para>$bundleHelper.render("usageDocLink",$usageDocLink)</para>
+    </section>
+    #if (!$component.usedDevelopmentComponents.isEmpty())
+        <section>
+            <title>$bundle.getString("usedComponents")</title>
+            #if ($!UsedDCsDiagramHeight && $!UsedDCsDiagramWidth)
+                <mediaobject>
+                    <caption>$bundleHelper.render("usedComponents.image.caption", $component.name)</caption>
+                    <imageobject condition="web">
+                        <imagedata fileref="images/${component.getNormalizedName('~')}-usedDCs.svg" format="SVG" width="$UsedDCsDiagramWidth" depth="$UsedDCsDiagramHeight"/>
+                    </imageobject>
+                    <imageobject condition="print">
+                        <imagedata fileref="images/${component.getNormalizedName('~')}-usedDCs.png" format="PNG"/>
+                    </imageobject>
+                </mediaobject>
+            #end
+            <table>
+                <title>$bundleHelper.render("usedComponents.table.caption", $component.getName())</title>
+                <tgroup cols="7">
+                    <colspec colnum="1" colname="c1" colwidth="3*"/>
+                    <colspec colnum="2" colname="c2" colwidth="3*"/>
+                    <colspec colnum="3" colname="c3" colwidth="5*"/>
+                    <colspec colnum="4" colname="c4" colwidth="3*"/>
+                    <colspec colnum="5" colname="c5" colwidth="3*"/>
+                    <colspec colnum="6" colname="c6" colwidth="5*"/>
+                    <colspec colnum="7" colname="c7" colwidth="5*"/>
+                    <thead>
+                        <row>
+                            <entry>$bundle.getString("developmentComponent")</entry>
+                            <entry>$bundle.getString("dcType")</entry>
+                            <entry>$bundle.getString("vendor")</entry>
+                            <entry>$bundle.getString("PublicPartName")</entry>
+                            <entry>$bundle.getString("buildTime")</entry>
+                            <entry>$bundle.getString("runTime")</entry>
+                            <entry>$bundle.getString("softwareComponent")</entry>
+                        </row>
+                    </thead>
+                    <tbody>
+                        #foreach($pp in $component.getUsedDevelopmentComponents())
+                            #set($usedDC = $dcFactory.get($pp))
+                            <row>
+                                <entry>$pp.getComponentName()</entry>
+                                <entry>$usedDC.getType().toString()</entry>
+                                <entry>$pp.getVendor()</entry>
+                                <entry>$pp.getName()</entry>
+                                <entry>#if($pp.isAtBuildTime())x#else #end</entry>
+                                        <entry>#if($pp.isAtRunTime())x#else #end</entry>
+                                                <entry>#if (!$bundleHelper.isNull($usedDC.getCompartment()))$usedDC.getCompartment().getSoftwareComponent()#end</entry>
+                            </row>
+                        #end  
+                    </tbody>
+                </tgroup>
+            </table>
+        </section>
+    #end
+    #if (!$component.getUsingDevelopmentComponents().isEmpty())
+        <section>
+            <title>$bundleHelper.render("usingComponents", $component.getName())</title>
+            <itemizedlist>
+                #foreach($usingDC in $component.getUsingDevelopmentComponents())
+                    <listitem>
+                        <para>
+                            <link role="wiki" linkend="$usingDC.getNormalizedName("_")">$usingDC.getName()</link>
+                        </para>
+                    </listitem>
+                #end
+            </itemizedlist>
+            <mediaobject>
+                <caption>$bundleHelper.render("usedComponents.image.caption", $component.name)</caption>
+                <imageobject condition="web">
+                    <imagedata fileref="images/${component.getNormalizedName('~')}-usingDCs.svg" format="SVG" width="${UsingDCsDiagramWidth}" depth="${UsingDCsDiagramHeight}"/>
+                </imageobject>
+                <imageobject condition="print">
+                    <imagedata fileref="images/${component.getNormalizedName('~')}-usingDCs.png" format="PNG"/>
+                </imageobject>
+            </mediaobject>
+        </section>
+    #end
+    #if (!$component.publicParts.isEmpty())
+        <section>
+            <title>$bundle.getString("publicParts.section.caption")</title>
+            <table>
+                <title>$bundleHelper.render("publicParts.table.caption",$component.getName())</title>
+                <tgroup cols="4">
+                    <colspec colnum="1" colname="c1" colwidth="3*"/>
+                    <colspec colnum="2" colname="c2" colwidth="3*"/>
+                    <colspec colnum="3" colname="c3" colwidth="5*"/>
+                    <colspec colnum="4" colname="c4" colwidth="3*"/>
+                    <thead>
+                        <row>
+                            <entry>$bundle.getString("PublicPartName")</entry>
+                            <entry>$bundle.getString("ppType")</entry>
+                            <entry>$bundle.getString("caption")</entry>
+                            <entry>$bundle.getString("description")</entry>
+                        </row>
+                    </thead>
+                    <tbody>
+                        #foreach($pp in $component.getPublicParts())
+                            <row>
+                                <entry>$pp.getPublicPart()</entry>
+                                <entry>$pp.getType().toString()</entry>
+                                <entry>$escape.xml($pp.getCaption())</entry>
+                                <entry>$escape.xml($pp.getDescription())</entry>
+                            </row>
+                        #end  
+                    </tbody>
+                </tgroup>
+            </table>
+        </section>
+    #end
+    #if ($webServices && !$webServices.isEmpty())
+        <section>
+            <title>$bundle.getString("WebServices")</title>
+            #foreach($service in $webServices)
+                <section>
+                    <title>$service.getName()</title>
+                    <para>$bundle.getString("Endpoint"): $service.getEndPointClass()</para>
+                    <table>
+                        <title>$bundleHelper.render("methods.table.caption",$component.getName())</title>
+                        <tgroup cols="5">
+                            <colspec colnum="1" colname="c1" colwidth="3*"/>
+                            <colspec colnum="2" colname="c2" colwidth="3*"/>
+                            <colspec colnum="3" colname="c3" colwidth="5*"/>
+                            <colspec colnum="4" colname="c4" colwidth="3*"/>
+                            <colspec colnum="5" colname="c5" colwidth="3*"/>
+                            <thead>
+                                <row>
+                                    <entry>$bundle.getString("signature")</entry>
+                                    <entry>$bundle.getString("originalName")</entry>
+                                    <entry>$bundle.getString("mappedName")</entry>
+                                    <entry>$bundle.getString("caption")</entry>
+                                    <entry>$bundle.getString("description")</entry>
+                                </row>
+                            </thead>
+                            <tbody>
+                                #foreach($method in $service.getMethods())
+                                    <row>
+                                        <entry>Signatur der Methode...</entry>
+                                        <entry>$method.getOriginalName()</entry>
+                                        <entry>$method.getMappedName()</entry>
+                                        <entry>$escape.xml($method.getDescription())</entry>
+                                        <entry>Langbeschreibung...</entry>
+                                    </row>
+                                #end  
+                            </tbody>
+                        </tgroup>
+                    </table>
+                    <section>
+                        <title>$bundle.getString("WebServiceMethods")</title>
+                        #foreach($m in $service.getMethods())
+                            <section>
+                                <title>$m.getMappedName()</title>
+                                <para>$m.getDescription()</para>
+                                <table>
+                                    <title>$bundleHelper.render("methods.table.caption",$component.getName())</title>
+                                    <tgroup cols="5">
+                                        <colspec colnum="1" colname="c1" colwidth="3*"/>
+                                        <colspec colnum="2" colname="c2" colwidth="3*"/>
+                                        <colspec colnum="3" colname="c3" colwidth="5*"/>
+                                        <colspec colnum="4" colname="c4" colwidth="3*"/>
+                                        <colspec colnum="5" colname="c5" colwidth="3*"/>
+                                        <thead>
+                                            <row>
+                                                <entry>$bundle.getString("signature")</entry>
+                                                <entry>$bundle.getString("originalName")</entry>
+                                                <entry>$bundle.getString("mappedName")</entry>
+                                                <entry>$bundle.getString("caption")</entry>
+                                                <entry>$bundle.getString("description")</entry>
+                                            </row>
+                                        </thead>
+                                        <tbody>
+                                            #foreach($parameter in $m.getParameters())
+                                                <row>
+                                                    <entry>Signatur der Methode...</entry>
+                                                    <entry>$method.getOriginalName()</entry>
+                                                    <entry>$method.getMappedName()</entry>
+                                                    <entry>$escape.xml($method.getDescription())</entry>
+                                                    <entry>Langbeschreibung...</entry>
+                                                </row>
+                                            #end  
+                                        </tbody>
+                                    </tgroup>
+                                </table>
+                            </section>
+                        #end
+            #end
+                    </section>
+                </section>
+        </section>
+    #end
+    #if ($externalLibraries)
+        <section>
+            <title>$bundle.getString("external.libraries.title")</title>
+            <table>
+                <title>$bundleHelper.render("external.libraries.caption",$component.getName())</title>
+                <tgroup cols="2">
+                    <colspec colnum="1" colname="c1" colwidth="3*"/>
+                    <colspec colnum="2" colname="c2" colwidth="3*"/>
+                    <thead>
+                        <row>
+                            <entry>$bundle.getString("library")</entry>
+                            <entry>$bundle.getString("license")</entry>
+                        </row>
+                    </thead>
+                    <tbody>
+                        #foreach($descriptor in $externalLibraries)
+                            <row>
+                                <entry>$descriptor.getArchive()</entry>
+                                <entry>$descriptor.getLicense().getName()</entry>
+                            </row>
+                        #end  
+                    </tbody>
+                </tgroup>
+            </table>
+        </section>
+    #end
 </section>
