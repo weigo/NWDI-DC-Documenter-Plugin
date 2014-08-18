@@ -6,12 +6,10 @@ package org.arachna.netweaver.nwdi.documenter.report;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.Reader;
 import java.io.StringWriter;
-import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,7 +24,6 @@ import jenkins.plugins.confluence.soap.v1.RemotePageSummary;
 import jenkins.plugins.confluence.soap.v2.RemotePage;
 import jenkins.plugins.confluence.soap.v2.RemotePageUpdateOptions;
 
-import org.apache.commons.io.IOUtils;
 import org.arachna.netweaver.dc.types.Compartment;
 import org.arachna.netweaver.dc.types.DevelopmentComponent;
 import org.arachna.netweaver.dc.types.DevelopmentConfiguration;
@@ -181,7 +178,7 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator implements De
      */
     @Override
     public void visit(final DevelopmentComponent component) {
-        if (!vendorFilter.accept(component)) {
+        if (!vendorFilter.accept(component) && component.isNeedsRebuild()) {
             final String pageName = component.getNormalizedName("_");
             final DiagramDescriptor descriptor = dotFileDescriptorContainer.getDescriptor(component);
 
@@ -208,6 +205,7 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator implements De
             final File attachment = new File(dotFileName.replaceFirst("\\.dot", "\\.svg"));
 
             try {
+                logger.println(String.format("Uploading attachment: %s!", attachment.getAbsolutePath()));
                 session.addAttachment(pageId, attachment, "image/svg+xml", "");
             }
             catch (final IOException e) {
@@ -234,6 +232,8 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator implements De
             RemotePage page = getRemotePage(realPageName, parent);
 
             if (!pageContent.equals(page.getContent())) {
+                logger.println(Messages.DevelopmentConfigurationConfluenceWikiGenerator_updating_development_component_page(realPageName));
+
                 page.setContent(pageContent);
                 page = session.updatePageV2(page, new RemotePageUpdateOptions(true, ""));
             }
@@ -242,17 +242,6 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator implements De
         }
         catch (final java.rmi.RemoteException e) {
             throw new IllegalStateException(e);
-        }
-        finally {
-            try {
-                final Writer writer = new FileWriter(new File(System.getProperty("java.io.tmpdir"), realPageName));
-                writer.write(pageContent);
-                writer.close();
-            }
-            catch (final IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
         }
     }
 
@@ -276,7 +265,7 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator implements De
             pageId = pageSummary.getId();
         }
         catch (final Exception e) {
-            logger.append(String.format("Page %s does not exist yet.\n", pageName));
+            logger.println(Messages.DevelopmentConfigurationConfluenceWikiGenerator_create_page(pageName));
             final jenkins.plugins.confluence.soap.v1.RemotePage p = new jenkins.plugins.confluence.soap.v1.RemotePage();
             p.setContent("");
             p.setTitle(pageName);
@@ -299,26 +288,7 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator implements De
     protected String generateWikiPageContent(final DevelopmentComponent component) {
         final String docBook = String.format("%s/%s.xml", component.getCompartment().getName(), component.getNormalizedName("_"));
 
-        try {
-            return transform(createDocBookTemplateReader(docBook));
-        }
-        catch (final IllegalStateException ise) {
-            final StringWriter msg = new StringWriter();
-            msg.write("generateWikiPageContent: ");
-            msg.write(docBook);
-            msg.write("\n");
-
-            try {
-                IOUtils.copy(createDocBookTemplateReader(docBook), msg);
-                throw new IllegalStateException(msg.toString(), ise);
-            }
-            catch (final IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
-
-        return "";
+        return transform(createDocBookTemplateReader(docBook));
     }
 
     /**
