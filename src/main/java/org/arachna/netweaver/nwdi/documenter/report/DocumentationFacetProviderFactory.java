@@ -14,6 +14,7 @@ import org.arachna.netweaver.dc.types.DevelopmentComponent;
 import org.arachna.netweaver.dc.types.DevelopmentComponentType;
 import org.arachna.netweaver.nwdi.documenter.facets.DocumentationFacetProvider;
 import org.arachna.netweaver.nwdi.documenter.facets.librarydc.LicenseInspector;
+import org.arachna.netweaver.nwdi.documenter.facets.restservices.RestServiceDocumentationFacetProvider;
 import org.arachna.netweaver.nwdi.documenter.facets.webservices.VirtualInterfaceDefinitionProvider;
 
 /**
@@ -44,6 +45,7 @@ public class DocumentationFacetProviderFactory {
     public DocumentationFacetProviderFactory(final AntHelper antHelper) {
         this.antHelper = antHelper;
         providers.put(DevelopmentComponentType.Java, createProvidersForJavaDCs());
+        providers.put(DevelopmentComponentType.J2EEWebModule, createProvidersForWebDCs());
         providers.put(DevelopmentComponentType.ExternalLibrary, createProvidersForExternalLibrariesDCs());
     }
 
@@ -74,6 +76,19 @@ public class DocumentationFacetProviderFactory {
     }
 
     /**
+     * Create documentation facet provider(s) for Java DCs.
+     * 
+     * @return documentation facet provider(s) for Java DCs.
+     */
+    private Collection<DocumentationFacetProvider<DevelopmentComponent>> createProvidersForWebDCs() {
+        final Collection<DocumentationFacetProvider<DevelopmentComponent>> providers =
+            new LinkedList<DocumentationFacetProvider<DevelopmentComponent>>();
+        providers.add(new RestServiceDocumentationFacetProvider());
+
+        return providers;
+    }
+
+    /**
      * Get a collection of documentation facet providers for the given type of development component.
      * 
      * @param type
@@ -83,7 +98,6 @@ public class DocumentationFacetProviderFactory {
     public Collection<DocumentationFacetProvider<DevelopmentComponent>> getInstance(final DevelopmentComponentType type) {
         final Collection<DocumentationFacetProvider<DevelopmentComponent>> facetProviders = providers.get(type);
 
-        return facetProviders == null ? new ArrayList<DocumentationFacetProvider<DevelopmentComponent>>()
-            : facetProviders;
+        return facetProviders == null ? new ArrayList<DocumentationFacetProvider<DevelopmentComponent>>() : facetProviders;
     }
 }

@@ -4,7 +4,6 @@
   xmlns="http://www.atlassian.com/schema/confluence/4/">
 
   <xsl:output method="xml" encoding="utf-8" indent="yes" doctype-public="ac:confluence" omit-xml-declaration="yes" />
-  <xsl:strip-space elements="*" />
 
   <xsl:param name="wikiSpace" select="."></xsl:param>
   <xsl:param name="track" select="."></xsl:param>
@@ -15,7 +14,7 @@
     </xsl:element>
   </xsl:template>
 
-  <xsl:template match="d:caption|d:title[parent::d:table]">
+  <xsl:template match="d:caption">
     <xsl:element name="caption">
       <xsl:apply-templates />
     </xsl:element>
@@ -274,18 +273,27 @@
     </xsl:element>
   </xsl:template>
 
+  <xsl:template match="d:title[parent::d:table]">
+    <xsl:apply-templates />
+  </xsl:template>
+
   <!-- XXX: CALS table -->
 
   <xsl:template match="d:table">
+    <xsl:if test="./d:title">
+      <h4>
+        <xsl:apply-templates select="./d:title" />
+      </h4>
+    </xsl:if>
     <xsl:element name="table">
-      <xsl:apply-templates />
+      <xsl:apply-templates select="d:tgroup" />
     </xsl:element>
   </xsl:template>
 
   <xsl:template match="d:colspec">
-    <xsl:element name="col">
-      <xsl:attribute name="width"><xsl:value-of select="@colwidth" /></xsl:attribute>
-    </xsl:element>
+    <!-- xsl:element name="col" -->
+    <!-- xsl:attribute name="width"><xsl:value-of select="@colwidth" /></xsl:attribute -->
+    <!-- /xsl:element -->
   </xsl:template>
 
   <xsl:template match="d:tgroup">
@@ -301,11 +309,7 @@
 </xsl:text>
       </xsl:when>
       <xsl:otherwise>
-        <xsl:if test="@cols &gt; 0">
-          <xsl:element name="colgroup">
-            <xsl:apply-templates select="d:colspec" />
-          </xsl:element>
-        </xsl:if>
+        <!-- xsl:if test="@cols &gt; 0"> <xsl:element name="colgroup"> <xsl:apply-templates select="d:colspec" /> </xsl:element> </xsl:if -->
         <xsl:apply-templates select="d:thead" />
         <xsl:apply-templates select="d:tbody" />
         <xsl:apply-templates select="d:tfoot" />

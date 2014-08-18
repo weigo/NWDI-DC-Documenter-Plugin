@@ -62,16 +62,6 @@
       <groupId>org.arachna.netweaver</groupId>
       <artifactId>NWDI-Core-Plugin</artifactId>
       <version>1.1-SNAPSHOT</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>xercesImpl</artifactId>
-          <groupId>xerces</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>xalan</artifactId>
-          <groupId>xalan</groupId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.arachna</groupId>
@@ -97,6 +87,12 @@
       <version>1.7</version>
       <type>jar</type>
       <scope>compile</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>commons-lang</artifactId>
+          <groupId>commons-lang</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.velocity</groupId>
@@ -120,21 +116,6 @@
         <exclusion>
           <artifactId>commons-digester</artifactId>
           <groupId>commons-digester</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.jenkins-ci.main</groupId>
-      <artifactId>jenkins-core</artifactId>
-      <version>1.509</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>commons-digester</artifactId>
-          <groupId>commons-digester</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>asm3</artifactId>
-          <groupId>org.kohsuke</groupId>
         </exclusion>
       </exclusions>
     </dependency>
