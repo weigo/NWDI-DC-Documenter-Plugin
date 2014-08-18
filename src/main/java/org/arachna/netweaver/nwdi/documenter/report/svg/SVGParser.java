@@ -3,25 +3,19 @@
  */
 package org.arachna.netweaver.nwdi.documenter.report.svg;
 
-import java.io.IOException;
 import java.io.Reader;
 
-import org.apache.commons.digester3.Digester;
-import org.arachna.xml.NullEntityResolver;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.XMLReaderFactory;
+import org.apache.commons.digester3.binder.AbstractRulesModule;
+import org.apache.commons.digester3.binder.RulesModule;
+import org.arachna.xml.DigesterHelper;
+import org.arachna.xml.RulesModuleProducer;
 
 /**
  * Parser for SVG documents. Extracts general properties of an SVG {@see SVGProperties}.
  * 
  * @author Dirk Weigenand
  */
-public final class SVGParser {
-    /**
-     * svg element.
-     */
-    private static final String SVG = "svg";
-
+public final class SVGParser implements RulesModuleProducer {
     /**
      * Parse the given SVG and extract general properties (width, height).
      * 
@@ -30,31 +24,20 @@ public final class SVGParser {
      * @return {@link SVGProperties} read from the SVG document.
      */
     public SVGProperties parse(final Reader reader) {
-        try {
-            final Digester digester = new Digester(XMLReaderFactory.createXMLReader());
-            digester.setEntityResolver(new NullEntityResolver());
-            digester.addObjectCreate(SVG, SVGProperties.class);
+        return new DigesterHelper<SVGProperties>(this).execute(reader);
+    }
 
-            digester.addCallMethod(SVG, "setWidth", 1);
-            digester.addCallParam(SVG, 0, "width");
-            digester.addCallMethod(SVG, "setHeight", 1);
-            digester.addCallParam(SVG, 0, "height");
+    /**
+     * {@inheritdoc}
+     */
+    @Override
+    public RulesModule getRulesModule() {
+        return new AbstractRulesModule() {
 
-            return (SVGProperties)digester.parse(reader);
-        }
-        catch (final SAXException e) {
-            throw new IllegalStateException(e);
-        }
-        catch (final IOException e) {
-            throw new IllegalStateException(e);
-        }
-        finally {
-            try {
-                reader.close();
+            @Override
+            protected void configure() {
+                forPattern("svg").createObject().ofType(SVGProperties.class).then().setProperties();
             }
-            catch (final IOException e) {
-                throw new IllegalStateException(e);
-            }
-        }
+        };
     }
 }
