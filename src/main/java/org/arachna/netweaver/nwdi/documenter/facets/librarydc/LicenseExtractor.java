@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.arachna.netweaver.nwdi.documenter.facets.librarydc;
 
@@ -19,7 +19,7 @@ import org.apache.log4j.Logger;
 
 /**
  * Extract license information from a Jar archive.
- * 
+ *
  * @author Dirk Weigenand
  */
 final class LicenseExtractor {
@@ -29,15 +29,14 @@ final class LicenseExtractor {
     private static final Logger LOGGER = Logger.getLogger(LicenseExtractor.class);
 
     /**
-     * Regular expression to match Jar-Entries against. Matches jar entries that
-     * contain license conditions.
+     * Regular expression to match Jar-Entries against. Matches jar entries that contain license conditions.
      */
     private final Pattern licenseFile = Pattern
         .compile(".*?/?(LICENSE|COPYING|MPL-\\d+\\.\\d+|lgpl|(apache_)?license|about|.*_lic)(\\.(txt|html))?");
 
     /**
      * Find licenses (if any) in the given jar archive.
-     * 
+     *
      * @param archive
      *            jar archive to inspect for known licenses.
      * @return a descriptor detailing the license found (if any).
@@ -70,11 +69,10 @@ final class LicenseExtractor {
 
     /**
      * Determine whether the given entry name matches a known license.
-     * 
+     *
      * @param entryName
      *            name of entry of a ZipArchive.
-     * @return <code>true</code> when the given entry matches the regular
-     *         expression of file name known to contain license information,
+     * @return <code>true</code> when the given entry matches the regular expression of file name known to contain license information,
      *         <code>false</code> otherwise.
      */
     private boolean isKnownLicenseFile(final String entryName) {
@@ -83,13 +81,13 @@ final class LicenseExtractor {
 
     /**
      * Extract license from the given content.
-     * 
+     *
      * @param archive
      *            the name of the archive (used in the returned descriptor).
      * @param content
      *            text of license conditions
-     * @return a descriptor naming the license found. If the license could not
-     *         be determined a type of {@see License#Other} will be returned.
+     * @return a descriptor naming the license found. If the license could not be determined a type of {@see License#Other} will be
+     *         returned.
      */
     private LicenseDescriptor extractLicense(final String archive, final InputStream content) {
         final String licenseText = getLicenseText(content);
@@ -102,12 +100,16 @@ final class LicenseExtractor {
             }
         }
 
+        if (descriptor.getLicense().equals(License.Other)) {
+            LOGGER.error("Could not determine licens from license text:\n" + licenseText);
+        }
+
         return descriptor;
     }
 
     /**
      * Read the license text contained in the given input stream.
-     * 
+     *
      * @param content
      *            input stream containing license text.
      * @return license text as string.
