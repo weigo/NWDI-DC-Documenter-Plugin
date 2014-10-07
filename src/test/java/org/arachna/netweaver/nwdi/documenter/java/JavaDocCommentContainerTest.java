@@ -7,6 +7,8 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 
+import java.util.Collection;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -106,13 +108,23 @@ public class JavaDocCommentContainerTest {
 
     @Test
     public final void testParseCommentWithMultiLineDescriptionAndLoneTag() {
-        container =
-            new JavaDocCommentContainer("/**\n * This is a\n * test description.\n * @throws IllegalStateException */");
+        container = new JavaDocCommentContainer("/**\n * This is a\n * test description.\n * @throws IllegalStateException */");
         assertThat(container.getDescription(), equalTo("This is a\ntest description."));
 
         final TagDescriptor descriptor = container.getTagDescriptors("@throws").iterator().next();
         assertThat(descriptor.getDescription(), equalTo("IllegalStateException"));
     }
-    
-    
+
+    @Test
+    public final void testParseCommentWithMultiLineDescriptionAndParamTag() {
+        container = new JavaDocCommentContainer("/**\n * This is a\n * test description.\n * @param p1 This is parameter1.\n */");
+        assertThat(container.getDescription(), equalTo("This is a\ntest description."));
+
+        Collection<ParamTagDescriptor> descriptors = container.getParamTagDescriptors();
+
+        assertThat(descriptors, hasSize(1));
+        final ParamTagDescriptor descriptor = descriptors.iterator().next();
+        assertThat(descriptor.getParameterName(), equalTo("p1"));
+        assertThat(descriptor.getDescription(), equalTo("This is parameter1."));
+    }
 }

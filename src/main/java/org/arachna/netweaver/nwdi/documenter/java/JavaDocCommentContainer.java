@@ -3,6 +3,7 @@
  */
 package org.arachna.netweaver.nwdi.documenter.java;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -30,8 +31,7 @@ public class JavaDocCommentContainer {
     private final Pattern pattern = Pattern.compile("\\{?(@\\p{Alpha}+)\\}?(\\s+.*)?");
 
     /**
-     * Create a new instance of a <code></code> with the given Javadoc comment
-     * text.
+     * Create a new instance of a <code></code> with the given Javadoc comment text.
      * 
      * Parses the comment into a description and the respective tags if any.
      * 
@@ -69,8 +69,7 @@ public class JavaDocCommentContainer {
     }
 
     /**
-     * Returns a collection of {@link TagDescriptor} objects matching the given
-     * tag name.
+     * Returns a collection of {@link TagDescriptor} objects matching the given tag name.
      * 
      * @param tagName
      *            the tag name the tag descriptors should be filter with.
@@ -86,6 +85,22 @@ public class JavaDocCommentContainer {
         }
 
         return matches;
+    }
+
+    /**
+     * Extract parameter tag descriptors.
+     * @return a list of parameter tags.
+     */
+    public Collection<ParamTagDescriptor> getParamTagDescriptors() {
+        Collection<ParamTagDescriptor> descriptors = new ArrayList<ParamTagDescriptor>();
+
+        for (final TagDescriptor descriptor : this.getTagDescriptors()) {
+            if (descriptor.getTag().equalsIgnoreCase("@param")) {
+                descriptors.add((ParamTagDescriptor)descriptor);
+            }
+        }
+        
+        return descriptors;
     }
 
     /**
@@ -162,7 +177,12 @@ public class JavaDocCommentContainer {
         }
 
         if (tagName != null) {
-            tagDescriptors.add(new TagDescriptor(tagName, description.toString().trim()));
+            if (tagName.equals("@param")) {
+                tagDescriptors.add(new ParamTagDescriptor(tagName, description.toString().trim()));
+            }
+            else {
+                tagDescriptors.add(new TagDescriptor(tagName, description.toString().trim()));
+            }
         }
 
         if (lines.hasNext()) {
