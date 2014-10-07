@@ -10,12 +10,21 @@ public final class TranslationUnit {
     /**
      * name of resource this translation unit is associated with.
      */
-    private String resourceName;
+    private final String resourceName;
 
     /**
      * text associated with this translation unit.
      */
     private String text;
+
+    /**
+     * Create a new translation unit instance with the name of the associated ressource.
+     * 
+     * @param resourceName
+     */
+    public TranslationUnit(final String resourceName) {
+        this.resourceName = resourceName;
+    }
 
     /**
      * @return the text
@@ -37,13 +46,5 @@ public final class TranslationUnit {
      */
     public String getResourceName() {
         return resourceName;
-    }
-
-    /**
-     * @param resourceName
-     *            the resourceName to set
-     */
-    public void setResourceName(final String resourceName) {
-        this.resourceName = resourceName;
     }
 }

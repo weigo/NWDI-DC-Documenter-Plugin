@@ -21,23 +21,22 @@ public final class XliffGroup {
     /**
      * resource classification (button, caption, header, etc.)
      */
-    private String resourceType;
+    private final String resourceType;
+
+    /**
+     * Create a new instance with the given resource type.
+     * 
+     * @param resourceType
+     */
+    public XliffGroup(final String resourceType) {
+        this.resourceType = resourceType;
+    }
 
     /**
      * @return the resourceType
      */
     public String getResourceType() {
         return resourceType;
-    }
-
-    /**
-     * A <code>XliffGroup</code> is associated with a resource type.
-     * 
-     * @param resourceType
-     *            the resourceType to set
-     */
-    public void setResourceType(final String resourceType) {
-        this.resourceType = resourceType;
     }
 
     /**
