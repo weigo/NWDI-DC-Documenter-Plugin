@@ -40,7 +40,7 @@ public final class WebDynproComponentReaderTest {
         final WebDynproComponentReader reader = new WebDynproComponentReader();
         component =
             reader.read(new InputStreamReader(getClass().getResourceAsStream(
-                "/org/arachna/netweaver/nwdi/documenter/webdynpro/ExampleComp.wdcomponent")));
+                "/org/arachna/netweaver/nwdi/documenter/facets/webdynpro/ExampleComp.wdcomponent")));
     }
 
     /**
