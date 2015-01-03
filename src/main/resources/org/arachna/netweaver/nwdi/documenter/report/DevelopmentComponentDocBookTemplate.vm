@@ -238,82 +238,81 @@
             <title>$bundleHelper.render("rest.services.title",$component.getName())</title>
             <section>
                 <title>$bundle.getString("rest.services.baseurl.title")</title>
-                <para>Hier muss noch die Basis-URL aus der web.xml eingesetzt werden: <link xlink:href="http://<server>:<port>/${component.getNormalizedName('~')}"></para>
-                    </section>
-                    #foreach($service in $RESTServices)
+                <para>Hier muss noch die Basis-URL aus der web.xml eingesetzt werden: http://server:port/${component.getNormalizedName('~')}</para>
+            </section>
+            #foreach($service in $RESTServices)
+                <section>
+                    <title>$service.getName()</title>
+                    <para>$escape.xml($service.getDescription())</para>
+                    #if (!$service.getBasePath().isEmpty())
                         <section>
-                            <title>$service.getName()</title>
-                            <para>$escape.xml($service.getDescription())</para>
-                            #if (!$service.getBasePath().isEmpty())
-                                <section>
-                                    <title>$bundle.getString("rest.services.basepath.title")</title>
-                                    <para>$service.getBasePath()</para>
-                                </section>
-                            #end
-                            <section>
-                                <title>$bundleHelper.getString("rest.services.methods.title")</title>
-                                #foreach($method in $service.getMethods())
-                                    <section>
-                                        <title>$method.getPath()</title>
-                                        <para>$method.getDescription()</para>
-                                        <table>
-                                            <tgroup cols="2">
-                                                <colspec colnum="1" colname="c1" colwidth="1*"/>
-                                                <colspec colnum="2" colname="c2" colwidth="3*"/>
-                                                <tbody>
-                                                    <row>
-                                                        <entry>
-                                                            <emphasis role="bold">HTTP-Methode</emphasis>
-                                                        </entry>
-                                                        <entry>$method.getMethod()</entry>
-                                                    </row>
-                                                    <row>
-                                                        <entry>
-                                                            <emphasis role="bold">akzeptierte Mime-Typen</emphasis>
-                                                        </entry>
-                                                        <entry>$method.getConsumedMediaTypes()</entry>
-                                                    </row>
-                                                    <row>
-                                                        <entry>
-                                                            <emphasis role="bold">erzeugte Mime-Typen</emphasis>
-                                                        </entry>
-                                                        <entry>$method.getProducedMediaTypes()</entry>
-                                                    </row>
-                                                </tbody>
-                                            </tgroup>
-                                        </table>
-                                        #if(!$method.getParameters().isEmpty())
-                                            <table>
-                                                <title>$bundleHelper.getString("rest.services.method.parameters.caption")</title>
-                                                <tgroup cols="3">
-                                                    <colspec colnum="1" colname="c1" colwidth="3*"/>
-                                                    <colspec colnum="2" colname="c2" colwidth="1*"/>
-                                                    <colspec colnum="3" colname="c3" colwidth="5*"/>
-                                                    <thead>
-                                                        <row>
-                                                            <entry>$bundle.getString("name")</entry>
-                                                            <entry>$bundle.getString("type")</entry>
-                                                            <entry>$bundle.getString("description")</entry>
-                                                        </row>
-                                                    </thead>
-                                                    <tbody>
-                                                        #foreach($parameter in $method.getParameters())
-                                                            <row>
-                                                                <entry>$parameter.getName()</entry>
-                                                                <entry>$method.getType().name()</entry>
-                                                                <entry>$escape.xml($method.getDescription())</entry>
-                                                            </row>
-                                                        #end  
-                                                    </tbody>
-                                                </tgroup>
-                                            </table>
-                                        #end
-                                    </section>
-                                #end
-                            </section>
+                            <title>$bundle.getString("rest.services.basepath.title")</title>
+                            <para>$service.getBasePath()</para>
                         </section>
                     #end
-            </section>
+                    <section>
+                        <title>$bundle.getString("rest.services.methods.title")</title>
+                        #foreach($method in $service.getMethods())
+                            <section>
+                                <title>$method.getPath()</title>
+                                <para>$method.getDescription()</para>
+                                <table>
+                                    <tgroup cols="2">
+                                        <colspec colnum="1" colname="c1" colwidth="1*"/>
+                                        <colspec colnum="2" colname="c2" colwidth="3*"/>
+                                        <tbody>
+                                            <row>
+                                                <entry>
+                                                    <emphasis role="bold">HTTP-Methode</emphasis>
+                                                </entry>
+                                                <entry>$method.getMethod()</entry>
+                                            </row>
+                                            <row>
+                                                <entry>
+                                                    <emphasis role="bold">akzeptierte Mime-Typen</emphasis>
+                                                </entry>
+                                                <entry>$method.getConsumedMediaTypes()</entry>
+                                            </row>
+                                            <row>
+                                                <entry>
+                                                    <emphasis role="bold">erzeugte Mime-Typen</emphasis>
+                                                </entry>
+                                                <entry>$method.getProducedMediaTypes()</entry>
+                                            </row>
+                                        </tbody>
+                                    </tgroup>
+                                </table>
+                                #if(!$method.getParameters().isEmpty())
+                                    <table>
+                                        <title>$bundle.getString("rest.services.method.parameters.caption")</title>
+                                        <tgroup cols="3">
+                                            <colspec colnum="1" colname="c1" colwidth="3*"/>
+                                            <colspec colnum="2" colname="c2" colwidth="1*"/>
+                                            <colspec colnum="3" colname="c3" colwidth="5*"/>
+                                            <thead>
+                                                <row>
+                                                    <entry>$bundle.getString("name")</entry>
+                                                    <entry>$bundle.getString("type")</entry>
+                                                    <entry>$bundle.getString("description")</entry>
+                                                </row>
+                                            </thead>
+                                            <tbody>
+                                                #foreach($parameter in $method.getParameters())
+                                                    <row>
+                                                        <entry>$parameter.getName()</entry>
+                                                        <entry>$parameter.getType().name()</entry>
+                                                        <entry>$escape.xml($parameter.getDescription())</entry>
+                                                    </row>
+                                                #end  
+                                            </tbody>
+                                        </tgroup>
+                                    </table>
+                                #end
+                            </section>
+                        #end
+                    </section>
+                </section>
+            #end
         </section>
-        #end
+		#end
 </section>

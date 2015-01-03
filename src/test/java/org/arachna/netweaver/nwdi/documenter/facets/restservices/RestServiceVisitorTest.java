@@ -65,13 +65,13 @@ public class RestServiceVisitorTest {
      */
     @Test
     public void testVisitMethodDeclarationRestService() {
-        assertThat(restService.getMethods(), hasSize(1));
+        assertThat(restService.getMethods(), hasSize(2));
     }
 
     @Test
     public void testVisitMethodDeclarationRestServiceParamDeclarations() {
         final List<Method> methods = new ArrayList<Method>(restService.getMethods());
-        assertThat(methods, hasSize(1));
+        assertThat(methods, hasSize(2));
 
         final Method method = methods.get(0);
         final List<Parameter> parameters = method.getParameters();
@@ -83,7 +83,7 @@ public class RestServiceVisitorTest {
     @Test
     public void testVisitMethodDeclarationRestServiceParamDeclarationsWithoutJavaDoc() {
         final List<Method> methods = new ArrayList<Method>(restService.getMethods());
-        assertThat(methods, hasSize(1));
+        assertThat(methods, hasSize(2));
 
         final Method method = methods.get(0);
         final List<Parameter> parameters = method.getParameters();
@@ -102,7 +102,7 @@ public class RestServiceVisitorTest {
     @Test
     public void testVisitMethodDeclarationRestServicePathDeclaration() {
         final List<Method> methods = new ArrayList<Method>(restService.getMethods());
-        assertThat(methods, hasSize(1));
+        assertThat(methods, hasSize(2));
         final Method method = methods.get(0);
 
         assertThat(method.getPath(), equalTo("/{client}/{process}"));
@@ -111,7 +111,7 @@ public class RestServiceVisitorTest {
     @Test
     public void testVisitMethodDeclarationRestServiceConsumesDeclarations() {
         final List<Method> methods = new ArrayList<Method>(restService.getMethods());
-        assertThat(methods, hasSize(1));
+        assertThat(methods, hasSize(2));
 
         final Method method = methods.get(0);
         assertThat(method.getConsumedMediaTypes(), containsInAnyOrder("MediaType.APPLICATION_JSON"));
@@ -120,7 +120,7 @@ public class RestServiceVisitorTest {
     @Test
     public void testVisitMethodDeclarationRestServiceSingleValuedProducesDeclaration() {
         final List<Method> methods = new ArrayList<Method>(restService.getMethods());
-        assertThat(methods, hasSize(1));
+        assertThat(methods, hasSize(2));
 
         final Method method = methods.get(0);
         assertThat(method.getProducedMediaTypes(), containsInAnyOrder("MediaType.APPLICATION_JSON"));

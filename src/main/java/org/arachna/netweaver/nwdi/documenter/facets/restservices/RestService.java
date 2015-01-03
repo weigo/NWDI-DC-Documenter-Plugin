@@ -17,6 +17,7 @@ import org.apache.commons.lang.StringUtils;
 public class RestService {
     private String basePath = "";
     private String description = "";
+    private String name = "";
 
     private final Collection<Method> methods = new LinkedList<Method>();
 
@@ -61,7 +62,21 @@ public class RestService {
     }
 
     /**
-     * {@inheritdoc}
+     * @return the name
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * @param name
+     *            the name to set
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /**
      */
     @Override
     public String toString() {

@@ -3,12 +3,12 @@
  */
 package org.arachna.netweaver.nwdi.documenter.facets.librarydc;
 
-import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
 
 /**
  * Unittests for {@link LicenseComparator}.
@@ -18,6 +18,7 @@ import org.junit.Test;
 public class LicenseComparatorTest {
     /**
      * instance under test.
+     * 
      */
     private LicenseComparator comparator;
 

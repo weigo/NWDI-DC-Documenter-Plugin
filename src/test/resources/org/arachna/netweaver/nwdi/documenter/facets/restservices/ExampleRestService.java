@@ -54,4 +54,23 @@ public class ProcessControl {
         @QueryParam("hashCode") String hashCode) {
         return Response.status(Status.OK).build();
     }
+
+    /**
+     * This is an example method using a mix of path and query parameters as well as consumes and produces tags. The @Produces annotation is
+     * used to test another annotation type during the parsing stage when generating documentation from this example.
+     * 
+     * @param client
+     *            the example 'client' parameter.
+     * @param process
+     *            the example 'process' parameter.
+     * @return This comment should detail the return value one should expect from calling this method.
+     */
+    @GET
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(value = "application/pdf")
+    @Path("/{client}/{process}")
+    public Response getCustomerProcess1(@PathParam("client") String client, @PathParam("process") final String process,
+        @QueryParam("hashCode") String hashCode) {
+        return Response.status(Status.OK).build();
+    }
 }

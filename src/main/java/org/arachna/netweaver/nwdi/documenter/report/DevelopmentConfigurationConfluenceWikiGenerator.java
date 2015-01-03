@@ -13,6 +13,7 @@ import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.xml.transform.ErrorListener;
 import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
@@ -24,6 +25,7 @@ import jenkins.plugins.confluence.soap.v1.RemotePageSummary;
 import jenkins.plugins.confluence.soap.v2.RemotePage;
 import jenkins.plugins.confluence.soap.v2.RemotePageUpdateOptions;
 
+import org.apache.commons.io.IOUtils;
 import org.arachna.netweaver.dc.types.Compartment;
 import org.arachna.netweaver.dc.types.DevelopmentComponent;
 import org.arachna.netweaver.dc.types.DevelopmentConfiguration;
@@ -288,7 +290,26 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator implements De
     protected String generateWikiPageContent(final DevelopmentComponent component) {
         final String docBook = String.format("%s/%s.xml", component.getCompartment().getName(), component.getNormalizedName("_"));
 
-        return transform(createDocBookTemplateReader(docBook));
+        String result = null;
+
+        try {
+            result = transform(createDocBookTemplateReader(docBook));
+        }
+        catch (IllegalStateException e) {
+            StringWriter output = new StringWriter();
+            
+            try {
+                IOUtils.copy(createDocBookTemplateReader(docBook), output);
+                logger.append(e.getLocalizedMessage()).append(output.toString());
+            }
+            catch (IOException e1) {
+                e1.printStackTrace(logger);
+            }
+            
+            throw e;
+        }
+        
+        return result;
     }
 
     /**
@@ -334,6 +355,23 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator implements De
             transformer = template.newTransformer();
             transformer.setParameter("wikiSpace", getSpaceKey());
             transformer.setParameter("track", trackName);
+            transformer.setErrorListener(new ErrorListener() {
+
+                @Override
+                public void warning(TransformerException exception) throws TransformerException {
+                    logger.append(exception.getMessageAndLocation());
+                }
+
+                @Override
+                public void error(TransformerException exception) throws TransformerException {
+                    logger.append(exception.getMessageAndLocation());
+                }
+
+                @Override
+                public void fatalError(TransformerException exception) throws TransformerException {
+                    logger.append(exception.getMessageAndLocation());
+                }
+            });
         }
         catch (final TransformerConfigurationException e) {
             throw new IllegalStateException(e);

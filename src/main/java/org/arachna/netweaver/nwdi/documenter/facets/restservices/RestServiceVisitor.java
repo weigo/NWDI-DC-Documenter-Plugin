@@ -3,10 +3,12 @@
  */
 package org.arachna.netweaver.nwdi.documenter.facets.restservices;
 
+import japa.parser.ast.Comment;
 import japa.parser.ast.body.ClassOrInterfaceDeclaration;
-import japa.parser.ast.body.JavadocComment;
 import japa.parser.ast.body.MethodDeclaration;
 import japa.parser.ast.expr.AnnotationExpr;
+import japa.parser.ast.expr.MemberValuePair;
+import japa.parser.ast.expr.NormalAnnotationExpr;
 import japa.parser.ast.expr.SingleMemberAnnotationExpr;
 import japa.parser.ast.visitor.VoidVisitorAdapter;
 
@@ -33,17 +35,19 @@ public class RestServiceVisitor extends VoidVisitorAdapter<RestService> {
             return;
         }
 
+        service.setName(classDef.getName());
+        
+        Comment comment = classDef.getComment();
+
+        if (comment != null) {
+            final JavaDocCommentContainer content = new JavaDocCommentContainer(comment.getContent());
+            service.setDescription(content.getDescription());
+        }
+
         for (final AnnotationExpr annotation : classDef.getAnnotations()) {
             if ("Path".equals(annotation.getName().getName())) {
                 final SingleMemberAnnotationExpr expr = (SingleMemberAnnotationExpr)annotation;
                 service.setBasePath(expr.getMemberValue().toString().replaceAll("\"", ""));
-                final JavadocComment javaDoc = classDef.getJavaDoc();
-
-                if (javaDoc != null) {
-                    final JavaDocCommentContainer content = new JavaDocCommentContainer(javaDoc.getContent());
-                    service.setDescription(content.getDescription());
-                }
-
                 break;
             }
         }
@@ -105,7 +109,7 @@ public class RestServiceVisitor extends VoidVisitorAdapter<RestService> {
                 }
             }
 
-            final JavadocComment javaDoc = methodDeclaration.getJavaDoc();
+            final Comment javaDoc = methodDeclaration.getComment();
 
             if (javaDoc != null) {
                 final JavaDocCommentContainer content = new JavaDocCommentContainer(javaDoc.getContent());
@@ -134,8 +138,20 @@ public class RestServiceVisitor extends VoidVisitorAdapter<RestService> {
      * @param annotation
      */
     private void getAnnotationValues(final Set<String> valuesHolder, final AnnotationExpr annotation) {
-        final SingleMemberAnnotationExpr expr = (SingleMemberAnnotationExpr)annotation;
-        valuesHolder.add(expr.getMemberValue().toString().replaceAll("\"", ""));
+        if (annotation instanceof SingleMemberAnnotationExpr) {
+            final SingleMemberAnnotationExpr expr = (SingleMemberAnnotationExpr)annotation;
+            valuesHolder.add(expr.getMemberValue().toString().replaceAll("\"", ""));
+        }
+        else if (annotation instanceof NormalAnnotationExpr) {
+            final NormalAnnotationExpr expr = (NormalAnnotationExpr)annotation;
+            List<MemberValuePair> pairs = expr.getPairs();
+
+            if (pairs != null) {
+                for (MemberValuePair pair : pairs) {
+                    valuesHolder.add(pair.getValue().toString());
+                }
+            }
+        }
     }
 
     private boolean isHttpRestMethod(final String annotationName) {

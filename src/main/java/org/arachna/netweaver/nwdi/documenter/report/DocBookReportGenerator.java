@@ -108,7 +108,7 @@ public final class DocBookReportGenerator implements DevelopmentConfigurationVis
      * @throws FileNotFoundException
      *             when the given target file does not exist.
      */
-    private Writer createWriter(final File target) throws FileNotFoundException {
+    protected Writer createWriter(final File target) throws FileNotFoundException {
         return new OutputStreamWriter(new FileOutputStream(target), Charset.forName("UTF-8"));
     }
 
@@ -168,7 +168,7 @@ public final class DocBookReportGenerator implements DevelopmentConfigurationVis
      * @param writer
      *            target for content.
      */
-    private void createDocument(final Compartment compartment, final Writer writer) {
+    protected void createDocument(final Compartment compartment, final Writer writer) {
         final ReportGenerator generator = reportGeneratorFactory.create(compartment);
         generator.execute(writer, additionalContext, DocBookVelocityTemplate.Compartment.getTemplate());
     }
@@ -233,7 +233,7 @@ public final class DocBookReportGenerator implements DevelopmentConfigurationVis
      * @param writer
      *            target for content.
      */
-    private void createDocument(final DevelopmentComponent component, final Writer writer) {
+    protected void createDocument(final DevelopmentComponent component, final Writer writer) {
         final ReportGenerator generator = reportGeneratorFactory.create(component);
         generator.execute(writer, additionalContext, DocBookVelocityTemplate.DevelopmentComponent.getTemplate());
     }
