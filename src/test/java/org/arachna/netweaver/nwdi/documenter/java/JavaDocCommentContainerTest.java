@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.arachna.netweaver.nwdi.documenter.java;
 
@@ -15,7 +15,7 @@ import org.junit.Test;
 
 /**
  * @author Dirk Weigenand
- * 
+ *
  */
 public class JavaDocCommentContainerTest {
     /**
@@ -120,7 +120,20 @@ public class JavaDocCommentContainerTest {
         container = new JavaDocCommentContainer("/**\n * This is a\n * test description.\n * @param p1 This is parameter1.\n */");
         assertThat(container.getDescription(), equalTo("This is a\ntest description."));
 
-        Collection<ParamTagDescriptor> descriptors = container.getParamTagDescriptors();
+        final Collection<ParamTagDescriptor> descriptors = container.getParamTagDescriptors();
+
+        assertThat(descriptors, hasSize(1));
+        final ParamTagDescriptor descriptor = descriptors.iterator().next();
+        assertThat(descriptor.getParameterName(), equalTo("p1"));
+        assertThat(descriptor.getDescription(), equalTo("This is parameter1."));
+    }
+
+    @Test
+    public final void testParseCommentWithMultiLineDescriptionAndParamTagWithDescriptionOnNextLine() {
+        container = new JavaDocCommentContainer("/**\n * This is a\n * test description.\n * @param p1\n * This is parameter1.\n */");
+        assertThat(container.getDescription(), equalTo("This is a\ntest description."));
+
+        final Collection<ParamTagDescriptor> descriptors = container.getParamTagDescriptors();
 
         assertThat(descriptors, hasSize(1));
         final ParamTagDescriptor descriptor = descriptors.iterator().next();

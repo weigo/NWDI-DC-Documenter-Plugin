@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	id="WebApp_ID" version="2.5">
+	<display-name></display-name>
+
+	<servlet>
+		<servlet-name>JerseyRESTService</servlet-name>
+		<servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
+		<init-param>
+			<param-name>com.sun.jersey.config.property.packages</param-name>
+			<param-value>org.codehaus.jackson.jaxrs</param-value>
+		</init-param>
+		<init-param>
+			<param-name>com.sun.jersey.api.json.POJOMappingFeature</param-name>
+			<param-value>true</param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>JerseyRESTService</servlet-name>
+		<url-pattern>/api/*</url-pattern>
+	</servlet-mapping>
+
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>ServicesWithAuth</web-resource-name>
+			<url-pattern>/api/*</url-pattern>
+		</web-resource-collection>
+        <auth-constraint>
+            <description>Sicherheitsrolle zum Mapping auf Serverrolle in web-j2ee-engine.xml.</description>
+            <role-name>examplePermissionRole</role-name>
+        </auth-constraint>
+	</security-constraint>
+
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>ServicesWithoutAuth</web-resource-name>
+			<url-pattern>/api/process/*</url-pattern>
+		</web-resource-collection>
+	</security-constraint>
+
+	<!--
+		login-config> <auth-method>BASIC</auth-method> </login-config
+	-->
+
+    <security-role>
+        <role-name>examplePermissionRole</role-name>
+    </security-role>
+    <security-role>
+        <role-name>examplePermissionRole2</role-name>
+    </security-role>
+</web-app>

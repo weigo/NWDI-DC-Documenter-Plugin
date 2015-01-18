@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.arachna.netweaver.nwdi.documenter.facets.webdynpro;
 
@@ -17,15 +17,10 @@ import org.junit.Test;
 
 /**
  * Unit tests for {@link WebDynproApplicationRuleProducer}.
- * 
+ *
  * @author Dirk Weigenand
  */
 public class WebDynproApplicationRuleProducerTest {
-    /**
-     * DigesterHelper for executing a WebDynproApplicationRuleProducer.
-     */
-    private DigesterHelper<WebDynproApplication> digesterHelper;
-
     /**
      * <code>WebDynproApplication</code> parsed using the <code>WebDynproApplicationRuleProducer</code>.
      */
@@ -36,15 +31,14 @@ public class WebDynproApplicationRuleProducerTest {
      */
     @Before
     public void setUp() {
-        digesterHelper = new DigesterHelper<WebDynproApplication>(new WebDynproApplicationRuleProducer());
-        application = digesterHelper.execute(getExampleWDApplicationReader());
+        application =
+            new DigesterHelper<WebDynproApplication>(new WebDynproApplicationRuleProducer()).execute(getExampleWDApplicationReader());
     }
 
     /**
      */
     @After
     public void tearDown() {
-        digesterHelper = null;
         application = null;
     }
 

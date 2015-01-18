@@ -44,6 +44,7 @@ public class ProcessControl {
      *            the example 'client' parameter.
      * @param process
      *            the example 'process' parameter.
+     * @param hashCode
      * @return This comment should detail the return value one should expect from calling this method.
      */
     @GET
@@ -63,6 +64,7 @@ public class ProcessControl {
      *            the example 'client' parameter.
      * @param process
      *            the example 'process' parameter.
+     * @param hashCode
      * @return This comment should detail the return value one should expect from calling this method.
      */
     @GET

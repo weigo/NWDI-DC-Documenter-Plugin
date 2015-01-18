@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.arachna.netweaver.nwdi.documenter.facets.restservices;
+package org.arachna.netweaver.nwdi.documenter.facets.webapp.restservices;
 
 import java.util.Collection;
 import java.util.Collections;

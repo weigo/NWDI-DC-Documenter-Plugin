@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.arachna.netweaver.nwdi.documenter.report;
 
@@ -14,17 +14,17 @@ import org.arachna.netweaver.dc.types.DevelopmentComponent;
 import org.arachna.netweaver.dc.types.DevelopmentComponentType;
 import org.arachna.netweaver.nwdi.documenter.facets.DocumentationFacetProvider;
 import org.arachna.netweaver.nwdi.documenter.facets.librarydc.LicenseInspector;
-import org.arachna.netweaver.nwdi.documenter.facets.restservices.RestServiceDocumentationFacetProvider;
+import org.arachna.netweaver.nwdi.documenter.facets.webapp.WebApplicationDocumentationFacetProvider;
 import org.arachna.netweaver.nwdi.documenter.facets.webservices.VirtualInterfaceDefinitionProvider;
 
 /**
  * Factory for {@link DocumentationFacetProvider}s.
- * 
+ *
  * @author Dirk Weigenand
  */
 public class DocumentationFacetProviderFactory {
     /**
-     * 
+     *
      */
     private final AntHelper antHelper;
 
@@ -36,9 +36,9 @@ public class DocumentationFacetProviderFactory {
 
     /**
      * Create a new instance of a <code>DocumentationFacetProviderFactory</code> .
-     * 
+     *
      * Use the given {@link AntHelper} to determine the location of DCs in the workspace.
-     * 
+     *
      * @param antHelper
      *            determine the location of DCs in the workspace.
      */
@@ -51,7 +51,7 @@ public class DocumentationFacetProviderFactory {
 
     /**
      * Create documentation facet provider(s) for external library DCs.
-     * 
+     *
      * @return documentation facet provider(s) for external library DCs.
      */
     private Collection<DocumentationFacetProvider<DevelopmentComponent>> createProvidersForExternalLibrariesDCs() {
@@ -64,7 +64,7 @@ public class DocumentationFacetProviderFactory {
 
     /**
      * Create documentation facet provider(s) for Java DCs.
-     * 
+     *
      * @return documentation facet provider(s) for Java DCs.
      */
     private Collection<DocumentationFacetProvider<DevelopmentComponent>> createProvidersForJavaDCs() {
@@ -77,20 +77,20 @@ public class DocumentationFacetProviderFactory {
 
     /**
      * Create documentation facet provider(s) for Java DCs.
-     * 
+     *
      * @return documentation facet provider(s) for Java DCs.
      */
     private Collection<DocumentationFacetProvider<DevelopmentComponent>> createProvidersForWebDCs() {
         final Collection<DocumentationFacetProvider<DevelopmentComponent>> providers =
             new LinkedList<DocumentationFacetProvider<DevelopmentComponent>>();
-        providers.add(new RestServiceDocumentationFacetProvider());
+        providers.add(new WebApplicationDocumentationFacetProvider(antHelper));
 
         return providers;
     }
 
     /**
      * Get a collection of documentation facet providers for the given type of development component.
-     * 
+     *
      * @param type
      *            development component type documentation facet providers are requested for.
      * @return registerd providers for the given development component type or an empty list if there were none registered.

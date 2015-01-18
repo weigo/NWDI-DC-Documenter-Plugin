@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.arachna.netweaver.nwdi.documenter.facets.webdynpro;
 
@@ -10,21 +10,20 @@ import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 
 import java.io.InputStreamReader;
 
-import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
  * Unittests for {@link XLIFFReader}.
- * 
+ *
  * @author Dirk Weigenand
  */
+@Ignore
 public class XLIFFReaderTest {
     /**
-     * Instance under test.
+     *
      */
-    private XLIFFReader reader;
-
     private Xliff xliff;
 
     /**
@@ -32,17 +31,9 @@ public class XLIFFReaderTest {
      */
     @Before
     public void setUp() throws Exception {
-        reader = new XLIFFReader();
         xliff =
-            reader.execute(new InputStreamReader(getClass().getResourceAsStream(
+            new XLIFFReader().execute(new InputStreamReader(getClass().getResourceAsStream(
                 "/org/arachna/netweaver/nwdi/documenter/facets/webdynpro/xliff.xml")));
-    }
-
-    /**
-     * @throws java.lang.Exception
-     */
-    @After
-    public void tearDown() throws Exception {
     }
 
     @Test
@@ -65,7 +56,7 @@ public class XLIFFReaderTest {
         assertThat(buttons, notNullValue(XliffGroup.class));
         final TranslationUnit translationUnit =
             buttons
-                .getTranslationUnit("RootUIElementContainer/Child:ButtonRow/OutgoingAggregation:Buttons/AggregatedObject:Change_Button@text");
+            .getTranslationUnit("RootUIElementContainer/Child:ButtonRow/OutgoingAggregation:Buttons/AggregatedObject:Change_Button@text");
         assertThat(translationUnit, notNullValue(TranslationUnit.class));
         assertThat(translationUnit.getText(), equalTo("choose"));
     }

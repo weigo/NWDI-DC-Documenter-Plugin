@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.arachna.netweaver.nwdi.documenter.facets.librarydc;
 
@@ -20,10 +20,9 @@ import org.arachna.netweaver.nwdi.documenter.facets.DocumentationFacetProvider;
 import org.arachna.util.io.FileFinder;
 
 /**
- * Inspector for external library development components. Reads the contained
- * jar archives in order to determine the license under which these are
- * distributed.
- * 
+ * Inspector for external library development components. Reads the contained jar archives in order to determine the license under which
+ * these are distributed.
+ *
  * @author Dirk Weigenand
  */
 public final class LicenseInspector implements DocumentationFacetProvider<DevelopmentComponent> {
@@ -39,19 +38,17 @@ public final class LicenseInspector implements DocumentationFacetProvider<Develo
 
     /**
      * Create a new instance of a license inspector.
-     * 
+     *
      * @param antHelper
-     *            helper class for determining properties of development
-     *            components.
+     *            helper class for determining properties of development components.
      */
     public LicenseInspector(final AntHelper antHelper) {
         this.antHelper = antHelper;
     }
 
     /**
-     * Inspect the given external library development components jar archives
-     * for license conditions.
-     * 
+     * Inspect the given external library development components jar archives for license conditions.
+     *
      * @param component
      *            development component to inspect.
      * @return a documentation facet containing the found license conditions.
@@ -94,14 +91,11 @@ public final class LicenseInspector implements DocumentationFacetProvider<Develo
     }
 
     /**
-     * Determine the folders to search for jar archives using the given
-     * development component.
-     * 
+     * Determine the folders to search for jar archives using the given development component.
+     *
      * @param component
-     *            development component that should be inspected for contained
-     *            jar archives.
-     * @return list of candidate folders containing jar archives (depending on
-     *         the type of the given development component).
+     *            development component that should be inspected for contained jar archives.
+     * @return list of candidate folders containing jar archives (depending on the type of the given development component).
      */
     protected Collection<String> getJarFolders(final DevelopmentComponent component) {
         final Collection<String> folders = new HashSet<String>();

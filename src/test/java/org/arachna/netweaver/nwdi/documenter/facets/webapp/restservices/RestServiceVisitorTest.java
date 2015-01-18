@@ -1,7 +1,7 @@
 /**
- * 
+ *
  */
-package org.arachna.netweaver.nwdi.documenter.facets.restservices;
+package org.arachna.netweaver.nwdi.documenter.facets.webapp.restservices;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -20,7 +20,7 @@ import org.junit.Test;
 
 /**
  * @author Dirk Weigenand
- * 
+ *
  */
 public class RestServiceVisitorTest {
     private CompilationUnit unit;
@@ -45,7 +45,7 @@ public class RestServiceVisitorTest {
 
     /**
      * Test method for
-     * {@link org.arachna.netweaver.nwdi.documenter.facets.restservices.RestServiceVisitor#visit(japa.parser.ast.body.ClassOrInterfaceDeclaration, org.arachna.netweaver.nwdi.documenter.facets.restservices.RestService)}
+     * {@link org.arachna.netweaver.nwdi.documenter.facets.webapp.restservices.RestServiceVisitor#visit(japa.parser.ast.body.ClassOrInterfaceDeclaration, org.arachna.netweaver.nwdi.documenter.facets.webapp.restservices.RestService)}
      * .
      */
     @Test
@@ -60,7 +60,7 @@ public class RestServiceVisitorTest {
 
     /**
      * Test method for
-     * {@link org.arachna.netweaver.nwdi.documenter.facets.restservices.RestServiceVisitor#visit(japa.parser.ast.body.MethodDeclaration, org.arachna.netweaver.nwdi.documenter.facets.restservices.RestService)}
+     * {@link org.arachna.netweaver.nwdi.documenter.facets.webapp.restservices.RestServiceVisitor#visit(japa.parser.ast.body.MethodDeclaration, org.arachna.netweaver.nwdi.documenter.facets.webapp.restservices.RestService)}
      * .
      */
     @Test
@@ -114,7 +114,7 @@ public class RestServiceVisitorTest {
         assertThat(methods, hasSize(2));
 
         final Method method = methods.get(0);
-        assertThat(method.getConsumedMediaTypes(), containsInAnyOrder("MediaType.APPLICATION_JSON"));
+        assertThat(method.getConsumedMediaTypes(), containsInAnyOrder("application/json"));
     }
 
     @Test
@@ -123,7 +123,7 @@ public class RestServiceVisitorTest {
         assertThat(methods, hasSize(2));
 
         final Method method = methods.get(0);
-        assertThat(method.getProducedMediaTypes(), containsInAnyOrder("MediaType.APPLICATION_JSON"));
+        assertThat(method.getProducedMediaTypes(), containsInAnyOrder("application/json"));
     }
 
     private InputStream getResource() {

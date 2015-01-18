@@ -1,7 +1,7 @@
 /**
- * 
+ *
  */
-package org.arachna.netweaver.nwdi.documenter.facets.restservices;
+package org.arachna.netweaver.nwdi.documenter.facets.webapp.restservices;
 
 import japa.parser.ast.Comment;
 import japa.parser.ast.body.ClassOrInterfaceDeclaration;
@@ -23,7 +23,7 @@ import org.arachna.netweaver.nwdi.documenter.java.ParamTagDescriptor;
 
 /**
  * VistorAdapter for extracting REST service descriptors from Java sources.
- * 
+ *
  * @author Dirk Weigenand
  */
 public class RestServiceVisitor extends VoidVisitorAdapter<RestService> {
@@ -36,8 +36,8 @@ public class RestServiceVisitor extends VoidVisitorAdapter<RestService> {
         }
 
         service.setName(classDef.getName());
-        
-        Comment comment = classDef.getComment();
+
+        final Comment comment = classDef.getComment();
 
         if (comment != null) {
             final JavaDocCommentContainer content = new JavaDocCommentContainer(comment.getContent());
@@ -83,30 +83,13 @@ public class RestServiceVisitor extends VoidVisitorAdapter<RestService> {
             }
         }
 
-        if (StringUtils.isNotEmpty(httpRequestType) && !consumesMediaTypes.isEmpty()) {
+        if (StringUtils.isNotEmpty(httpRequestType)) {
             final Method method = new Method(httpRequestType, path);
             method.addConsumedMediaTypes(consumesMediaTypes);
             method.addProducedMediaTypes(producesMediaTypes);
 
             if (methodDeclaration.getParameters() != null) {
-                for (final japa.parser.ast.body.Parameter p : methodDeclaration.getParameters()) {
-                    final List<AnnotationExpr> annotations = p.getAnnotations();
-                    ParameterType type = ParameterType.Param;
-
-                    if (annotations != null) {
-                        for (final AnnotationExpr paramAnnotation : annotations) {
-                            final String name = paramAnnotation.getName().getName();
-                            if ("PathParam".equals(name)) {
-                                type = ParameterType.PathParam;
-                            }
-                            else if ("QueryParam".equals(name)) {
-                                type = ParameterType.QueryParam;
-                            }
-                        }
-                    }
-
-                    method.add(new Parameter(type, p.getId().getName()));
-                }
+                addParameters(methodDeclaration, method);
             }
 
             final Comment javaDoc = methodDeclaration.getComment();
@@ -128,9 +111,35 @@ public class RestServiceVisitor extends VoidVisitorAdapter<RestService> {
         }
     }
 
+    /**
+     * @param methodDeclaration
+     * @param method
+     */
+    private void addParameters(final MethodDeclaration methodDeclaration, final Method method) {
+        for (final japa.parser.ast.body.Parameter p : methodDeclaration.getParameters()) {
+            final List<AnnotationExpr> annotations = p.getAnnotations();
+            ParameterType type = ParameterType.Param;
+
+            if (annotations != null) {
+                for (final AnnotationExpr paramAnnotation : annotations) {
+                    final String name = paramAnnotation.getName().getName();
+                    if ("PathParam".equals(name)) {
+                        type = ParameterType.PathParam;
+                    }
+                    else if ("QueryParam".equals(name)) {
+                        type = ParameterType.QueryParam;
+                    }
+                }
+            }
+
+            method.add(new Parameter(type, p.getId().getName()));
+        }
+    }
+
     private String getSingleAnnotationValue(final AnnotationExpr annotation) {
         final SingleMemberAnnotationExpr expr = (SingleMemberAnnotationExpr)annotation;
-        return StringUtils.trimToEmpty(expr.getMemberValue().toString().replaceAll("\"", ""));
+
+        return StringUtils.trimToEmpty(expr.getMemberValue().toString()).replaceAll("\"", "");
     }
 
     /**
@@ -140,15 +149,15 @@ public class RestServiceVisitor extends VoidVisitorAdapter<RestService> {
     private void getAnnotationValues(final Set<String> valuesHolder, final AnnotationExpr annotation) {
         if (annotation instanceof SingleMemberAnnotationExpr) {
             final SingleMemberAnnotationExpr expr = (SingleMemberAnnotationExpr)annotation;
-            valuesHolder.add(expr.getMemberValue().toString().replaceAll("\"", ""));
+            valuesHolder.add(getSingleAnnotationValue(expr));
         }
         else if (annotation instanceof NormalAnnotationExpr) {
             final NormalAnnotationExpr expr = (NormalAnnotationExpr)annotation;
-            List<MemberValuePair> pairs = expr.getPairs();
+            final List<MemberValuePair> pairs = expr.getPairs();
 
             if (pairs != null) {
-                for (MemberValuePair pair : pairs) {
-                    valuesHolder.add(pair.getValue().toString());
+                for (final MemberValuePair pair : pairs) {
+                    valuesHolder.add(pair.getValue().toString().replaceAll("\"", ""));
                 }
             }
         }

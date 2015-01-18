@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.arachna.netweaver.nwdi.documenter.java;
 
@@ -13,11 +13,13 @@ import java.util.ListIterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * Container for a JavaDoc comment.
- * 
+ *
  * Provides methods for access to description and tags of a JavaDoc comment.
- * 
+ *
  * @author Dirk Weigenand
  */
 public class JavaDocCommentContainer {
@@ -28,13 +30,13 @@ public class JavaDocCommentContainer {
 
     private final List<TagDescriptor> tagDescriptors = new LinkedList<TagDescriptor>();
 
-    private final Pattern pattern = Pattern.compile("\\{?(@\\p{Alpha}+)\\}?(\\s+.*)?");
+    private final Pattern pattern = Pattern.compile("\\s*\\{?(@\\p{Alpha}+)\\}?(\\s+.*)?");
 
     /**
      * Create a new instance of a <code></code> with the given Javadoc comment text.
-     * 
+     *
      * Parses the comment into a description and the respective tags if any.
-     * 
+     *
      * @param comment
      *            the raw JavaDoc comment.
      */
@@ -70,7 +72,7 @@ public class JavaDocCommentContainer {
 
     /**
      * Returns a collection of {@link TagDescriptor} objects matching the given tag name.
-     * 
+     *
      * @param tagName
      *            the tag name the tag descriptors should be filter with.
      * @return the tag descriptors matching the given tag name or an empty list.
@@ -89,23 +91,24 @@ public class JavaDocCommentContainer {
 
     /**
      * Extract parameter tag descriptors.
+     *
      * @return a list of parameter tags.
      */
     public Collection<ParamTagDescriptor> getParamTagDescriptors() {
-        Collection<ParamTagDescriptor> descriptors = new ArrayList<ParamTagDescriptor>();
+        final Collection<ParamTagDescriptor> descriptors = new ArrayList<ParamTagDescriptor>();
 
         for (final TagDescriptor descriptor : this.getTagDescriptors()) {
             if (descriptor.getTag().equalsIgnoreCase("@param")) {
                 descriptors.add((ParamTagDescriptor)descriptor);
             }
         }
-        
+
         return descriptors;
     }
 
     /**
      * Returns the description part of this JavaDoc comment.
-     * 
+     *
      * @return the description the description part of this JavaDoc comment.
      */
     public String getDescription() {
@@ -119,7 +122,7 @@ public class JavaDocCommentContainer {
         while (lines.hasNext()) {
             line = trimStarsFromStartOfStringAndTrimSpaces(lines.next());
 
-            if (this.pattern.matcher(line).matches()) {
+            if (pattern.matcher(line).matches()) {
                 lines.previous();
                 break;
             }
@@ -154,6 +157,7 @@ public class JavaDocCommentContainer {
         String line;
         final StringBuilder description = new StringBuilder();
         String tagName = null;
+        String paramName = null;
 
         while (lines.hasNext()) {
             line = trimStarsFromStartOfStringAndTrimSpaces(lines.next());
@@ -167,8 +171,20 @@ public class JavaDocCommentContainer {
                 }
 
                 tagName = matcher.group(1);
-                String descriptionGroupMatch = matcher.group(2);
-                description.append(descriptionGroupMatch == null ? "" : descriptionGroupMatch);
+                description.append(StringUtils.trimToEmpty(matcher.group(2)));
+
+                if ("@param".equals(tagName)) {
+                    final int idx = description.indexOf(" ");
+
+                    if (idx == -1) {
+                        paramName = description.toString();
+                        description.setLength(0);
+                    }
+                    else {
+                        paramName = description.substring(0, idx);
+                        description.delete(0, idx);
+                    }
+                }
 
                 continue;
             }
@@ -177,8 +193,8 @@ public class JavaDocCommentContainer {
         }
 
         if (tagName != null) {
-            if (tagName.equals("@param")) {
-                tagDescriptors.add(new ParamTagDescriptor(tagName, description.toString().trim()));
+            if ("@param".equals(tagName)) {
+                tagDescriptors.add(new ParamTagDescriptor(paramName, description.toString().trim()));
             }
             else {
                 tagDescriptors.add(new TagDescriptor(tagName, description.toString().trim()));

@@ -1,11 +1,11 @@
 /**
- * 
+ *
  */
 package org.arachna.netweaver.nwdi.documenter.java;
 
 /**
  * Descriptor for JavaDoc tags.
- * 
+ *
  * @author Dirk Weigenand
  */
 public class TagDescriptor {
@@ -20,9 +20,8 @@ public class TagDescriptor {
     private final String description;
 
     /**
-     * Create a new instance of a tag descriptor using the given tag name and
-     * description.
-     * 
+     * Create a new instance of a tag descriptor using the given tag name and description.
+     *
      * @param tag
      *            the name of this tag (e.g. @param).
      * @param description
@@ -30,12 +29,11 @@ public class TagDescriptor {
      */
     public TagDescriptor(final String tag, final String description) {
         if (tag == null || !tag.startsWith("@") || tag.contains(" ")) {
-            throw new IllegalArgumentException(
-                "tag name must not be null, start with @ and must not contain any spaces!");
+            throw new IllegalArgumentException("tag name must not be null, start with @ and must not contain any spaces!");
         }
 
         this.tag = tag;
-        this.description = description == null ? "" : description;
+        this.description = description == null ? "" : description.replaceAll("\\n\\s+", "\\n");
     }
 
     /**
