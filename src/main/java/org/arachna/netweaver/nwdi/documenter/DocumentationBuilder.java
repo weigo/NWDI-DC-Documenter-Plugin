@@ -18,14 +18,6 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.regex.Pattern;
 
-import javax.xml.transform.ErrorListener;
-import javax.xml.transform.Templates;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.TransformerFactoryConfigurationError;
-import javax.xml.transform.stream.StreamSource;
-
 import jenkins.model.Jenkins;
 import net.sf.json.JSONObject;
 
@@ -51,7 +43,7 @@ import com.myyearbook.hudson.plugins.confluence.ConfluenceSite;
 
 /**
  * Builder for generating documentation of a development configuration.
- * 
+ *
  * @author Dirk Weigenand
  */
 public class DocumentationBuilder extends AntTaskBuilder {
@@ -59,11 +51,6 @@ public class DocumentationBuilder extends AntTaskBuilder {
      * bundle to use for report internationalization.
      */
     public static final String DC_REPORT_BUNDLE = "org/arachna/netweaver/nwdi/documenter/report/DevelopmentComponentReport";
-
-    /**
-     * path to XSL stylesheets.
-     */
-    private static final String STYLESHEET_PATH_TEMPLATE = "/org/arachna/netweaver/nwdi/documenter/report/%s";
 
     /**
      * descriptor for DocumentationBuilder.
@@ -109,7 +96,7 @@ public class DocumentationBuilder extends AntTaskBuilder {
     /**
      * Create a new instance of a <code>DocumentationBuilder</code> using the given regular expression for vendors to ignore when building
      * documentation.
-     * 
+     *
      * @param ignoreVendorRegexp
      *            regular expression for vendors to ignore during generation of documentation. E.g. <code>sap\.com</code> to ignore the
      *            usual suspects like sap.com_SAP_BUILDT, sap.com_SAP_JEE, sap.com_SAP_JTECHS, etc. Those would only pollute the dependency
@@ -136,9 +123,9 @@ public class DocumentationBuilder extends AntTaskBuilder {
 
     /**
      * Return the locale matching the language selected for generation of documentation.
-     * 
+     *
      * When no language was selected previously return the ENGLISH locale.
-     * 
+     *
      * @return locale matching language selected for generation of documentation.
      */
     private Locale getLocale() {
@@ -160,7 +147,7 @@ public class DocumentationBuilder extends AntTaskBuilder {
 
     /**
      * Returns the selected confluence site.
-     * 
+     *
      * @return the confluenceSite
      */
     public String getConfluenceSite() {
@@ -169,7 +156,7 @@ public class DocumentationBuilder extends AntTaskBuilder {
 
     /**
      * Return the regular expression to be used for vendors to ignore when documenting development components.
-     * 
+     *
      * @return the regular expression to be used for vendors to ignore when documenting development components.
      */
     public String getIgnoreVendorRegexp() {
@@ -318,7 +305,7 @@ public class DocumentationBuilder extends AntTaskBuilder {
     }
 
     /**
-     * 
+     *
      * @param dcFactory
      * @param developmentConfiguration
      * @param docBookSourceFolder
@@ -362,9 +349,11 @@ public class DocumentationBuilder extends AntTaskBuilder {
 
                 final DevelopmentConfigurationConfluenceWikiGenerator visitor =
                     new DevelopmentConfigurationConfluenceWikiGenerator(docBookSourceFolder, vendorFilter, confluenceSession,
-                        listener.getLogger(), descriptorContainer, createConfluenceTemplates(confluenceSession.getServerInfo()
-                            .getMajorVersion()));
+                        listener.getLogger(), descriptorContainer, ConfluenceVersion.fromConfluenceVersion(
+                            confluenceSession.getServerInfo().getMajorVersion()).createTemplate());
                 visitor.addToGlobalContext(ContextPropertyName.WikiSpace, confluenceSpace);
+
+                // FIXME: Jenkins.getInstance().getRootUrl() doesn't seem to return an url anymore!
                 visitor
                     .addToGlobalContext(ContextPropertyName.ProjectUrl, Jenkins.getInstance().getRootUrl() + build.getProject().getUrl());
                 developmentConfiguration.accept(visitor);
@@ -375,41 +364,9 @@ public class DocumentationBuilder extends AntTaskBuilder {
         }
     }
 
-    private Templates createConfluenceTemplates(final int confluenceMajorVersion) {
-        try {
-            final TransformerFactory factory = TransformerFactory.newInstance();
-
-            factory.setErrorListener(new ErrorListener() {
-                @Override
-                public void warning(final TransformerException exception) throws TransformerException {
-                    throw new IllegalStateException(exception);
-                }
-
-                @Override
-                public void error(final TransformerException exception) throws TransformerException {
-                    throw new IllegalStateException(exception);
-                }
-
-                @Override
-                public void fatalError(final TransformerException exception) throws TransformerException {
-                    throw new IllegalStateException(exception);
-                }
-            });
-
-            return factory.newTemplates(new StreamSource(this.getClass().getResourceAsStream(
-                String.format(STYLESHEET_PATH_TEMPLATE, ConfluenceVersion.fromConfluenceVersion(confluenceMajorVersion).getTemplate()))));
-        }
-        catch (final TransformerConfigurationException e) {
-            throw new IllegalStateException(e);
-        }
-        catch (final TransformerFactoryConfigurationError e) {
-            throw new IllegalStateException(e);
-        }
-    }
-
     /**
      * Get the selected Confluence site.
-     * 
+     *
      * @return the selected confluence site or <code>null</code> if none was selected.
      */
     protected ConfluenceSite getSelectedConfluenceSite() {
@@ -419,7 +376,7 @@ public class DocumentationBuilder extends AntTaskBuilder {
 
     /**
      * Look up the descriptor of the <code>ConfluencePublisher</code>.
-     * 
+     *
      * @return the descriptor of the <code>ConfluencePublisher</code> or <code>null</code> if the plugin is not installed.
      */
     protected com.myyearbook.hudson.plugins.confluence.ConfluencePublisher.DescriptorImpl getConfluencePublisherDescriptor() {
@@ -437,7 +394,7 @@ public class DocumentationBuilder extends AntTaskBuilder {
     /**
      * Descriptor for {@link DocumentationBuilder}. Used as a singleton. The class is marked as public so that it can be accessed from
      * views.
-     * 
+     *
      * <p>
      * See <tt>src/main/resources/hudson/plugins/hello_world/HelloWorldBuilder/*.jelly</tt> for the actual HTML fragment for the
      * configuration screen.
@@ -448,7 +405,7 @@ public class DocumentationBuilder extends AntTaskBuilder {
     public static final class DescriptorImpl extends BuildStepDescriptor<Builder> {
         /**
          * regular expression for ignoring development components of certain vendors.
-         * 
+         *
          * @deprecated Not used anymore
          */
         @Deprecated
@@ -456,7 +413,7 @@ public class DocumentationBuilder extends AntTaskBuilder {
 
         /**
          * regular expression for ignoring development components of certain software components.
-         * 
+         *
          * @deprecated Not used anymore.
          */
         @Deprecated
@@ -517,7 +474,7 @@ public class DocumentationBuilder extends AntTaskBuilder {
 
         /**
          * Return the regular expression for ignoring vendors as a String.
-         * 
+         *
          * @return the regular expression for ignoring vendors as a String.
          */
         public String getIgnoreVendorRegexp() {
@@ -526,7 +483,7 @@ public class DocumentationBuilder extends AntTaskBuilder {
 
         /**
          * Return the pattern for ignoring vendors.
-         * 
+         *
          * @return the pattern for ignoring vendors.
          */
         public Pattern getIgnoreVendorRegexpPattern() {
@@ -535,7 +492,7 @@ public class DocumentationBuilder extends AntTaskBuilder {
 
         /**
          * Sets the regular expression to be used when ignoring development components via their compartments vendor.
-         * 
+         *
          * @param ignoreVendorRegexp
          *            the ignoreVendorRegexp to set
          */
@@ -545,7 +502,7 @@ public class DocumentationBuilder extends AntTaskBuilder {
 
         /**
          * Returns the pattern for ignoring development components via their software components name.
-         * 
+         *
          * @return the ignoreSoftwareComponentRegex
          */
         public String getIgnoreSoftwareComponentRegex() {
@@ -554,7 +511,7 @@ public class DocumentationBuilder extends AntTaskBuilder {
 
         /**
          * Set the regular expression to be used ignoring software components during the documentation process.
-         * 
+         *
          * @param ignoreSoftwareComponentRegex
          *            the regular expression to be used ignoring software components during the documentation process to set
          */
@@ -564,7 +521,7 @@ public class DocumentationBuilder extends AntTaskBuilder {
 
         /**
          * Returns the absolute path of the 'dot' executable.
-         * 
+         *
          * @return the absolute path of the 'dot' executable.
          */
         public String getDotExecutable() {
@@ -573,7 +530,7 @@ public class DocumentationBuilder extends AntTaskBuilder {
 
         /**
          * Sets the absolute path of the 'dot' executable.
-         * 
+         *
          * @param dotExecutable
          *            the absolute path of the 'dot' executable.
          */
@@ -592,7 +549,7 @@ public class DocumentationBuilder extends AntTaskBuilder {
 
     /**
      * Return the configured confluence sites.
-     * 
+     *
      * @return the list of configured confluence sites. The list is empty if no sites are configured or the confluence publisher plugin is
      *         not installed.
      */
@@ -603,7 +560,7 @@ public class DocumentationBuilder extends AntTaskBuilder {
 
     /**
      * Return the locales matching the languages available for generating documentation.
-     * 
+     *
      * @return list of locales available for documentation generation.
      */
     public List<Locale> getAvailableDocumentationLanguages() {

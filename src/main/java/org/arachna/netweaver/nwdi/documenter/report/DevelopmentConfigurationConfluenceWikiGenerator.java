@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.arachna.netweaver.nwdi.documenter.report;
 
@@ -38,7 +38,7 @@ import com.myyearbook.hudson.plugins.confluence.ConfluenceSession;
 
 /**
  * Generator for documentation of a development configuration in HTML.
- * 
+ *
  * @author Dirk Weigenand
  */
 public final class DevelopmentConfigurationConfluenceWikiGenerator implements DevelopmentConfigurationVisitor {
@@ -94,7 +94,7 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator implements De
 
     /**
      * Create an instance of the confluence wiki content generator for development components.
-     * 
+     *
      * @param reportSourceFolder
      *            base folder containing docbook sources for wiki pages.
      * @param vendorFilter
@@ -105,6 +105,8 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator implements De
      *            the logger to use
      * @param dotFileDescriptorContainer
      *            container for descriptors of generated dependency diagrams.
+     * @param templates
+     *            template for repeatedly transforming docbook sources using the same stylesheet.
      */
     public DevelopmentConfigurationConfluenceWikiGenerator(final File reportSourceFolder, final VendorFilter vendorFilter,
         final ConfluenceSession session, final PrintStream logger, final DiagramDescriptorContainer dotFileDescriptorContainer,
@@ -134,7 +136,7 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator implements De
 
     /**
      * Create an overview page of licenses for external libraries used in the given development configuration.
-     * 
+     *
      * @param configuration
      *            development configuration to create license overview for.
      */
@@ -156,7 +158,7 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator implements De
 
     /**
      * Create wiki content for the given compartment.
-     * 
+     *
      * @param compartment
      *            compartment to generate wiki documentation from.
      * @return generated documentation
@@ -196,7 +198,7 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator implements De
 
     /**
      * Add a dependency diagram to the given page.
-     * 
+     *
      * @param pageId
      *            id of page to attach diagram to.
      * @param dotFileName
@@ -218,7 +220,7 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator implements De
 
     /**
      * Create or update a wiki page with the given content. Associate it with the given parent page.
-     * 
+     *
      * @param pageName
      *            name of wiki page to create or update.
      * @param pageContent
@@ -250,7 +252,7 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator implements De
     /**
      * Returns the remote page with the given name. If it does not exist yet a new page object will be created and associated with the given
      * parent page.
-     * 
+     *
      * @param pageName
      *            name of remote page to be retrieved.
      * @param parent
@@ -282,7 +284,7 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator implements De
 
     /**
      * Create wiki content for the given development component.
-     * 
+     *
      * @param component
      *            DC to generate wiki documentation from.
      * @return generated documentation
@@ -295,26 +297,26 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator implements De
         try {
             result = transform(createDocBookTemplateReader(docBook));
         }
-        catch (IllegalStateException e) {
-            StringWriter output = new StringWriter();
-            
+        catch (final IllegalStateException e) {
+            final StringWriter output = new StringWriter();
+
             try {
                 IOUtils.copy(createDocBookTemplateReader(docBook), output);
                 logger.append(e.getLocalizedMessage()).append(output.toString());
             }
-            catch (IOException e1) {
+            catch (final IOException e1) {
                 e1.printStackTrace(logger);
             }
-            
+
             throw e;
         }
-        
+
         return result;
     }
 
     /**
      * Create the overview page for a track/development configuration.
-     * 
+     *
      * @param configuration
      *            the development configuration.
      * @throws java.rmi.RemoteException
@@ -336,7 +338,7 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator implements De
 
     /**
      * Add a property to the global context.
-     * 
+     *
      * @param key
      * @param value
      */
@@ -358,17 +360,17 @@ public final class DevelopmentConfigurationConfluenceWikiGenerator implements De
             transformer.setErrorListener(new ErrorListener() {
 
                 @Override
-                public void warning(TransformerException exception) throws TransformerException {
+                public void warning(final TransformerException exception) throws TransformerException {
                     logger.append(exception.getMessageAndLocation());
                 }
 
                 @Override
-                public void error(TransformerException exception) throws TransformerException {
+                public void error(final TransformerException exception) throws TransformerException {
                     logger.append(exception.getMessageAndLocation());
                 }
 
                 @Override
-                public void fatalError(TransformerException exception) throws TransformerException {
+                public void fatalError(final TransformerException exception) throws TransformerException {
                     logger.append(exception.getMessageAndLocation());
                 }
             });
