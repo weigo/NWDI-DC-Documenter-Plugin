@@ -150,13 +150,16 @@ public class WebApplication {
         for (final ServletDescriptor descriptor : servlets) {
             if (ServletDescriptor.JERSEY_SERVLET_CLASS.equals(descriptor.getClazz())) {
                 baseUrl.append(descriptor.getServletMapping());
+                break;
             }
         }
 
-        // trim '/*' from end of base url.
-        for (final char c : new char[] { '*', '/' }) {
-            if (c == baseUrl.charAt(baseUrl.length() - 1)) {
-                baseUrl.setLength(baseUrl.length() - 1);
+        if (baseUrl.length() > 0) {
+            // trim '/*' from end of base url.
+            for (final char c : new char[] { '*', '/' }) {
+                if (c == baseUrl.charAt(baseUrl.length() - 1)) {
+                    baseUrl.setLength(baseUrl.length() - 1);
+                }
             }
         }
 
